@@ -1,4 +1,5 @@
-﻿using MoneyOrbit.Application.Interfaces.IApplication.IFactories;
+﻿using MoneyOrbit.Application.Helpers;
+using MoneyOrbit.Application.Interfaces.IApplication.IFactories;
 using MoneyOrbit.Core.Entities;
 
 namespace MoneyOrbit.Application.Factory
@@ -7,14 +8,13 @@ namespace MoneyOrbit.Application.Factory
     {
         public User CreateUser(string _userName, string _firstName, string _lastName, string _password)
         {
+            Tuple<byte[], byte[]>  encryptedPasswordTuple = Generators.PasswordEncryptor(_password);
             User _user = new User() 
             {
                 UserName=_userName, FirstName=_firstName, LastName=_lastName,
                 ID = generators.GenerateKey(DateTime.Now), // Generate a new unique ID for the user
-                password = _password,
-                //These should be uncommented when @Terrence implements the authentication and authorization
-                //PasswordHash = null, 
-                //PasswordSalt = null,
+                PasswordHash = encryptedPasswordTuple.Item1, 
+                PasswordSalt = encryptedPasswordTuple.Item2
             };
             return _user;
 
