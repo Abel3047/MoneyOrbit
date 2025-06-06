@@ -8,7 +8,7 @@ namespace MoneyOrbit.Application.Factory
     {
         public User CreateUser(string _userName, string _firstName, string _lastName, string _password)
         {
-            Tuple<byte[], byte[]>  encryptedPasswordTuple = Generators.PasswordEncryptor(_password);
+            Tuple<byte[], byte[]>  encryptedPasswordTuple = generators.PasswordEncryptor(_password);
             User _user = new User() 
             {
                 UserName=_userName, FirstName=_firstName, LastName=_lastName,

@@ -1,5 +1,4 @@
-﻿using MoneyOrbit.Core.Entities;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 
 namespace MoneyOrbit.Application.Helpers
@@ -9,7 +8,13 @@ namespace MoneyOrbit.Application.Helpers
     /// </summary>
     public class Generators
     {
-        internal static Tuple<byte[], byte[]> PasswordEncryptor(string Password)
+        /// <summary>
+        /// Takes in a password and encrypts it using HMACSHA512 encryption and returns a tuple that contains the PasswordHash 
+        /// in item1 and the PasswordSalt in item2
+        /// </summary>
+        /// <param name="Password"></param>
+        /// <returns></returns>
+        internal Tuple<byte[], byte[]> PasswordEncryptor(string Password)
         {
             using (var hmac = new HMACSHA512())
             {
@@ -27,7 +32,7 @@ namespace MoneyOrbit.Application.Helpers
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
-        public string GenerateKey(DateTime dateTime)
+        internal string GenerateKey(DateTime dateTime)
         {
             long ticks = dateTime.Ticks;
 
