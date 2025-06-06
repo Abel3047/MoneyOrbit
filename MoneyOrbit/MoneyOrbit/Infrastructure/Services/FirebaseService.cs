@@ -22,6 +22,8 @@ namespace MoneyOrbit.Infrastructure.Services
               {
                   AuthTokenAsyncFactory = () => Task.FromResult(authenticationSecret)
               });
+
+            generators = new Generators();
         }
 
         /// <summary>
