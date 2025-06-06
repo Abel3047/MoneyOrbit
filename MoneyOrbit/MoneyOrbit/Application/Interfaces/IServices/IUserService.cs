@@ -1,0 +1,44 @@
+﻿using MoneyOrbit.Application.DTOs.UserDtos;
+using MoneyOrbit.Core.Entities;
+
+namespace MoneyOrbit.Application.Interfaces.IServices
+{
+    public interface IUserService
+    {
+        /// <summary>
+        /// This method creates a user using <see cref="UserFactory.CreateUser(string, string, string, string)"/> 
+        /// stores the user in the database partition <see cref="IUserRepository{TUser}"/> and outputs the User ID
+        /// </summary>
+        /// <param name="uCD"></param>
+        /// <returns></returns>
+        Task<string> CreateUser(UserCreationDto uCD);
+        /// <summary>
+        /// Checks if the properties in <see cref="UserUpdateDto"/> are not null. If not null it will update the user it gets
+        /// from the database by the <paramref name="uUD.ID"/>
+        /// </summary>
+        /// <param name="uUD"></param>
+        /// <returns></returns>
+        Task UpdateUser(UserUpdateDto uUD);
+        /// <summary>
+        /// Requires a <paramref name="token"/> and a <paramref name="userID"/> to find the user, get the reset token and make
+        /// a new passwordHash and passwordSalt
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task UpdateUserPassword(string userID, string token);
+        /// <summary>
+        /// Gets the user from the database by its ID
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Task<User> GetUserById(string userId);
+        /// <summary>
+        /// Deletes the user and its data by its path (which is its ID)
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Task DeleteUser(string userId);
+
+    }
+}
