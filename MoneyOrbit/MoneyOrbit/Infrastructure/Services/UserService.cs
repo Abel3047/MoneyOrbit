@@ -1,5 +1,6 @@
 ﻿using MoneyOrbit.Application.DTOs.UserDtos;
 using MoneyOrbit.Application.Factory;
+using MoneyOrbit.Application.Helpers;
 using MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository;
 using MoneyOrbit.Application.Interfaces.IEntities;
 using MoneyOrbit.Application.Interfaces.IServices;
@@ -31,15 +32,20 @@ namespace MoneyOrbit.Infrastructure.Services
             if (!String.IsNullOrEmpty(uUD.PhoneNumber)) user.PhoneNumber = uUD.PhoneNumber;
             await _userRepository.UpdateData(user.ID, user);
         }
-        public async Task UpdateUserPassword(string userID, string token)
-        {
-            User user = await _userRepository.GetInstanceOfType<User>(userID);
+        public async Task UpdateUserPassword(string userID, string resetToken, string _newpassword)
+        {          
+            if (String.IsNullOrEmpty(resetToken)) throw new NullReferenceException("You cannot have a null/empty resetToken");
+            if (String.IsNullOrEmpty(_newpassword)) throw new NullReferenceException("You cannot have a null/empty _newpassword");
 
-            if (String.IsNullOrEmpty(token)) throw new NullReferenceException("You cannot have a null/empty token");
+            //Code that @Terrence has to implement for resetToken authentication
+            throw new NotImplementedException("Terrence needs to implement resetToken authentication so that the rest of the method can" +
+                "fire. He of course needs to test it as well");
 
-            //Code that @Terrence has to implement for passwordHash and salt generation
-            throw new NotImplementedException("Terrence needs to implement the password and salt generation pattern and put the" +
-                "call to an instance of it here");
+            User user = await _userRepository.GetInstanceOfType<User>(userID);            
+
+            var encryptedPasswordTuple = new Generators().PasswordEncryptor(_newpassword);
+            user.PasswordHash = encryptedPasswordTuple.Item1;
+            user.PasswordSalt = encryptedPasswordTuple.Item2;
 
             await _userRepository.UpdateData(user.ID, user);
         }

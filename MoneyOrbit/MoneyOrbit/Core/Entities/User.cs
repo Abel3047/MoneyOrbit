@@ -18,8 +18,7 @@ namespace MoneyOrbit.Core.Entities
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
 
-        //This will be phased out when @Terrence implements the authentication and authorization
-        public string password { get; set; }
+        public string AccessLevel { get; set; }
 
         //These I believe will be used by @Terrence when he implements the authentication and authorization
         public string ResetToken { get; set; }
