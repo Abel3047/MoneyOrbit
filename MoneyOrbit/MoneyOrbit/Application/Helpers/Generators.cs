@@ -20,9 +20,8 @@ namespace MoneyOrbit.Application.Helpers
             {
                 var PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(Password));
                 var PasswordSalt = hmac.Key;
-                var result= Tuple(PasswordHash, PasswordSalt);
+                return Tuple.Create(PasswordHash, PasswordSalt);
             }
-            
         }
 
         /// <summary>
