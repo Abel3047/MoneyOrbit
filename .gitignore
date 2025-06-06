@@ -832,3 +832,6 @@ $RECYCLE.BIN/
 /MoneyOrbit/MoneyOrbit/obj/Debug/net8.0/MoneyOrbit.AssemblyInfoInputs.cache
 *.cache
 *.cache/
+/MoneyOrbit/MoneyOrbit/obj/MoneyOrbit.csproj.nuget.dgspec.json
+/MoneyOrbit/MoneyOrbit/obj/project.assets.json
+/MoneyOrbit/MoneyOrbit/obj/project.nuget.cache
