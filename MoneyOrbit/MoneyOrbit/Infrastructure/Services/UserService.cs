@@ -18,8 +18,9 @@ namespace MoneyOrbit.Infrastructure.Services
         }
 
         public async Task<string> CreateUser(UserCreationDto uCD)
-        {
-            var user= new UserFactory().CreateUser(uCD.UserName, uCD.FirstName, uCD.LastName, uCD.password);
+        {                
+            var user= new UserFactory()
+                .CreateUser(uCD.UserName, uCD.FirstName, uCD.LastName, uCD.password, uCD.AccessLevel, uCD.Email, uCD.PhoneNumber);
             await _userRepository.UpdateData(user.ID, user);
             return user.ID;
         }
@@ -50,6 +51,7 @@ namespace MoneyOrbit.Infrastructure.Services
             await _userRepository.UpdateData(user.ID, user);
         }
         public async Task<User> GetUserById(string userId) => await _userRepository.GetInstanceOfType<User>(userId);
+        public async Task<User> GetUserByUserName(string username) => await _userRepository.GetInstanceOfType<User>(username);
         public async Task DeleteUser(string userId) => await _userRepository.DeleteData(userId);
     }
 }

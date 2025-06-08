@@ -34,6 +34,12 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         /// <returns></returns>
         Task<User> GetUserById(string userId);
         /// <summary>
+        /// Gets the user from the database by its username
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        Task<User> GetUserByUserName(string username);
+        /// <summary>
         /// Deletes the user and its data by its path (which is its ID)
         /// </summary>
         /// <param name="userId"></param>
