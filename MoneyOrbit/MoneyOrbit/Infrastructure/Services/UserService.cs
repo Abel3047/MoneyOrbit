@@ -17,12 +17,38 @@ namespace MoneyOrbit.Infrastructure.Services
             this._userRepository = userRepository;
         }
 
-        public async Task<string> CreateUser(UserCreationDto uCD)
-        {                
-            var user= new UserFactory()
+        public async Task<ResultObject> RegisterUser(UserCreationDto uCD)
+        {
+            //Checks to see if the DTO is empty
+            if (uCD == null)
+                return new ResultObject() { Error = "User creation data is null." };
+
+            //Checks if the important information is not null or empty
+            if (String.IsNullOrEmpty(uCD.password) ||
+               String.IsNullOrEmpty(uCD.UserName) ||
+               String.IsNullOrEmpty(uCD.FirstName) ||
+               String.IsNullOrEmpty(uCD.LastName) ||
+               String.IsNullOrEmpty(uCD.AccessLevel))
+                return new ResultObject() { Error = "You are missing an important piece of information.Please provide a" +
+                    " 'username'/password/firstname/lastname/AccessLevel."};
+
+            //Checks if the email and phonenumber are in the correct format
+            if (uCD.Email != null && !Validator.ValidateEmail(uCD.Email))
+                return new ResultObject(){ Error = "This isn't the correct format for an email." };
+            if (uCD.PhoneNumber != null && !Validator.ValidatePhoneNumber(uCD.PhoneNumber))
+                return new ResultObject() { Error = "This isn't the correct format for a PhoneNumber." };
+
+            // Check if the user already exists
+            if (await DoesUserNameExist(uCD.UserName))
+            return new ResultObject() { Error = "User already exists" };
+
+            //Creates the user with information
+            var user = new UserFactory()
                 .CreateUser(uCD.UserName, uCD.FirstName, uCD.LastName, uCD.password, uCD.AccessLevel, uCD.Email, uCD.PhoneNumber);
+
+            //Stores info in the database
             await _userRepository.UpdateData(user.ID, user);
-            return user.ID;
+            return  new ResultObject() { Result= user.ID};
         }
         public async Task UpdateUser(UserUpdateDto uUD)
         {
@@ -50,8 +76,22 @@ namespace MoneyOrbit.Infrastructure.Services
 
             await _userRepository.UpdateData(user.ID, user);
         }
-        public async Task<User> GetUserById(string userId) => await _userRepository.GetInstanceOfType<User>(userId);
-        public async Task<User> GetUserByUserName(string username) => await _userRepository.GetInstanceOfType<User>(username);
+        public async Task<User> GetUserById(string userId) => await _userRepository.GetInstanceOfType<User>(userId);        
         public async Task DeleteUser(string userId) => await _userRepository.DeleteData(userId);
+
+        #region Support methods
+        /// <summary>
+        /// Checks if the username already exists in the database
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns> False if it does not exist in the database</returns>
+        private async Task<bool> DoesUserNameExist(string username)
+        {
+            //This won't work. We need this to filter the nodes so see if the nodes as strings
+            //contain the username, this is not sufficient
+            var user = await _userRepository.GetInstanceOfType<User>(username);
+            return user != null;
+        }
+        #endregion
     }
 }

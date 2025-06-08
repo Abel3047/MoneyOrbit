@@ -1,4 +1,5 @@
 ﻿using MoneyOrbit.Application.DTOs.UserDtos;
+using MoneyOrbit.Application.Helpers;
 using MoneyOrbit.Core.Entities;
 
 namespace MoneyOrbit.Application.Interfaces.IServices
@@ -11,7 +12,7 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         /// </summary>
         /// <param name="uCD"></param>
         /// <returns></returns>
-        Task<string> CreateUser(UserCreationDto uCD);
+        Task<ResultObject> RegisterUser(UserCreationDto uCD);
         /// <summary>
         /// Checks if the properties in <see cref="UserUpdateDto"/> are not null. If not null it will update the user it gets
         /// from the database by the <paramref name="uUD.ID"/>
@@ -33,12 +34,6 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         /// <param name="userId"></param>
         /// <returns></returns>
         Task<User> GetUserById(string userId);
-        /// <summary>
-        /// Gets the user from the database by its username
-        /// </summary>
-        /// <param name="username"></param>
-        /// <returns></returns>
-        Task<User> GetUserByUserName(string username);
         /// <summary>
         /// Deletes the user and its data by its path (which is its ID)
         /// </summary>

@@ -5,12 +5,14 @@ namespace MoneyOrbit.Application.Helpers
     {
         internal static bool ValidateEmail(string? email)
         {
-            throw new NotImplementedException();
+            //@Terrence: please work on this
+            return true;
         }
 
         internal static bool ValidatePhoneNumber(string? phoneNumber)
         {
-            throw new NotImplementedException();
+            //@Terrence: please work on this
+            return true;
         }
     }
 }
