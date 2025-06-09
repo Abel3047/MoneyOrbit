@@ -2,12 +2,13 @@
 using MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository;
 using MoneyOrbit.Application.Interfaces.IEntities;
 using MoneyOrbit.Application.Interfaces.IServices;
+using System.IO;
 
 namespace MoneyOrbit.Application.Data.Repository
 {
     /// <summary>
     /// <para>
-    /// This abstract class serves as a base for all entity repositories. It implements the IEntityRepository interface
+    /// This abstract class serves as a base for all propertyKeyword repositories. It implements the IEntityRepository interface
     /// and provides the contracts for how all other repositories should behave. It also contains a protected string _nodepath 
     /// that is used to ensure that all information about this repository is taken from the right place in the database.
     /// </para>
@@ -19,6 +20,7 @@ namespace MoneyOrbit.Application.Data.Repository
         /// <summary>This is the _nodepath for this repository. This ensures that all information about this is taken from the right
         /// place in the database. </summary>
         protected string _nodepath { get; set; }
+        protected abstract string GetPropertyName();
         protected IDataService _dataService;
 
         public EntityRepository(IDataService dataService, string nodepath = "Entity")
@@ -58,5 +60,8 @@ namespace MoneyOrbit.Application.Data.Repository
 
             return _dataService.DeleteData(path);
         }
+
+        public async Task<bool> DoesPropertyExist(string propertyKeyword)=>
+            await _dataService.DoesPropertyExist(_nodepath, GetPropertyName(),propertyKeyword);
     }
 }

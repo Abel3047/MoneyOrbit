@@ -48,5 +48,14 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         /// <param name="path"></param>
         /// <returns></returns>
         public Task DeleteData(string path);
+        /// <summary>
+        /// This takes the <paramref name="nodepath"/> from a repository, and then checks <paramref name="property"/>
+        /// amoung what we are trying to search for using the keyword <paramref name="keyword"/>. If it finds something under these
+        /// three path , it returns true, otherwise it returns false.
+        /// </summary>
+        /// <param name="nodepath"></param>
+        /// <param name="keyword"></param>
+        /// <returns></returns>
+        Task<bool> DoesPropertyExist(string nodepath, string property, string keyword);
     }
 }
