@@ -50,7 +50,7 @@ namespace MoneyOrbit.Infrastructure.Services
             }
             
             //Creates the account with information
-            var account = new AccountFactory(_userRepository)
+            var account = await new AccountFactory(_userRepository)
                 .CreateAccount(aCD.userID ,aCD.AccountName,aCD.isAsset,aCD.isLiability, aCD.isCaptial,aCD.description);
 
             //Stores info in the database
@@ -59,11 +59,17 @@ namespace MoneyOrbit.Infrastructure.Services
         }
         public async Task<ResultObject> UpdateAccount(AccountUpdateDto aUD)
         {
-            Account account = await _accountRepository.GetInstanceOfType<Account>(aUD.ID);
-            if (!String.IsNullOrEmpty(uUD.FirstName)) account.FirstName = uUD.FirstName;
-            if (!String.IsNullOrEmpty(uUD.LastName)) account.LastName = uUD.LastName;
-            if (!String.IsNullOrEmpty(uUD.Email)) account.Email = uUD.Email;
-            if (!String.IsNullOrEmpty(uUD.PhoneNumber)) account.PhoneNumber = uUD.PhoneNumber;
+            var account = await _accountRepository.GetInstanceOfType<Account>(aUD.ID);
+            if (!String.IsNullOrEmpty(aUD.description)) account.description = aUD.description;
+
+            //Checks if the account type is valid
+            int trueCount = Convert.ToInt32(aUD.isAsset) + Convert.ToInt32(aUD.isLiability) + Convert.ToInt32(aUD.isCaptial);
+            //If more than one of the account types are true, then it is invalid
+            if (trueCount != 1)
+                return new ResultObject() { Error = "Exactly one of Asset, Liability, or Capital must be true." };
+
+            //Sets the account type
+            account.isAsset = aUD.isAsset; account.isLiability = aUD.isLiability; account.isCaptial = aUD.isCaptial;
 
             await _accountRepository.UpdateData(account.ID, account);
             return new ResultObject() { Result = "success" };
