@@ -1,0 +1,39 @@
+﻿using MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository;
+using MoneyOrbit.Application.Interfaces.IApplication.IFactories;
+using MoneyOrbit.Application.Interfaces.IEntities;
+using MoneyOrbit.Core.Entities;
+
+namespace MoneyOrbit.Application.Factory
+{
+    public class AccountFactory :BaseFactory<Account>, IAccountFactory<Account>
+    {
+        private readonly IUserRepository<IUser> _userRepository;
+
+        public AccountFactory(IUserRepository<IUser> userRepository)
+        {
+            _userRepository = userRepository;
+        }
+        public async Task<Account> CreateAccount(string _userID, string _accountName, bool _isAsset, bool _isLiability, bool _isCaptial, string? _description)
+        {
+            //Generates ID to store in the new account and in the list of Users accounts
+            var accountID = generators.GenerateKey(DateTime.Now);
+
+            //Creates account with information
+            Account _account = new Account()
+            {
+                AccountName=_accountName,
+                description = _description,
+                isAsset = _isAsset,
+                isLiability = _isLiability,
+                isCaptial = _isCaptial,
+                ID = accountID
+            };
+
+            //Stores the ID in the Users list of accounts
+            var user = await _userRepository.GetInstanceOfType<User>(_userID);
+            user.AccountIDs.Append(accountID);
+
+            return _account;
+        }
+    }
+}

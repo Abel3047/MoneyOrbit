@@ -1,5 +1,4 @@
-﻿using MoneyOrbit.Application.Data.Repository;
-using MoneyOrbit.Application.DTOs.AccountDtos;
+﻿using MoneyOrbit.Application.DTOs.AccountDtos;
 using MoneyOrbit.Application.Factory;
 using MoneyOrbit.Application.Helpers;
 using MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository;
@@ -12,64 +11,82 @@ namespace MoneyOrbit.Infrastructure.Services
     public class AccountService:IAccountService
     {
         private readonly IAccountRepository<IAccount> _accountRepository;
+        private readonly IUserRepository<IUser> _userRepository;
 
-        public AccountService(IAccountRepository<IAccount> accountRepository)
+        public AccountService(IAccountRepository<IAccount> accountRepository, IUserRepository<IUser> userRepository)
         {
-            this._accountRepository = accountRepository;
+            _accountRepository = accountRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<ResultObject> CreateAccount(AccountCreationDto aCD)
         {
             //Checks to see if the DTO is empty
-            if (uCD == null)
-                return new ResultObject() { Error = "User creation data is null." };
+            if (aCD == null)
+                return new ResultObject() { Error = "Account creation data is null." };
 
             //Checks if the important information is not null or empty
-            if (String.IsNullOrEmpty(uCD.password) ||
-               String.IsNullOrEmpty(uCD.UserName) ||
-               String.IsNullOrEmpty(uCD.FirstName) ||
-               String.IsNullOrEmpty(uCD.LastName) ||
-               String.IsNullOrEmpty(uCD.AccessLevel))
-                return new ResultObject() { Error = "You are missing an important piece of information.Please provide a" +
-                    " 'ID'/password/firstname/lastname/AccessLevel."};
+            if (String.IsNullOrEmpty(aCD.AccountName) ||
+               String.IsNullOrEmpty(aCD.userID))
+                return new ResultObject() { Error = "You are missing an important piece of information.Please provide an" +
+                    " 'AccountName'/userID"};
 
-            //Checks if the email and phonenumber are in the correct format
-            if (uCD.Email != null && !Validator.ValidateEmail(uCD.Email))
-                return new ResultObject(){ Error = "This isn't the correct format for an email." };
-            if (uCD.PhoneNumber != null && !Validator.ValidatePhoneNumber(uCD.PhoneNumber))
-                return new ResultObject() { Error = "This isn't the correct format for a PhoneNumber." };
+            //Checks if the account type is valid
+            int trueCount = Convert.ToInt32(aCD.isAsset) + Convert.ToInt32(aCD.isLiability) + Convert.ToInt32(aCD.isCaptial);
+            //If more than one of the account types are true, then it is invalid
+            if (trueCount != 1) 
+                return new ResultObject() { Error = "Exactly one of Asset, Liability, or Capital must be true." };
 
-            // Check if the user already exists
-            if (await DoesUserNameExist(uCD.UserName))
-            return new ResultObject() { Error = "User already exists" };
-
-            //Creates the user with information
-            var user = new UserFactory()
-                .CreateUser(uCD.UserName, uCD.FirstName, uCD.LastName, uCD.password, uCD.AccessLevel, uCD.Email, uCD.PhoneNumber);
+            // Check if the account under the username already exists
+            try
+            {                
+                if (await DoesAccountExist(aCD.AccountName, aCD.userID))
+                    return new ResultObject() { Error = "An account under this user with this name already exists" };
+            }
+            catch (Exception)
+            {
+                return new ResultObject() { Error = $"A user with this id {aCD.userID} is unable to be located" };
+                throw;
+            }
+            
+            //Creates the account with information
+            var account = new AccountFactory(_userRepository)
+                .CreateAccount(aCD.userID ,aCD.AccountName,aCD.isAsset,aCD.isLiability, aCD.isCaptial,aCD.description);
 
             //Stores info in the database
-            await _userRepository.UpdateData(user.ID, user);
-            return  new ResultObject() { Result= user.ID};
+            await _accountRepository.UpdateData(account.ID, account);
+            return  new ResultObject() { Result= account.ID};
         }
-        public async Task UpdateAccount(AccountUpdateDto uUD)
+        public async Task<ResultObject> UpdateAccount(AccountUpdateDto aUD)
         {
-            User user = await _userRepository.GetInstanceOfType<User>(uUD.ID);
-            if (!String.IsNullOrEmpty(uUD.FirstName)) user.FirstName = uUD.FirstName;
-            if (!String.IsNullOrEmpty(uUD.LastName)) user.LastName = uUD.LastName;
-            if (!String.IsNullOrEmpty(uUD.Email)) user.Email = uUD.Email;
-            if (!String.IsNullOrEmpty(uUD.PhoneNumber)) user.PhoneNumber = uUD.PhoneNumber;
-            await _userRepository.UpdateData(user.ID, user);
+            Account account = await _accountRepository.GetInstanceOfType<Account>(aUD.ID);
+            if (!String.IsNullOrEmpty(uUD.FirstName)) account.FirstName = uUD.FirstName;
+            if (!String.IsNullOrEmpty(uUD.LastName)) account.LastName = uUD.LastName;
+            if (!String.IsNullOrEmpty(uUD.Email)) account.Email = uUD.Email;
+            if (!String.IsNullOrEmpty(uUD.PhoneNumber)) account.PhoneNumber = uUD.PhoneNumber;
+
+            await _accountRepository.UpdateData(account.ID, account);
+            return new ResultObject() { Result = "success" };
         }
         public async Task<Account> GetAccountById(string accountId) => await _accountRepository.GetInstanceOfType<Account>(accountId);        
-        public async Task DeleteUser(string accountId) => await _accountRepository.DeleteData(accountId);
+        public async Task<ResultObject> DeleteUser(string accountId)
+        {
+            await _accountRepository.DeleteData(accountId);
+            return new ResultObject() { Result = "success" };
+        }
 
         #region Support methods
         /// <summary>
-        /// Checks if the account already exists in the database by checking if the accountID is within a certain path configuration
+        /// Checks if the account already exists under the user with the id, <paramref name="userID"/>
         /// </summary>
         /// <param name="ID"></param>
         /// <returns> False if it does not exist in the database</returns>
-        private async Task<bool> DoesAccountExist(string ID)=> await _accountRepository.DoesPropertyExist(ID);
+        private async Task<bool> DoesAccountExist(string accountName, string userID)
+        {
+            var user= await _userRepository.GetInstanceOfType<User>(userID);
+            if (user == null) throw new Exception($"Unable to find user with {userID} in the database");
+            return user.AccountIDs.Contains(accountName);
+        }
         #endregion
     }
 }

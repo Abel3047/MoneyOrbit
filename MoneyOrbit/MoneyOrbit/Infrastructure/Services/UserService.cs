@@ -85,12 +85,12 @@ namespace MoneyOrbit.Infrastructure.Services
             return new ResultObject() { Result = "success" };
         }
         #region Support methods
-            /// <summary>
+        /// <summary>
             /// Checks if the username already exists in the database by checking if the username is within a certain path configuration
             /// </summary>
             /// <param name="username"></param>
             /// <returns> False if it does not exist in the database</returns>
-            private async Task<bool> DoesUserNameExist(string username)=> await _userRepository.DoesPropertyExist(username);
+        private async Task<bool> DoesUserNameExist(string username)=> await _userRepository.DoesPropertyExist(username);
         #endregion
     }
 }
