@@ -7,6 +7,7 @@ namespace MoneyOrbit.Application.Data.Repository
     public class TransactionRepository : EntityRepository, ITransactionRepository<ITransaction>
     {
         public TransactionRepository(IDataService dataService) : base(dataService, "Transaction") { }
+        protected override string GetPropertyName() => "Transaction";
 
     }
 }

@@ -16,7 +16,7 @@ namespace MoneyOrbit.Infrastructure.Controllers
             this._userService = userService;
         }
 
-        [HttpPost("Register")]
+        [HttpPost("RegisterUser")]
         public async Task<ActionResult> RegisterUser(UserCreationDto userCreationDto)
         {
             ResultObject resultObject = await _userService.RegisterUser(userCreationDto);
