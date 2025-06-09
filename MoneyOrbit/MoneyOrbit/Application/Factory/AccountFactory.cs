@@ -32,7 +32,12 @@ namespace MoneyOrbit.Application.Factory
 
             //Stores the ID in the Users list of accounts
             var user = await _userRepository.GetInstanceOfType<User>(_userID);
-            user.AccountIDs.Append(accountID);
+            //If there is accounts already,simply append
+            if(user.AccountIDs.Any()) user.AccountIDs.Append(accountID);
+            //If there isn't, we need to make a new array and add our first account
+            else user.AccountIDs = new string[] { accountID };
+
+            await _userRepository.UpdateData(_userID, user);
 
             return _account;
         }

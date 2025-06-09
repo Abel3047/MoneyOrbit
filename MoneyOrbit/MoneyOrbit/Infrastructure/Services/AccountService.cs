@@ -44,7 +44,7 @@ namespace MoneyOrbit.Infrastructure.Services
                 if (await DoesAccountExist(aCD.AccountName, aCD.userID))
                     return new ResultObject() { Error = "An account under this user with this name already exists" };
             }
-            catch (Exception)
+            catch (ArgumentNullException)
             {
                 return new ResultObject() { Error = $"A user with this id {aCD.userID} is unable to be located" };
                 throw;
@@ -93,7 +93,8 @@ namespace MoneyOrbit.Infrastructure.Services
         private async Task<bool> DoesAccountExist(string accountName, string userID)
         {
             var user= await _userRepository.GetInstanceOfType<User>(userID);
-            if (user == null) throw new Exception($"Unable to find user with {userID} in the database");
+            if (NullGuard.IsNull(user)) throw new Exception($"Unable to find user with {userID} in the database");
+            if(user.AccountIDs==null || user.AccountIDs.Length==0) return false;
             return user.AccountIDs.Contains(accountName);
         }
         #endregion
