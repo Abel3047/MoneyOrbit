@@ -16,6 +16,6 @@ namespace MoneyOrbit.Application.Interfaces.IApplication.IFactories
         /// <param name="_isCaptial"></param>
         /// <param name="_description"></param>
         /// <returns></returns>
-        Task<Account> CreateAccount(string _userID,string _accountName, bool _isAsset, bool _isLiability, bool _isCaptial, string? _description);
+        Task<Account> CreateAccount(string _userID, string _accountName, bool _isAsset, bool _isExpense, bool _isLiability, bool _isCaptial, string? _description);
     }
 }

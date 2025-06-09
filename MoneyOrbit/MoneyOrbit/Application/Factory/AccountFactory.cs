@@ -13,7 +13,7 @@ namespace MoneyOrbit.Application.Factory
         {
             _userRepository = userRepository;
         }
-        public async Task<Account> CreateAccount(string _userID, string _accountName, bool _isAsset, bool _isLiability, bool _isCaptial, string? _description)
+        public async Task<Account> CreateAccount(string _userID, string _accountName, bool _isAsset, bool _isExpense, bool _isLiability, bool _isCaptial, string? _description)
         {
             //Generates ID to store in the new account and in the list of Users accounts
             var accountID = generators.GenerateKey(DateTime.Now);
@@ -24,6 +24,7 @@ namespace MoneyOrbit.Application.Factory
                 AccountName=_accountName,
                 description = _description,
                 isAsset = _isAsset,
+                isExpense= _isExpense,
                 isLiability = _isLiability,
                 isCaptial = _isCaptial,
                 ID = accountID

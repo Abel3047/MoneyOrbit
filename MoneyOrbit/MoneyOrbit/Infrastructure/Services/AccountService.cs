@@ -32,7 +32,8 @@ namespace MoneyOrbit.Infrastructure.Services
                     " 'AccountName'/userID"};
 
             //Checks if the account type is valid
-            int trueCount = Convert.ToInt32(aCD.isAsset) + Convert.ToInt32(aCD.isLiability) + Convert.ToInt32(aCD.isCaptial);
+            int trueCount = Convert.ToInt32(aCD.isAsset) + Convert.ToInt32(aCD.isLiability)
+                            + Convert.ToInt32(aCD.isCaptial)+ Convert.ToInt32(aCD.isExpense);
             //If more than one of the account types are true, then it is invalid
             if (trueCount != 1) 
                 return new ResultObject() { Error = "Exactly one of Asset, Liability, or Capital must be true." };
@@ -51,7 +52,7 @@ namespace MoneyOrbit.Infrastructure.Services
             
             //Creates the account with information
             var account = await new AccountFactory(_userRepository)
-                .CreateAccount(aCD.userID ,aCD.AccountName,aCD.isAsset,aCD.isLiability, aCD.isCaptial,aCD.description);
+                .CreateAccount(aCD.userID ,aCD.AccountName,aCD.isAsset, aCD.isExpense,aCD.isLiability, aCD.isCaptial,aCD.description);
 
             //Stores info in the database
             await _accountRepository.UpdateData(account.ID, account);
@@ -63,13 +64,15 @@ namespace MoneyOrbit.Infrastructure.Services
             if (!String.IsNullOrEmpty(aUD.description)) account.description = aUD.description;
 
             //Checks if the account type is valid
-            int trueCount = Convert.ToInt32(aUD.isAsset) + Convert.ToInt32(aUD.isLiability) + Convert.ToInt32(aUD.isCaptial);
+            int trueCount = Convert.ToInt32(aUD.isAsset) + Convert.ToInt32(aUD.isLiability) 
+                            + Convert.ToInt32(aUD.isCaptial)+ Convert.ToInt32(aUD.isExpense);
             //If more than one of the account types are true, then it is invalid
             if (trueCount != 1)
                 return new ResultObject() { Error = "Exactly one of Asset, Liability, or Capital must be true." };
 
             //Sets the account type
-            account.isAsset = aUD.isAsset; account.isLiability = aUD.isLiability; account.isCaptial = aUD.isCaptial;
+            account.isAsset = aUD.isAsset; account.isExpense = aUD.isExpense;
+            account.isLiability = aUD.isLiability; account.isCaptial = aUD.isCaptial; 
 
             await _accountRepository.UpdateData(account.ID, account);
             return new ResultObject() { Result = "success" };
