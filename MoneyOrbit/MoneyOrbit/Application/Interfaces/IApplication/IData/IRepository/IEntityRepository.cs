@@ -34,5 +34,15 @@ namespace MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository
         /// <param name="path"></param>
         /// <returns></returns>
         public Task DeleteData(string path);
+
+        /// <summary>
+        /// This checks if an propertyKeyword exists in the database. 
+        /// <para> Essentially, each repository should have a property that they look for. For <see cref="IUserRepository{TUser}"/>
+        /// its <see cref="IUser.UserName"/>. The <paramref name="propertyKeyword"/> would then be something specific like 
+        /// 'Abel37'</para>
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        Task<bool> DoesPropertyExist(string propertyKeyword);
     }
 }

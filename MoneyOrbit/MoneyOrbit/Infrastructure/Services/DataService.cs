@@ -18,5 +18,6 @@ namespace MoneyOrbit.Infrastructure.Services
         public abstract Task<T> GetInstanceOfType<T>(string path);
         public abstract Task StoreData(string path, object data, bool generateKey = false);
         public abstract Task UpdateData(string path, object data);
+        public abstract Task<bool> DoesPropertyExist(string nodepath, string property, string keyword);
     }
 }

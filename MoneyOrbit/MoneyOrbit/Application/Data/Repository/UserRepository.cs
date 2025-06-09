@@ -8,5 +8,7 @@ namespace MoneyOrbit.Application.Data.Repository
     {
         public UserRepository(IDataService dataService) : base(dataService, "User") { }
 
+        protected override string GetPropertyName() => "UserName";
+
     }
 }
