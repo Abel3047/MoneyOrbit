@@ -17,6 +17,7 @@ namespace MoneyOrbit.Application.Extensions
             services.AddScoped<IDataService, FirebaseService>();
             services.AddScoped<IUserRepository<IUser>, UserRepository>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAccountService, AccountService>();
 
             return services;
         }

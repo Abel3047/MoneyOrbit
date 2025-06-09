@@ -50,7 +50,7 @@ namespace MoneyOrbit.Infrastructure.Services
             await _userRepository.UpdateData(user.ID, user);
             return  new ResultObject() { Result= user.ID};
         }
-        public async Task UpdateUser(UserUpdateDto uUD)
+        public async Task<ResultObject> UpdateUser(UserUpdateDto uUD)
         {
             User user = await _userRepository.GetInstanceOfType<User>(uUD.ID);
             if (!String.IsNullOrEmpty(uUD.FirstName)) user.FirstName = uUD.FirstName;
@@ -58,8 +58,9 @@ namespace MoneyOrbit.Infrastructure.Services
             if (!String.IsNullOrEmpty(uUD.Email)) user.Email = uUD.Email;
             if (!String.IsNullOrEmpty(uUD.PhoneNumber)) user.PhoneNumber = uUD.PhoneNumber;
             await _userRepository.UpdateData(user.ID, user);
+            return new ResultObject() { Result = "success" };
         }
-        public async Task UpdateUserPassword(string userID, string resetToken, string _newpassword)
+        public async Task<ResultObject> UpdateUserPassword(string userID, string resetToken, string _newpassword)
         {          
             if (String.IsNullOrEmpty(resetToken)) throw new NullReferenceException("You cannot have a null/empty resetToken");
             if (String.IsNullOrEmpty(_newpassword)) throw new NullReferenceException("You cannot have a null/empty _newpassword");
@@ -75,17 +76,21 @@ namespace MoneyOrbit.Infrastructure.Services
             user.PasswordSalt = encryptedPasswordTuple.Item2;
 
             await _userRepository.UpdateData(user.ID, user);
+            return new ResultObject() { Result = "success" };
         }
-        public async Task<User> GetUserById(string userId) => await _userRepository.GetInstanceOfType<User>(userId);        
-        public async Task DeleteUser(string userId) => await _userRepository.DeleteData(userId);
-
+        public async Task<User> GetUserById(string userId) => await _userRepository.GetInstanceOfType<User>(userId);
+        public async Task<ResultObject> DeleteUser(string userId)
+        {
+            await _userRepository.DeleteData(userId);
+            return new ResultObject() { Result = "success" };
+        }
         #region Support methods
-        /// <summary>
-        /// Checks if the username already exists in the database by checking if the username is within a certain path configuration
-        /// </summary>
-        /// <param name="username"></param>
-        /// <returns> False if it does not exist in the database</returns>
-        private async Task<bool> DoesUserNameExist(string username)=> await _userRepository.DoesPropertyExist(username);
+            /// <summary>
+            /// Checks if the username already exists in the database by checking if the username is within a certain path configuration
+            /// </summary>
+            /// <param name="username"></param>
+            /// <returns> False if it does not exist in the database</returns>
+            private async Task<bool> DoesUserNameExist(string username)=> await _userRepository.DoesPropertyExist(username);
         #endregion
     }
 }
