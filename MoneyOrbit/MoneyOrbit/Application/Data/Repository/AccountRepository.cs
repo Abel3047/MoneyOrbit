@@ -13,6 +13,7 @@ namespace MoneyOrbit.Application.Data.Repository
         /// to a user or not. And this is where this methods use comes alive. 
         /// </summary>
         /// <returns></returns>
-        protected override string GetPropertyName() => "ID";
+        protected override string GetPropertyName() => "AccountName";
+        
     }
 }

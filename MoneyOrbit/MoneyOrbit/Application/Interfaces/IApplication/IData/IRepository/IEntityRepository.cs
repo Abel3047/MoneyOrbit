@@ -18,7 +18,6 @@ namespace MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository
         /// <param name="path"></param>
         /// <returns>Collection of type T</returns>
         public Task<IEnumerable<T>> GetCollectionOfType<T>(string path);
-
         /// <summary>
         /// Updating an object can be done at a single property of an 
         /// object or the entire object or collection.
@@ -27,7 +26,6 @@ namespace MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository
         /// <param name="data"></param>
         /// <returns></returns>
         public Task UpdateData(string path, object data);
-
         /// <summary>
         /// Deletes the data at the directory defined by the node and path
         /// </summary>
@@ -44,5 +42,13 @@ namespace MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository
         /// <param name="path"></param>
         /// <returns></returns>
         Task<bool> DoesPropertyExist(string propertyKeyword);
+        /// <summary>
+        /// Gets collection from the database under the repository node and propertyname with the 
+        /// keyword <paramref name="propertyKeyword"/>. Expect to find subrepositories to have their own overrides
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="propertyKeyword"></param>
+        /// <returns></returns>
+        public Task<IEnumerable<T>> GetCollectionWithIdenticalProperty<T>(string propertyKeyword);
     }
 }

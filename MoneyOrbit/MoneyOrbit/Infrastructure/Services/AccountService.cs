@@ -95,19 +95,12 @@ namespace MoneyOrbit.Infrastructure.Services
             var user= await _userRepository.GetInstanceOfType<User>(userID);
             if (NullGuard.IsNull(user)) throw new Exception($"Unable to find user with {userID} in the database");
             if(user.AccountIDs==null || user.AccountIDs.Length==0) return false;
-            //Searchs the databases for an account with the name, <paramref name="accountName"/> and an ID that matches the user.accountID
-            foreach (var accountId in user.AccountIDs)
-            {
-                var account = await _accountRepository.GetInstanceOfType<Account>(accountId);
-                if (NullGuard.IsNull(account)) continue; // If the account is null, skip to the next iteration
-                if (account.AccountName.Equals(accountName, StringComparison.OrdinalIgnoreCase))
-                    return true; // Account with the same name exists under this user
-            }
-            return false;
 
-            //A better way of doing this is to have a method get all the similar method once, so that multiple requests to the API don't
-            //happen for something so simple
+            //A better to get multiple accounts at once and sort through them, than make multiple requests from different consumers of the 
+            //API   
+            //Takes all the accounts that have the same name as the <paramref name="accountName"/> and returns them
             var similarAccounts = await _accountRepository.GetCollectionWithIdenticalProperty<Account>(accountName);
+            //Checks if any of them have the same ID as the ones registered with the user
             foreach (var account in similarAccounts)
             {
                 if (NullGuard.IsNull(account)) continue; // If the account is null, skip to the next iteration

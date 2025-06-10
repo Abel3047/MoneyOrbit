@@ -88,13 +88,23 @@ namespace MoneyOrbit.Infrastructure.Services
         public override async Task DeleteData(string path) => await _firebaseClient.Child(path).DeleteAsync();
         public override async Task<bool> DoesPropertyExist(string nodepath, string property, string keyword)
         {
-            var users = await _firebaseClient
+            var collection = await _firebaseClient
                 .Child(nodepath)
                 .OrderBy(property)
                 .EqualTo(keyword)
                 .OnceAsync<object>();
 
-            return users.Any();
+            return collection.Any();
+        }
+        public override async Task<IEnumerable<T>> GetCollectionWithIdenticalProperty<T>(string nodepath, string property, string propertyKeyword)
+        {
+            var collection = await _firebaseClient
+                .Child(nodepath)
+                .OrderBy(property)
+                .EqualTo(propertyKeyword)
+                .OnceAsync<T>();
+
+            return collection.ToEnumerable() ;
         }
 
         //Method Unique to firebase
@@ -177,7 +187,7 @@ namespace MoneyOrbit.Infrastructure.Services
                 return dateTime.AddDays(1).AddSeconds(-1);
 
             return dateTime;
-        }     
+        }       
 
         #endregion
 

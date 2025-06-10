@@ -19,5 +19,6 @@ namespace MoneyOrbit.Infrastructure.Services
         public abstract Task StoreData(string path, object data, bool generateKey = false);
         public abstract Task UpdateData(string path, object data);
         public abstract Task<bool> DoesPropertyExist(string nodepath, string property, string keyword);
+        public abstract Task<IEnumerable<T>> GetCollectionWithIdenticalProperty<T>(string nodepath, string property, string propertyKeyword);
     }
 }

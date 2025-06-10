@@ -13,7 +13,7 @@ namespace MoneyOrbit.Infrastructure.Controllers
         public AccountController(ILogger<AccountController> logger, IAccountService accountService)
         {
             _logger = logger;
-            this._accountService = accountService;
+            _accountService = accountService;
         }
 
         [HttpPost("CreateAccount")]

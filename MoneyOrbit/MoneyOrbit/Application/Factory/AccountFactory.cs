@@ -35,7 +35,7 @@ namespace MoneyOrbit.Application.Factory
             //If there isn't, we need to make a new array and add our first account
             if (user.AccountIDs == null || user.AccountIDs.Length == 0) user.AccountIDs = new string[] { accountID };
             //else there is accounts already,simply append
-            else user.AccountIDs.Append(accountID);
+            else user.AccountIDs= user.AccountIDs.Append(accountID).ToArray();
             //Stores the new ID in the User's list of accounts
             await _userRepository.UpdateData(_userID, user);
 
