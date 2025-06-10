@@ -17,10 +17,12 @@ namespace MoneyOrbit.Application.Extensions
             services.AddScoped<IDataService, FirebaseService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<ITransactionService, TransactionService>();
 
             //Repositories
             services.AddScoped<IUserRepository<IUser>, UserRepository>();
             services.AddScoped<IAccountRepository<IAccount>, AccountRepository>();
+            services.AddScoped<ITransactionRepository<ITransaction>, TransactionRepository>();
 
             return services;
         }
