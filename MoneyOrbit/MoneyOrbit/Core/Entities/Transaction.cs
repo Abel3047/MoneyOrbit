@@ -6,9 +6,10 @@ namespace MoneyOrbit.Core.Entities
     public class Transaction : ITransaction, IEquatable<ITransaction>
     {
         public string ID { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
         public string? Description { get; set; }
-        public string? AccDebitedID { get; set; }
+        
+        public string AccDebitedID { get; set; }
         public string? AccCreditedID { get; set; }
         public decimal Amount { get; set; }
 

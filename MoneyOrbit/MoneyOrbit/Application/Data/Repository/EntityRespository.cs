@@ -63,5 +63,7 @@ namespace MoneyOrbit.Application.Data.Repository
 
         public async Task<bool> DoesPropertyExist(string propertyKeyword)=>
             await _dataService.DoesPropertyExist(_nodepath, GetPropertyName(),propertyKeyword);
+        public virtual async Task<IEnumerable<T>> GetCollectionWithIdenticalProperty<T>(string propertyKeyword)=>
+            await _dataService.GetCollectionWithIdenticalProperty<T>(_nodepath, GetPropertyName(), propertyKeyword);
     }
 }

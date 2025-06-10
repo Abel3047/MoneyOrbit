@@ -28,7 +28,8 @@ namespace MoneyOrbit.Application.Factory
                 ID = generators.GenerateKey(DateTime.Now),
                 PasswordHash = encryptedPasswordTuple.Item1,
                 PasswordSalt = encryptedPasswordTuple.Item2,
-                AccessLevel = permission.ToString()
+                AccessLevel = permission.ToString(),
+                AccountIDs= []
             };
             return _user;
         }

@@ -57,5 +57,16 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         /// <param name="keyword"></param>
         /// <returns></returns>
         Task<bool> DoesPropertyExist(string nodepath, string property, string keyword);
+        /// <summary>
+        /// This takes the <paramref name="nodepath"/> form a repository, and then checks <paramref name="property"/> amoung what 
+        /// we are trying to search for using the keyword <paramref name="propertyKeyword"/>. It then returns everything that
+        /// satifies the condition of that keyword with the provided type <typeparamref name="T"/>.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="nodepath"></param>
+        /// <param name="property"></param>
+        /// <param name="propertyKeyword"></param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> GetCollectionWithIdenticalProperty<T>(string nodepath, string property, string propertyKeyword);
     }
 }
