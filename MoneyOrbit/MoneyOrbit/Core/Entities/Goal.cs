@@ -10,6 +10,10 @@ namespace MoneyOrbit.Core.Entities
         public string GoalDescription { get; set; }
         required
         new public string AccDebitedID { get; set; }
+        /// <summary>
+        /// There may be multiple sources of income that will credit the Goal for it to be accomplished. The property reflects that
+        /// </summary>
+        public string[] AccountsCreditedID { get; set; } = Array.Empty<string>();
 
         private decimal amountAccomplished = 0;
         public decimal AmountAccomplished

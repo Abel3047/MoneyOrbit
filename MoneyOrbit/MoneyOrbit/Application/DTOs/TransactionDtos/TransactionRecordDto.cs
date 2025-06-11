@@ -2,8 +2,6 @@
 {
     public class TransactionRecordDto
     {
-        public string userID { get; set; }
-
         public DateTime? Date { get; set; }
         public string? Description { get; set; }
         public string? AccCreditedID { get; set; }

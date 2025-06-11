@@ -26,6 +26,9 @@ namespace MoneyOrbit.Infrastructure.Services
                 return new ResultObject() { Error = "Transaction record data is null." };
             if (trDTO.Amount == 0)
                 return new ResultObject() { Error = "Transaction record has to have an amount to be recorded." };
+
+            //If either of the transaction is null, it will set the value to a suspense account registered with the user
+            //If both of them are null it will throw the typical error
             //Checks if the important information (accountDebited) is not null or empty
             if (String.IsNullOrEmpty(trDTO.AccDebitedID))
                 return new ResultObject()
@@ -43,7 +46,7 @@ namespace MoneyOrbit.Infrastructure.Services
             //Records the transaction in the database
             await _transactionRepository.UpdateData(transaction.ID,transaction);
 
-            return new ResultObject();
+            return new ResultObject() { Result = "success" };
         }
 
         #region Support methods
@@ -51,7 +54,7 @@ namespace MoneyOrbit.Infrastructure.Services
         /// Checks if the account already exists in the database by simply running the typical path and if account!=null it will 
         /// return true
         /// </summary>
-        /// <param name="username"></param>
+        /// <param name="accID"></param>
         /// <returns> False if it does not exist in the database</returns>
         private async Task<bool> DoesAccountExist(string accID)
         {

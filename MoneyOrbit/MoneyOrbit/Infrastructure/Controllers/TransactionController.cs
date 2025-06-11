@@ -16,7 +16,7 @@ namespace MoneyOrbit.Infrastructure.Controllers
             _transactionService = transactionService;
         }
 
-        [HttpPost("RecordTransaction")]
+        [HttpPost("CreateGoal")]
         public async Task<ActionResult> RecordTransaction(TransactionRecordDto transactionRecordDto)
         {
             ResultObject resultObject = await _transactionService.RecordTransaction(transactionRecordDto);
