@@ -46,12 +46,31 @@ namespace MoneyOrbit.Infrastructure.Services
 
             return new ResultObject() { Result = "success" };
         }
-
         public async Task<ResultObject> UpdateGoal(GoalUpdateDto guDto)
         {
+            //Checks if the goal update data is null
             if (guDto == null)
                 return new ResultObject() { Error = "Goal creation data is null." };
-            throw new NotImplementedException();
+            if(String.IsNullOrEmpty(guDto.ID))
+                return new ResultObject() { Error = "Goal ID is required to update a goal." };
+            
+            var goal = await _goalRepository.GetInstanceOfType<Goal>(guDto.ID);
+            //Checks if the goal exists in the database
+            if (NullGuard.IsNull(goal))
+                return new ResultObject() { Error = "The goal does not exist in the database, and is a requisite parameter" };
+            
+            //Sets the goal properties from the DTO
+            goal.Date = guDto.Date ?? goal.Date;
+            goal.GoalName = guDto.GoalName ?? goal.GoalName;
+            goal.GoalDescription = guDto.GoalDescription ?? goal.GoalDescription;
+            //If the amount is not set, it will get the amount from the goal in the database
+            if (guDto.Amount <= 0) guDto.Amount = goal.Amount;
+            else goal.Amount = guDto.Amount;
+
+            await _goalRepository.UpdateData(goal.ID, goal);
+
+            return new ResultObject() { Result = "success" };
+
         }
         public Task<ResultObject> AssignTransationToGoal(AssignTransationToGoalDto assignTransationToGoalDto)
         {
