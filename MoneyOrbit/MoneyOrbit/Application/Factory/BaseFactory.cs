@@ -1,5 +1,5 @@
 ﻿using MoneyOrbit.Application.Helpers;
-using MoneyOrbit.Application.Interfaces.IApplication.IFactories;
+using MoneyOrbit.Application.Interfaces.IApplication.IFactory;
 using MoneyOrbit.Application.Interfaces.IEntities;
 
 namespace MoneyOrbit.Application.Factory

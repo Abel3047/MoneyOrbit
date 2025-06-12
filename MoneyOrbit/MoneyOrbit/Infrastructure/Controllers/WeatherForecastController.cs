@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MoneyOrbit.Infrastructure.Controllers
 {
-    public class WeatherForecastController : BaseController
+    [ApiController]
+    [Route("[controller]")]
+    public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
@@ -16,7 +18,7 @@ namespace MoneyOrbit.Infrastructure.Controllers
             _logger = logger;
         }
 
-        [HttpGet("GetWeatherForecast")]
+        [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast

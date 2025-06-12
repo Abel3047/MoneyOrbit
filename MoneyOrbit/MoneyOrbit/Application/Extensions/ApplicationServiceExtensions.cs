@@ -1,7 +1,4 @@
-﻿using MoneyOrbit.Application.Data.Repository;
-using MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository;
-using MoneyOrbit.Application.Interfaces.IEntities;
-using MoneyOrbit.Application.Interfaces.IServices;
+﻿using MoneyOrbit.Application.Interfaces.IServices;
 using MoneyOrbit.Infrastructure.Services;
 
 namespace MoneyOrbit.Application.Extensions
@@ -10,13 +7,15 @@ namespace MoneyOrbit.Application.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            services.AddScoped<IFirebaseService, FirebaseService>();
+            services.AddSingleton<IFirebaseService, FirebaseService>();
 
-            //I used FirebaseService here instead of DataService because DataService is an abstract
-            //If you wish to swap this with a different DataService, do so here
-            services.AddScoped<IDataService, FirebaseService>();
-            services.AddScoped<IUserRepository<IUser>, UserRepository>();
+            services.AddScoped<IFirebaseService, FirebaseService>();
+            services.AddScoped<IDataService, DataService>();
             services.AddScoped<IUserService, UserService>();
+
+            // NOTE: This sets up AutoMapper in our project. It will need a Profile class that defines named configurations
+            // you plan to use. See AutoMapperProfiles for clarification
+            // services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
             return services;
         }
