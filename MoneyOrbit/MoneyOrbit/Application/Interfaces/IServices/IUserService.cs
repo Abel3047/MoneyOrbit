@@ -1,4 +1,5 @@
 ﻿using MoneyOrbit.Application.DTOs.UserDtos;
+using MoneyOrbit.Application.DTOs.AuthDtos;
 using MoneyOrbit.Application.Helpers;
 using MoneyOrbit.Core.Entities;
 
@@ -6,6 +7,13 @@ namespace MoneyOrbit.Application.Interfaces.IServices
 {
     public interface IUserService
     {
+        /// <summary>
+        /// This method allows a user to login to the system
+        /// </summary>
+        /// <param name="loginDto"></param>
+        /// <returns></returns>
+        Task<AuthenticationResponseDto> Login(LoginDto loginDto);
+
         /// <summary>
         /// This method creates a user using <see cref="UserFactory.CreateUser(string, string, string, string)"/> 
         /// stores the user in the database partition <see cref="IUserRepository{TUser}"/> and outputs the User ID
