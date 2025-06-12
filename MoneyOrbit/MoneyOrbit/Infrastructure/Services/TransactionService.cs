@@ -67,6 +67,13 @@ namespace MoneyOrbit.Infrastructure.Services
                 transactions = transactions
                     .Where(t => t.Date <= gTDTO.EndDate.Value).ToList();
             }
+            // Checks if the transactions involve the suspense account (backlogged transactions)
+            if(gTDTO.suspenseTransactions)
+            {
+                string suspenseAccountID = await GetSuspenseAccountID();
+                transactions = transactions
+                    .Where(t => t.AccCreditedID == suspenseAccountID).ToList();
+            }
 
             #endregion
 
@@ -98,7 +105,7 @@ namespace MoneyOrbit.Infrastructure.Services
                     " debited-'AccDebitedID'."
                 };
             //If accountDebited is populated but the accountCredited is not, it will set the accountCredited to a suspense account
-            if (String.IsNullOrEmpty(trDTO.AccCreditedID)) trDTO.AccCreditedID = await GetSuspenseAccount();
+            if (String.IsNullOrEmpty(trDTO.AccCreditedID)) trDTO.AccCreditedID = await GetSuspenseAccountID();
             //Checks if the account exists in the database
             if (!await DoesAccountExist(trDTO.AccDebitedID))
                 return new ResultObject() { Error = "The debited account does not exist in the database, and is a requisite parameter" };
@@ -124,7 +131,7 @@ namespace MoneyOrbit.Infrastructure.Services
             var account = await _accountRepository.GetInstanceOfType<Account>(accID);
             return account != null;
         }
-        private async Task<string> GetSuspenseAccount()
+        private async Task<string> GetSuspenseAccountID()
         {
             //Note we use the environment variable because we can't have each person setting their own suspense account
             var susAcc= (await _accountRepository

@@ -12,5 +12,7 @@
         //These are also optional parameters to filter the results by date
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        //This to to filter users transactions that that which is backlogged
+        public bool suspenseTransactions { get; set; } = false;
     }
 }
