@@ -6,7 +6,7 @@ using MoneyOrbit.Application.Interfaces.IServices;
 
 namespace MoneyOrbit.Infrastructure.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("MoneyOrbit/[controller]")]
     public class AuthController : BaseController
     {
         private readonly IUserService _userService;
