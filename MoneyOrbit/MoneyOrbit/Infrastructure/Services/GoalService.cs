@@ -12,26 +12,29 @@ namespace MoneyOrbit.Infrastructure.Services
     {
         private readonly IGoalRepository<IGoal> _goalRepository;
         private readonly IAccountRepository<IAccount> _accountRepository;
+        private readonly ITransactionRepository<ITransaction> _transactionRepository;
 
         public GoalService(IGoalRepository<IGoal> goalRepository, 
-            IAccountRepository<IAccount> accountRepository)
+            IAccountRepository<IAccount> accountRepository,
+            ITransactionRepository<ITransaction> transactionRepository)
         {
             _goalRepository = goalRepository;
             _accountRepository = accountRepository;
+            _transactionRepository = transactionRepository;
         }
                 
         public async Task<ResultObject> CreateGoal(GoalCreationDto gDTO)
         {
-            if(gDTO == null)
+            if(gDTO == null|| NullGuard.IsNull(gDTO))
                 return new ResultObject() { Error = "Goal creation data is null." };
             if (gDTO.Amount == 0)
                 return new ResultObject() { Error = "Goal creation data has to have an amount to be recorded." };
             //Checks if the important information (accountDebited) is not null or empty
-            if (String.IsNullOrEmpty(gDTO.AccDebitedID))
+            if (String.IsNullOrEmpty(gDTO.AccDebitedID)|| NullGuard.IsNull(gDTO.Date))
                 return new ResultObject()
                 {
                     Error = "You are missing an important piece of information. Please provide  the ID of the account" +
-                    " debited-'AccDebitedID'."
+                    " debited-'AccDebitedID'/Date."
                 };
             //Checks if the account exists in the database
             if (!await DoesAccountExist(gDTO.AccDebitedID))
@@ -72,10 +75,47 @@ namespace MoneyOrbit.Infrastructure.Services
             return new ResultObject() { Result = "success" };
 
         }
-        public Task<ResultObject> AssignTransationToGoal(AssignTransationToGoalDto assignTransationToGoalDto)
+        public async Task<ResultObject> AssignTransationToGoal(AssignTransationToGoalDto aTGDto)
         {
-            throw new NotImplementedException();
+            //check if the transactionID or goalID is null or empty
+            if (String.IsNullOrEmpty(aTGDto.TransactionID) || String.IsNullOrEmpty(aTGDto.GoalID))
+                return new ResultObject() { Error = "Transaction ID/ Goal ID  is required to assign a the transaction to a goal." };
+
+            //checks if the transaction exists in the database
+            var transaction = await _transactionRepository.GetInstanceOfType<Transaction>(aTGDto.TransactionID);
+            if (NullGuard.IsNull(transaction))
+                return new ResultObject() { Error = "The transaction does not exist in the database, and is a requisite parameter" };
+            //checks if the goal exists in the database
+            Goal goal = await _goalRepository.GetInstanceOfType<Goal>(aTGDto.GoalID);
+            if (NullGuard.IsNull(goal))
+                return new ResultObject() { Error = "The goal does not exist in the database, and is a requisite parameter" };
+
+            //Checks if the transaction relates to the goal
+            if (!goal.RelatesToTransaction<Goal>(transaction))
+                return new ResultObject() { Error = "This transaction doesn't relate to the goal provided" };
+            //Checks if the transaction is already assigned to the goal
+            if (goal.RelatedTransactionIDs.Any(t => t == aTGDto.TransactionID))
+                return new ResultObject() { Error = "The transaction is already assigned to the goal." };
+
+            //If the transaction relates to the goal, it will be assigned to the goal and stored in the database
+            await setTransactionIntoGoal(transaction, goal);
+
+            return new ResultObject() { Result = "success" };
         }
+
+        public async Task<ResultObject> GetGoal(GetGoalDto getGoalDto)
+        {
+            var goal = await GetGoalfromID(getGoalDto.GoalID);
+            //Returns the amount accomplished by the goal
+            return new ResultObject() { Result = goal };
+        }
+        public async Task<ResultObject> GetGoalAmountAccomplished(GoalAmountAccomplishedDto gAADto)
+        {
+            var goal = await GetGoalfromID(gAADto.GoalID);
+            //Returns the amount accomplished by the goal
+            return new ResultObject() { Result = goal.AmountAccomplished };
+        }
+
         #region Support methods
         /// <summary>
         /// Checks if the account already exists in the database by simply running the typical path and if account!=null it will 
@@ -88,7 +128,28 @@ namespace MoneyOrbit.Infrastructure.Services
             var account = await _accountRepository.GetInstanceOfType<Account>(accID);
             return account != null;
         }
+        private async Task setTransactionIntoGoal(Transaction transaction, Goal goal)
+        {
+            //Gives the goal the transactionID that is being assigned to it
+            goal.RelatedTransactionIDs = goal.RelatedTransactionIDs.Append(transaction.ID).ToArray();
+            //Updates the amount accomplished by the goal
+            goal.AddToAmountAccomplished(transaction.Amount);
 
+            //Updates the goal in the database
+            await _goalRepository.UpdateData(goal.ID, goal);
+        }
+        private async Task<Goal> GetGoalfromID(string goalID)
+        {
+            //check if the goalID is null or empty
+            if (String.IsNullOrEmpty(goalID))
+                throw new NullReferenceException("Goal ID is required to get the amount accomplished.");
+            //checks if the goal exists in the database
+            var goal = await _goalRepository.GetInstanceOfType<Goal>(goalID);
+            if (NullGuard.IsNull(goal))
+                throw new NullReferenceException("The goal does not exist in the database, and is a requisite parameter");
+            return goal;
+        }
+        
         #endregion
     }
 }

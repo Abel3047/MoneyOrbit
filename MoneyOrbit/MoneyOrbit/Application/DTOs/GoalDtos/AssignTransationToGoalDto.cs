@@ -4,5 +4,6 @@
     {
         required
         public string TransactionID { get; set; }
+        public string GoalID { get; set; }
     }
 }

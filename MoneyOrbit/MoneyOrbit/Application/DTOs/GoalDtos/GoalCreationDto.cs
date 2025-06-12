@@ -2,8 +2,8 @@
 {
     public class GoalCreationDto
     {
-        public DateTime? Date { get; set; }
-
+        required
+        public DateTime Date { get; set; }
         required
         public string GoalName
         { get; set; }

@@ -46,5 +46,26 @@ namespace MoneyOrbit.Infrastructure.Controllers
 
             return Ok("Goal updated successfully.");
         }
+
+        [HttpGet("GetGoalAmountAccomplished")]
+        public async Task<ActionResult<ResultObject>> GetGoalAmountAccomplished(GoalAmountAccomplishedDto goalAmountAccomplishedDto)
+        {
+            ResultObject resultObject = await _goalService.GetGoalAmountAccomplished(goalAmountAccomplishedDto);
+
+            if (resultObject.Error != null)
+                return BadRequest(resultObject.Error);
+
+            return resultObject;
+        }
+        [HttpGet("GetGoal")]
+        public async Task<ActionResult<ResultObject>> GetGoal(GetGoalDto getGoalDto)
+        {
+            ResultObject resultObject = await _goalService.GetGoal(getGoalDto);
+
+            if (resultObject.Error != null)
+                return BadRequest(resultObject.Error);
+
+            return resultObject;
+        }
     }
 }

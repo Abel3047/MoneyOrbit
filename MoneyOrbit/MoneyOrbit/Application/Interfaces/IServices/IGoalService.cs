@@ -1,10 +1,19 @@
 ﻿using MoneyOrbit.Application.DTOs.GoalDtos;
+using MoneyOrbit.Core.Entities;
 using MoneyOrbit.Application.Helpers;
 
 namespace MoneyOrbit.Application.Interfaces.IServices
 {
     public interface IGoalService
     {
+        /// <summary>
+        /// This method assigns a transaction to a goal in the database, and returns a ResultObject with the result of the operation.
+        /// <para> It does this by taking a goal and transaction ID, then checks to see if the transaction relates to the goal with
+        /// <see cref="Goal.RelatesToTransaction{IGoal}(IEntities.ITransaction)"/></para>. If it does it will update the goal with 
+        /// the transaction ID, and add the amount of the transaction to the goal's AmountAccomplished property.
+        /// </summary>
+        /// <param name="assignTransationToGoalDto"></param>
+        /// <returns></returns>
         Task<ResultObject> AssignTransationToGoal(AssignTransationToGoalDto assignTransationToGoalDto);
         /// <summary>
         /// This methods creates a goal in the database, and returns a ResultObject with the result of the operation.
@@ -25,5 +34,17 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         /// <param name="goalUpdateDto"></param>
         /// <returns></returns>
         Task<ResultObject> UpdateGoal(GoalUpdateDto goalUpdateDto);
+        /// <summary>
+        /// This is simply a method that exposes the amountacomplished property of the goal entity.
+        /// </summary>
+        /// <param name="gAADto"></param>
+        /// <returns></returns>
+        Task<ResultObject> GetGoalAmountAccomplished(GoalAmountAccomplishedDto gAADto);
+        /// <summary>
+        /// This method retrieves a goal from the database based on the provided GoalID found in the <paramref name="getGoalDto"/>.
+        /// </summary>
+        /// <param name="getGoalDto"></param>
+        /// <returns></returns>
+        Task<ResultObject> GetGoal(GetGoalDto getGoalDto);
     }
 }

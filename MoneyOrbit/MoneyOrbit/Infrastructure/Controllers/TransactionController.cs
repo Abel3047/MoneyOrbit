@@ -16,7 +16,7 @@ namespace MoneyOrbit.Infrastructure.Controllers
             _transactionService = transactionService;
         }
 
-        [HttpPost("CreateGoal")]
+        [HttpPost("RecordTransaction")]
         public async Task<ActionResult> RecordTransaction(TransactionRecordDto transactionRecordDto)
         {
             ResultObject resultObject = await _transactionService.RecordTransaction(transactionRecordDto);
@@ -25,6 +25,16 @@ namespace MoneyOrbit.Infrastructure.Controllers
                 return BadRequest(resultObject.Error);
 
             return Ok("Transaction recorded successfully.");
+        }
+        [HttpGet("GetUserTransactions")]
+        public async Task<ActionResult<ResultObject>> GetUserTransactions(GetTransactionDto getTransactionDto)
+        {
+            ResultObject resultObject = await _transactionService.GetUserTransactions(getTransactionDto);
+
+            if (resultObject.Error != null)
+                return BadRequest(resultObject.Error);
+
+            return resultObject;
         }
     }
 }

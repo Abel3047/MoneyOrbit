@@ -8,6 +8,6 @@ namespace MoneyOrbit.Application.Data.Repository
     {
         public GoalRepository(IDataService dataService) : base(dataService, "Goals") { }
 
-        protected override string GetPropertyName() => "ID";
+        protected override string GetPropertyName() => "AccDebitedID";
     }
 }

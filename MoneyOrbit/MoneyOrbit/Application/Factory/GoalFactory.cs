@@ -5,7 +5,7 @@ namespace MoneyOrbit.Application.Factory
 {
     public class GoalFactory : BaseFactory<Goal>, IGoalFactory<Goal>
     {
-        public Goal CreateGoal(string goalName, string goalDescription, string accDebitedID, decimal amount, DateTime? date)
+        public Goal CreateGoal(string goalName, string goalDescription, string accDebitedID, decimal amount, DateTime date)
         {
             return new Goal
             {

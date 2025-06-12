@@ -5,6 +5,7 @@ namespace MoneyOrbit.Application.Interfaces.IServices
 {
     public interface ITransactionService
     {
+        Task<ResultObject> GetUserTransactions(GetTransactionDto getTransactionDto);
         Task<ResultObject> RecordTransaction(TransactionRecordDto transactionRecordDto);
     }
 }
