@@ -46,5 +46,13 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         /// <param name="getGoalDto"></param>
         /// <returns></returns>
         Task<ResultObject> GetGoal(GetGoalDto getGoalDto);
+        /// <summary>
+        /// This gets the userID, fines the goals associated with the user and returns a ResultObject with the goals.
+        /// <para>It works a lot like <see cref="ITransactionService.GetUserTransactions(DTOs.TransactionDtos.GetTransactionDto)"/>
+        /// but we can't inhert it because the services are too different, save for this one method</para>
+        /// </summary>
+        /// <param name="getGoalsForUserDto"></param>
+        /// <returns></returns>
+        Task<ResultObject> GetGoalsForUser(GetGoalsForUserDto getGoalsForUserDto);
     }
 }

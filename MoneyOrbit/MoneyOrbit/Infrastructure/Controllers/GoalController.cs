@@ -67,5 +67,15 @@ namespace MoneyOrbit.Infrastructure.Controllers
 
             return resultObject;
         }
+        [HttpGet("GetGoalsForUser")]
+        public async Task<ActionResult<ResultObject>> GetGoalsForUser(GetGoalsForUserDto getGoalsForUserDto)
+        {
+            ResultObject resultObject = await _goalService.GetGoalsForUser(getGoalsForUserDto);
+
+            if (resultObject.Error != null)
+                return BadRequest(resultObject.Error);
+
+            return resultObject;
+        }
     }
 }
