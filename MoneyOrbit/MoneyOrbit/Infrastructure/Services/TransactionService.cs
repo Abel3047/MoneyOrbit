@@ -25,13 +25,13 @@ namespace MoneyOrbit.Infrastructure.Services
 
         public async Task<ResultObject> GetUserTransactions(GetTransactionDto gTDTO)
         {
-            //Checks if the userID is null or empty, which is a required parameter to get transactions
-            if (String.IsNullOrEmpty(gTDTO.userID)) return new ResultObject() { Error = "User ID is required to get transactions." };
+            //Checks if the Token is null or empty, which is a required parameter to get transactions
+            if (String.IsNullOrEmpty(gTDTO.Token)) return new ResultObject() { Error = "User Token is required to get transactions." };
 
-            //Gets the user from the userID
-            var user= await _userRepository.GetInstanceOfType<User>(gTDTO.userID);
+            //Gets the user from the Token
+            var user= await _userRepository.GetInstanceOfType<User>(gTDTO.Token);
             //Checks if the user exists in the database
-            if(NullGuard.IsNull(user)) return new ResultObject() { Error = $"User was not found with the ID {gTDTO.userID}." };
+            if(NullGuard.IsNull(user)) return new ResultObject() { Error = $"User was not found with the Token {gTDTO.Token}." };
 
             //Gets the transactions from the acountIDs from the user
             List<Transaction> transactions = new List<Transaction>();

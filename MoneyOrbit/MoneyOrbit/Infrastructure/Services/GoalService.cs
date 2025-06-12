@@ -121,13 +121,13 @@ namespace MoneyOrbit.Infrastructure.Services
         }
         public async Task<ResultObject> GetGoalsForUser(GetGoalsForUserDto gGFUDto)
         {
-            //Checks if the userID is null or empty, which is a required parameter to get goals
-            if (String.IsNullOrEmpty(gGFUDto.userID)) return new ResultObject() { Error = "User ID is required to get Goals." };
+            //Checks if the Token is null or empty, which is a required parameter to get goals
+            if (String.IsNullOrEmpty(gGFUDto.Token)) return new ResultObject() { Error = "User Token is required to get Goals." };
 
-            //Gets the user from the userID
-            var user = await _userRepository.GetInstanceOfType<User>(gGFUDto.userID);
+            //Gets the user from the Token
+            var user = await _userRepository.GetInstanceOfType<User>(gGFUDto.Token);
             //Checks if the user exists in the database
-            if (NullGuard.IsNull(user)) return new ResultObject() { Error = $"User was not found with the ID {gGFUDto.userID}." };
+            if (NullGuard.IsNull(user)) return new ResultObject() { Error = $"User was not found with the Token {gGFUDto.Token}." };
 
             //Gets the goals from the acountIDs from the user
             List<Goal> goals = new List<Goal>();

@@ -27,9 +27,9 @@ namespace MoneyOrbit.Infrastructure.Services
 
             //Checks if the important information is not null or empty
             if (String.IsNullOrEmpty(aCD.AccountName) ||
-               String.IsNullOrEmpty(aCD.userID))
+               String.IsNullOrEmpty(aCD.Token))
                 return new ResultObject() { Error = "You are missing an important piece of information.Please provide an" +
-                    " 'AccountName'/userID"};
+                    " 'AccountName'/Token"};
 
             //Checks if the account type is valid
             int trueCount = Convert.ToInt32(aCD.isAsset) + Convert.ToInt32(aCD.isLiability)
@@ -41,20 +41,20 @@ namespace MoneyOrbit.Infrastructure.Services
             // Check if the account under the username already exists
             try
             {                
-                if (await DoesAccountExist(aCD.AccountName, aCD.userID))
+                if (await DoesAccountExist(aCD.AccountName, aCD.Token))
                     return new ResultObject() { Error = "An account under this user with this name already exists" };
                 if (aCD.AccountName.Contains("Suspense", StringComparison.OrdinalIgnoreCase))
                     return new ResultObject() { Error = "The Suspense account already exists" };
             }
             catch (ArgumentNullException)
             {
-                return new ResultObject() { Error = $"A user with this id {aCD.userID} is unable to be located" };
+                return new ResultObject() { Error = $"A user with this id {aCD.Token} is unable to be located" };
                 throw;
             }
             
             //Creates the account with information
             var account = await new AccountFactory(_userRepository)
-                .CreateAccount(aCD.userID ,aCD.AccountName,aCD.isAsset, aCD.isExpense,aCD.isLiability, aCD.isCaptial,aCD.description);
+                .CreateAccount(aCD.Token ,aCD.AccountName,aCD.isAsset, aCD.isExpense,aCD.isLiability, aCD.isCaptial,aCD.description);
 
             //Stores info in the database
             await _accountRepository.UpdateData(account.ID, account);
@@ -88,14 +88,14 @@ namespace MoneyOrbit.Infrastructure.Services
 
         #region Support methods
         /// <summary>
-        /// Checks if the account already exists under the user with the id, <paramref name="userID"/>
+        /// Checks if the account already exists under the user with the id, <paramref name="token"/>
         /// </summary>
         /// <param name="ID"></param>
         /// <returns> False if it does not exist in the database</returns>
-        private async Task<bool> DoesAccountExist(string accountName, string userID)
+        private async Task<bool> DoesAccountExist(string accountName, string token)
         {
-            var user= await _userRepository.GetInstanceOfType<User>(userID);
-            if (NullGuard.IsNull(user)) throw new Exception($"Unable to find user with {userID} in the database");
+            var user= await _userRepository.GetInstanceOfType<User>(token);
+            if (NullGuard.IsNull(user)) throw new Exception($"Unable to find user with {token} in the database");
             if(user.AccountIDs==null || user.AccountIDs.Length==0) return false;
 
             //A better to get multiple accounts at once and sort through them, than make multiple requests from different consumers of the 

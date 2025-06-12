@@ -8,9 +8,9 @@ namespace MoneyOrbit.Application.Interfaces.IServices
     {
         /// <summary>
         /// This method assigns a transaction to a goal in the database, and returns a ResultObject with the result of the operation.
-        /// <para> It does this by taking a goal and transaction ID, then checks to see if the transaction relates to the goal with
+        /// <para> It does this by taking a goal and transaction Token, then checks to see if the transaction relates to the goal with
         /// <see cref="Goal.RelatesToTransaction{IGoal}(IEntities.ITransaction)"/></para>. If it does it will update the goal with 
-        /// the transaction ID, and add the amount of the transaction to the goal's AmountAccomplished property.
+        /// the transaction Token, and add the amount of the transaction to the goal's AmountAccomplished property.
         /// </summary>
         /// <param name="assignTransationToGoalDto"></param>
         /// <returns></returns>
@@ -28,7 +28,7 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         Task<ResultObject> CreateGoal(GoalCreationDto goalCreationDto);
         /// <summary>
         /// This method updates a goal in the database, and returns a ResultObject with the result of the operation.
-        /// <para> This requires ID of the goal you want to update, and any of the goals properties expect the AccDebited.
+        /// <para> This requires Token of the goal you want to update, and any of the goals properties expect the AccDebited.
         /// If the provided property is null/empty/0/less than 0, it will keep the value from the database</para>
         /// </summary>
         /// <param name="goalUpdateDto"></param>
@@ -47,7 +47,7 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         /// <returns></returns>
         Task<ResultObject> GetGoal(GetGoalDto getGoalDto);
         /// <summary>
-        /// This gets the userID, fines the goals associated with the user and returns a ResultObject with the goals.
+        /// This gets the Token, fines the goals associated with the user and returns a ResultObject with the goals.
         /// <para>It works a lot like <see cref="ITransactionService.GetUserTransactions(DTOs.TransactionDtos.GetTransactionDto)"/>
         /// but we can't inhert it because the services are too different, save for this one method</para>
         /// </summary>

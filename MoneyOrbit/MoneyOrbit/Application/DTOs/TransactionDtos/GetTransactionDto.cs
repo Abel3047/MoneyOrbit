@@ -3,7 +3,7 @@
     public class GetTransactionDto
     {
         required
-        public string userID { get; set; }
+        public string Token { get; set; }
         /// <summary>
         /// This is an optional parameter if you want to filter your results by specific accounts
         /// </summary>

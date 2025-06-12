@@ -13,7 +13,7 @@ namespace MoneyOrbit.Application.Factory
         {
             _userRepository = userRepository;
         }
-        public async Task<Account> CreateAccount(string _userID, string _accountName, bool _isAsset, bool _isExpense, bool _isLiability, bool _isCaptial, string? _description)
+        public async Task<Account> CreateAccount(string token, string _accountName, bool _isAsset, bool _isExpense, bool _isLiability, bool _isCaptial, string? _description)
         {
             //Generates ID to store in the new account and in the list of Users accounts
             var accountID = generators.GenerateKey(DateTime.Now);
@@ -31,13 +31,13 @@ namespace MoneyOrbit.Application.Factory
             };
 
             //Gets the IDs in the Users list of accounts
-            var user = await _userRepository.GetInstanceOfType<User>(_userID);
+            var user = await _userRepository.GetInstanceOfType<User>(token);
             //If there isn't, we need to make a new array and add our first account
             if (user.AccountIDs == null || user.AccountIDs.Length == 0) user.AccountIDs = new string[] { accountID };
             //else there is accounts already,simply append
             else user.AccountIDs= user.AccountIDs.Append(accountID).ToArray();
             //Stores the new ID in the User's list of accounts
-            await _userRepository.UpdateData(_userID, user);
+            await _userRepository.UpdateData(user.ID, user);
 
             return _account;
         }

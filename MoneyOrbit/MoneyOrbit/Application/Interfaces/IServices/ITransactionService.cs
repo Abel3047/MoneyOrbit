@@ -6,7 +6,7 @@ namespace MoneyOrbit.Application.Interfaces.IServices
     public interface ITransactionService
     {
         /// <summary>
-        /// This method takes the user ID gets all the accounts involved with the user. 
+        /// This method takes the user Token gets all the accounts involved with the user. 
         /// <para>It then goes ahead to search all transactions involved with those accounts. Since those accounts are only involved
         /// with that user, there is no way more transactions could be involved.</para>
         /// <para>These transactions are then filtered according to the variables set in <paramref name="getTransactionDto"/>
