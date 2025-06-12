@@ -21,6 +21,7 @@ namespace MoneyOrbit.Core.Entities
         public string AccessLevel { get; set; }
 
         //These I believe will be used by @Terrence when he implements the authentication and authorization
+        //Well.. BLIMEY.. @Abel you might be right!
         public string ResetToken { get; set; }
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
