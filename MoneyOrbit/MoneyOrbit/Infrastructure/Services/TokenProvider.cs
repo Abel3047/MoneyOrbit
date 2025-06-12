@@ -3,8 +3,6 @@ using Microsoft.IdentityModel.Tokens;
 using MoneyOrbit.Core.Entities;
 using System.Security.Claims;
 using System.Text;
-
-
 internal sealed class TokenProvider(IConfiguration configuration)
 {
     public string Create(User user)
