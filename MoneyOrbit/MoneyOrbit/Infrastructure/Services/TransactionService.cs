@@ -88,7 +88,7 @@ namespace MoneyOrbit.Infrastructure.Services
             if(trDTO.Date == default(DateTime) || trDTO.Date == DateTime.MinValue|| NullGuard.IsNull(trDTO.Date))
                 return new ResultObject() { Error = "Transaction record has to have a date to be recorded." };
 
-            //If either of the transaction is null, it will set the value to a suspense account registered with the user
+            //If accredited of the transaction account is null, it will set the value to a suspense account registered with the user
             //If both of them are null it will throw the typical error
             //Checks if the important information (accountDebited) is not null or empty
             if (String.IsNullOrEmpty(trDTO.AccDebitedID))
@@ -97,6 +97,8 @@ namespace MoneyOrbit.Infrastructure.Services
                     Error = "You are missing an important piece of information. Please provide  the ID of the account" +
                     " debited-'AccDebitedID'."
                 };
+            //If accountDebited is populated but the accountCredited is not, it will set the accountCredited to a suspense account
+            if (String.IsNullOrEmpty(trDTO.AccCreditedID)) trDTO.AccCreditedID = await GetSuspenseAccount();
             //Checks if the account exists in the database
             if (!await DoesAccountExist(trDTO.AccDebitedID))
                 return new ResultObject() { Error = "The debited account does not exist in the database, and is a requisite parameter" };
@@ -122,7 +124,16 @@ namespace MoneyOrbit.Infrastructure.Services
             var account = await _accountRepository.GetInstanceOfType<Account>(accID);
             return account != null;
         }
-        
+        private async Task<string> GetSuspenseAccount()
+        {
+            //Note we use the environment variable because we can't have each person setting their own suspense account
+            var susAcc= (await _accountRepository
+                .GetCollectionWithIdenticalProperty<Account>(Environment.GetEnvironmentVariable("Firebase_Db_SuspenseAccount_name")))
+                .FirstOrDefault();
+            if (NullGuard.IsNull(susAcc)) return "1";
+            return susAcc.ID;
+        }
+            
         #endregion
     }
 }

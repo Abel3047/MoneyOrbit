@@ -43,6 +43,8 @@ namespace MoneyOrbit.Infrastructure.Services
             {                
                 if (await DoesAccountExist(aCD.AccountName, aCD.userID))
                     return new ResultObject() { Error = "An account under this user with this name already exists" };
+                if (aCD.AccountName.Contains("Suspense", StringComparison.OrdinalIgnoreCase))
+                    return new ResultObject() { Error = "The Suspense account already exists" };
             }
             catch (ArgumentNullException)
             {
