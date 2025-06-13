@@ -17,7 +17,7 @@ namespace MoneyOrbit.Infrastructure.Controllers
         }
 
         [HttpPost("CreateAccount")]
-        public async Task<ActionResult> CreateAccount(AccountCreationDto accountCreationDto)
+        public async Task<ActionResult> CreateAccount(CreateAccountDto accountCreationDto)
         {
             ResultObject resultObject = await _accountService.CreateAccount(accountCreationDto);
 
@@ -26,5 +26,26 @@ namespace MoneyOrbit.Infrastructure.Controllers
 
             return Ok("Account registered successfully.");
         }
+        [HttpPost("DeleteAccount")]
+        public async Task<ActionResult> DeleteAccount(DeleteAccountDto deleteAccountDto)
+        {
+            ResultObject resultObject = await _accountService.DeleteAccount(deleteAccountDto);
+
+            if (resultObject.Error != null)
+                return BadRequest(resultObject.Error);
+
+            return Ok("Account deleted successfully.");
+        }
+        [HttpPost("LinkBankAccount")]
+        public async Task<ActionResult> LinkBankAccount(LinkBankAccountDto linkBankAccountDto)
+        {
+            ResultObject resultObject = await _accountService.LinkBankAccount(linkBankAccountDto);
+
+            if (resultObject.Error != null)
+                return BadRequest(resultObject.Error);
+
+            return Ok("Request to your bank as been sent. Wait 3 business working days to confirm linkage.");
+        }
+        
     }
 }

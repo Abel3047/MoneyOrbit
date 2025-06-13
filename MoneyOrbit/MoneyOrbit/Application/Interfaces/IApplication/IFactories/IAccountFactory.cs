@@ -17,5 +17,18 @@ namespace MoneyOrbit.Application.Interfaces.IApplication.IFactories
         /// <param name="_description"></param>
         /// <returns></returns>
         Task<Account> CreateAccount(string Token, string _accountName, bool _isAsset, bool _isExpense, bool _isLiability, bool _isCaptial, string? _description);
+        /// <summary>
+        /// This take in the requied informaiton for creating a BankAccount in the database. Note that this does not link the actual bank 
+        /// account to the user. A separate endpoint is used for that.
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="accountName"></param>
+        /// <param name="description"></param>
+        /// <param name="bankAccountName"></param>
+        /// <param name="bankAccountNumber"></param>
+        /// <param name="bankBranchName"></param>
+        /// <param name="bankBranchCode"></param>
+        /// <returns></returns>
+        Task<BankAccount> CreateBankAccount(string token, string accountName, string? description, string bankAccountName, string bankAccountNumber, string bankBranchName, string bankBranchCode, string? bankSwiftCode);
     }
 }

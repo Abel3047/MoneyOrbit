@@ -8,7 +8,7 @@ using MoneyOrbit.Core.Entities;
 
 namespace MoneyOrbit.Infrastructure.Services
 {
-    public class AccountService:IAccountService
+    public class AccountService: IAccountService
     {
         private readonly IAccountRepository<IAccount> _accountRepository;
         private readonly IUserRepository<IUser> _userRepository;
@@ -19,7 +19,7 @@ namespace MoneyOrbit.Infrastructure.Services
             _userRepository = userRepository;
         }
 
-        public async Task<ResultObject> CreateAccount(AccountCreationDto aCD)
+        public async Task<ResultObject> CreateAccount(CreateAccountDto aCD)
         {
             //Checks to see if the DTO is empty
             if (NullGuard.IsNull(aCD))
@@ -52,6 +52,23 @@ namespace MoneyOrbit.Infrastructure.Services
                 throw;
             }
             
+            //If BankAccount, check the required information about it
+            if(aCD.isBankAccount)
+            {
+                if(String.IsNullOrEmpty(aCD.BankAccountName) || String.IsNullOrEmpty(aCD.BankAccountNumber)||
+                   String.IsNullOrEmpty(aCD.BankBranchName) || String.IsNullOrEmpty(aCD.BankBranchCode))
+                    return new ResultObject() { Error = "You cannot create a Bank Account without an AccountName,AccountNumber," +
+                        "BranchName or BankBranch code" };
+                //Creates a bank account with information
+                var bankaccount = await new AccountFactory(_userRepository)
+                .CreateBankAccount(aCD.Token, aCD.AccountName, aCD.description, aCD.BankAccountName, aCD.BankAccountNumber,
+                aCD.BankBranchName, aCD.BankBranchCode, aCD.BankSwiftCode);
+
+                //Stores info in the database
+                await _accountRepository.UpdateData(bankaccount.ID, bankaccount);
+                return new ResultObject() { Result = bankaccount.ID };
+            }
+
             //Creates the account with information
             var account = await new AccountFactory(_userRepository)
                 .CreateAccount(aCD.Token ,aCD.AccountName,aCD.isAsset, aCD.isExpense,aCD.isLiability, aCD.isCaptial,aCD.description);
@@ -60,7 +77,7 @@ namespace MoneyOrbit.Infrastructure.Services
             await _accountRepository.UpdateData(account.ID, account);
             return  new ResultObject() { Result= account.ID};
         }
-        public async Task<ResultObject> UpdateAccount(AccountUpdateDto aUD)
+        public async Task<ResultObject> UpdateAccount(UpdateAccountDto aUD)
         {
             var account = await _accountRepository.GetInstanceOfType<Account>(aUD.ID);
             if (!String.IsNullOrEmpty(aUD.description)) account.description = aUD.description;
@@ -85,7 +102,10 @@ namespace MoneyOrbit.Infrastructure.Services
             await _accountRepository.DeleteData(accountId);
             return new ResultObject() { Result = "success" };
         }
-
+        public Task<ResultObject> LinkBankAccount(LinkBankAccountDto linkBankAccountDto)
+        {
+            throw new NotImplementedException();
+        }
         #region Support methods
         /// <summary>
         /// Checks if the account already exists under the user with the id, <paramref name="token"/>
@@ -111,6 +131,7 @@ namespace MoneyOrbit.Infrastructure.Services
             }
             return false;
         }
+
         #endregion
     }
 }

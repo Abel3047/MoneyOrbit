@@ -6,9 +6,16 @@ namespace MoneyOrbit.Application.Interfaces.IServices
 {
     public interface IAccountService
     {
-        Task<ResultObject> CreateAccount(AccountCreationDto accountCreationDto);
-        Task<ResultObject> UpdateAccount(AccountUpdateDto aUD);
+        /// <summary>
+        /// This is used to create all accounts (including <see cref="BankAccount"/>s).
+        /// <para>It makes sure that the dto has the necessary information, then makes sure that the account</para>
+        /// </summary>
+        /// <param name="accountCreationDto"></param>
+        /// <returns></returns>
+        Task<ResultObject> CreateAccount(CreateAccountDto accountCreationDto);
+        Task<ResultObject> UpdateAccount(UpdateAccountDto aUD);
         Task<Account> GetAccountById(string accountId);
         Task<ResultObject> DeleteUser(string accountId);
+        Task<ResultObject> LinkBankAccount(LinkBankAccountDto linkBankAccountDto);
     }
 }
