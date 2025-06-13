@@ -27,5 +27,7 @@ namespace MoneyOrbit.Core.Entities
         public byte[] PasswordSalt { get; set; }
 
         public string[]? AccountIDs { get; set; }
+
+        public DateTime? ResetTokenExpires { get; set; }
     }
 }
