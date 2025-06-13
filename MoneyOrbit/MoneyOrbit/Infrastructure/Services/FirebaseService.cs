@@ -25,7 +25,7 @@ namespace MoneyOrbit.Infrastructure.Services
         }
 
         /// <summary>
-        /// This directly gets a single instance of type T at the path specified from the Firebase Database
+        /// This directly gets a single instance of type T at the user specified from the Firebase Database
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="path"></param>
@@ -37,8 +37,8 @@ namespace MoneyOrbit.Infrastructure.Services
             return await GetCollectionOfType<T>(filter);
         }
         /// <summary>
-        /// This method stores data at a path in the Firebase Database.
-        /// <para>It also has implements an option on whether or not one wishes to generate a key for the path to store the
+        /// This method stores data at a user in the Firebase Database.
+        /// <para>It also has implements an option on whether or not one wishes to generate a key for the user to store the
         /// object</para>
         /// </summary>
         /// <param name="path"></param>
@@ -64,12 +64,12 @@ namespace MoneyOrbit.Infrastructure.Services
                     .PutAsync(GetJSONData(data),
                     DateTime.UtcNow.AddSeconds(5) - DateTime.UtcNow);
 
-                //Assign the auto generated path to the "ID" parameter of the object
+                //Assign the auto generated user to the "ID" parameter of the object
                 await UpdateData(path + "/" + generatedKey + "/ID", generatedKey);
             }
         }
         /// <summary>
-        /// This overwrites what ever data is in the path with the object in the parameter in the Firebase Database
+        /// This overwrites what ever data is in the user with the object in the parameter in the Firebase Database
         /// </summary>
         /// <param name="path"></param>
         /// <param name="data"></param>
@@ -79,18 +79,38 @@ namespace MoneyOrbit.Infrastructure.Services
             .Child(path)
             .PutAsync(GetJSONData(data), DateTime.UtcNow.AddSeconds(5) - DateTime.UtcNow);
         /// <summary>
-        /// This deletes the data at the path specified in the Firebase Database.
+        /// This deletes the data at the user specified in the Firebase Database.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
         public override async Task DeleteData(string path) => await _firebaseClient.Child(path).DeleteAsync();
+        public override async Task<bool> DoesPropertyExist(string nodepath, string property, string keyword)
+        {
+            var collection = await _firebaseClient
+                .Child(nodepath)
+                .OrderBy(property)
+                .EqualTo(keyword)
+                .OnceAsync<object>();
+
+            return collection.Any();
+        }
+        public override async Task<IEnumerable<T>> GetCollectionWithIdenticalProperty<T>(string nodepath, string property, string propertyKeyword)
+        {
+            var collection = await _firebaseClient
+                .Child(nodepath)
+                .OrderBy(property)
+                .EqualTo(propertyKeyword)
+                .OnceAsync<T>();
+
+            return collection.ToEnumerable() ;
+        }
 
         //Method Unique to firebase
         /// <summary>
-        /// This directly gets a collection of type T at the path specified from the Firebase Database.
+        /// This directly gets a collection of type T at the user specified from the Firebase Database.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="filteringOptions"> This is set in the  repository and contains the path as well as other filtering
+        /// <param name="filteringOptions"> This is set in the  repository and contains the user as well as other filtering
         /// possibilities</param>
         /// <returns></returns>
         public async Task<IEnumerable<T>> GetCollectionOfType<T>(FilteringOptions filteringOptions)
@@ -165,7 +185,7 @@ namespace MoneyOrbit.Infrastructure.Services
                 return dateTime.AddDays(1).AddSeconds(-1);
 
             return dateTime;
-        }
+        }       
 
         #endregion
 

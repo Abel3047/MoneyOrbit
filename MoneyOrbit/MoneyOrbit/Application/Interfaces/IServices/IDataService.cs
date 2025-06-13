@@ -48,5 +48,25 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         /// <param name="path"></param>
         /// <returns></returns>
         public Task DeleteData(string path);
+        /// <summary>
+        /// This takes the <paramref name="nodepath"/> from a repository, and then checks <paramref name="property"/>
+        /// amoung what we are trying to search for using the keyword <paramref name="keyword"/>. If it finds something under these
+        /// three path , it returns true, otherwise it returns false.
+        /// </summary>
+        /// <param name="nodepath"></param>
+        /// <param name="keyword"></param>
+        /// <returns></returns>
+        Task<bool> DoesPropertyExist(string nodepath, string property, string keyword);
+        /// <summary>
+        /// This takes the <paramref name="nodepath"/> form a repository, and then checks <paramref name="property"/> amoung what 
+        /// we are trying to search for using the keyword <paramref name="propertyKeyword"/>. It then returns everything that
+        /// satifies the condition of that keyword with the provided type <typeparamref name="T"/>.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="nodepath"></param>
+        /// <param name="property"></param>
+        /// <param name="propertyKeyword"></param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> GetCollectionWithIdenticalProperty<T>(string nodepath, string property, string propertyKeyword);
     }
 }

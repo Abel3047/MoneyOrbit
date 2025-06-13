@@ -7,15 +7,21 @@ namespace MoneyOrbit.Application.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            services.AddSingleton<IFirebaseService, FirebaseService>();
-
+            //Services
             services.AddScoped<IFirebaseService, FirebaseService>();
-            services.AddScoped<IDataService, DataService>();
+            //I used FirebaseService here instead of DataService because DataService is an abstract
+            //If you wish to swap this with a different DataService, do so here
+            services.AddScoped<IDataService, FirebaseService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<IGoalService, GoalService>();
 
-            // NOTE: This sets up AutoMapper in our project. It will need a Profile class that defines named configurations
-            // you plan to use. See AutoMapperProfiles for clarification
-            // services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
+            //Repositories
+            services.AddScoped<IUserRepository<IUser>, UserRepository>();
+            services.AddScoped<IAccountRepository<IAccount>, AccountRepository>();
+            services.AddScoped<ITransactionRepository<ITransaction>, TransactionRepository>();
+            services.AddScoped<IGoalRepository<IGoal>, GoalRepository>();
 
             return services;
         }

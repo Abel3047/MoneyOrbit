@@ -1,4 +1,5 @@
 ﻿using MoneyOrbit.Application.DTOs.UserDtos;
+using MoneyOrbit.Application.Helpers;
 using MoneyOrbit.Core.Entities;
 
 namespace MoneyOrbit.Application.Interfaces.IServices
@@ -11,22 +12,22 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         /// </summary>
         /// <param name="uCD"></param>
         /// <returns></returns>
-        Task<string> CreateUser(UserCreationDto uCD);
+        Task<ResultObject> RegisterUser(UserCreationDto uCD);
         /// <summary>
         /// Checks if the properties in <see cref="UserUpdateDto"/> are not null. If not null it will update the user it gets
         /// from the database by the <paramref name="uUD.ID"/>
         /// </summary>
         /// <param name="uUD"></param>
         /// <returns></returns>
-        Task UpdateUser(UserUpdateDto uUD);
+        Task<ResultObject> UpdateUser(UserUpdateDto uUD);
         /// <summary>
         /// Requires a <paramref name="token"/> and a <paramref name="userID"/> to find the user, get the reset token and make
         /// a new passwordHash and passwordSalt
         /// </summary>
-        /// <param name="userID"></param>
-        /// <param name="token"></param>
+        /// <param name="resetToken"></param>
+        /// <param name="_newpassword"></param>
         /// <returns></returns>
-        Task UpdateUserPassword(string userID, string token);
+        Task<ResultObject> UpdateUserPassword(string resetToken, string _newpassword);
         /// <summary>
         /// Gets the user from the database by its ID
         /// </summary>
@@ -38,7 +39,7 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        Task DeleteUser(string userId);
+        Task<ResultObject> DeleteUser(string userId);
 
     }
 }

@@ -25,5 +25,7 @@ namespace MoneyOrbit.Core.Entities
         public string ResetToken { get; set; }
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
+
+        public string[]? AccountIDs { get; set; }
     }
 }
