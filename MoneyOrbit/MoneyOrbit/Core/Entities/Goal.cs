@@ -41,5 +41,7 @@ namespace MoneyOrbit.Core.Entities
             return true;
         }
 
+        new public string AccCreditedID { get; private set; }= "N/A"; // Goals are not credited, they are debited from related accounts.
+
     }
 }
