@@ -7,7 +7,6 @@ using System.Security.Claims;
 
 namespace MoneyOrbit.Infrastructure.Controllers
 {
-    [Route("MoneyOrbit/[controller]")]
     [Authorize] // <-- THIS SECURES THE ENTIRE CONTROLLER
     public class UserController : BaseController
     {

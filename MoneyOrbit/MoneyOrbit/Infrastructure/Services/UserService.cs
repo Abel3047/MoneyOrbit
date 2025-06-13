@@ -78,7 +78,7 @@ namespace MoneyOrbit.Infrastructure.Services
 
             // Creates the user with information
             var user = new UserFactory()
-                .CreateUser(uCD.UserName, uCD.FirstName, uCD.LastName, uCD.AccessLevel, uCD.Email, uCD.PhoneNumber);
+                .CreateUser(uCD.UserName, uCD.FirstName, uCD.LastName, uCD.password, uCD.AccessLevel, uCD.Email, uCD.PhoneNumber);
 
             // IMPORTANT: Assign the generated hash and salt to the user object before saving
             user.PasswordHash = passwordHash;
@@ -100,23 +100,44 @@ namespace MoneyOrbit.Infrastructure.Services
             return new ResultObject() { Result = "success" };
         }
 
-        public async Task<ResultObject> UpdateUserPassword(string userID, string resetToken, string _newpassword)
+        public async Task<ResultObject> UpdateUserPassword(string userID, string resetToken, string newPassword) // Renamed for clarity
         {
-            if (string.IsNullOrEmpty(resetToken)) throw new NullReferenceException("You cannot have a null/empty resetToken");
-            if (string.IsNullOrEmpty(_newpassword)) throw new NullReferenceException("You cannot have a null/empty _newpassword");
+            if (string.IsNullOrEmpty(resetToken))
+                return new ResultObject { Error = "Reset token is required." };
 
-            //Code that @Terrence has to implement for resetToken authentication
-            //throw new NotImplementedException("Terrence needs to implement resetToken authentication so that the rest of the method can" +
-            //    "fire. He of course needs to test it as well");
+            if (string.IsNullOrEmpty(newPassword))
+                return new ResultObject { Error = "New password cannot be empty." };
 
-            // This code will only execute after the above check is implemented and passes
+            // Fetch the user by their ID
             User user = await _userRepository.GetInstanceOfType<User>(userID);
 
-            var (passwordHash, passwordSalt) = CreatePasswordHash(_newpassword);
+            // ---- START OF IMPLEMENTATION ----
+
+            // 1. Validate the user and the token
+            if (user == null)
+                return new ResultObject { Error = "Invalid user." };
+
+            if (user.ResetToken != resetToken)
+                return new ResultObject { Error = "Invalid reset token." };
+
+            if (user.ResetTokenExpires < DateTime.UtcNow)
+                return new ResultObject { Error = "Reset token has expired." };
+
+            // ---- END OF VALIDATION ----
+
+            // All checks passed. Now update the password.
+            var (passwordHash, passwordSalt) = CreatePasswordHash(newPassword);
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
 
+            // CRITICAL: Invalidate the token after use by clearing the fields.
+            // This prevents the same token from being used for another password change.
+            user.ResetToken = null;
+            user.ResetTokenExpires = null;
+
+            // Save all changes (new password and nullified token) to the database
             await _userRepository.UpdateData(user.ID, user);
+
             return new ResultObject() { Result = "success" };
         }
 
@@ -147,6 +168,40 @@ namespace MoneyOrbit.Infrastructure.Services
             var passwordSalt = hmac.Key;
             var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
             return (passwordHash, passwordSalt);
+        }
+
+        public async Task<ResultObject> GeneratePasswordResetTokenAsync(string email)
+        {
+            if (string.IsNullOrEmpty(email) || !Validator.ValidateEmail(email))
+            {
+                return new ResultObject { Error = "A valid email address is required." };
+            }
+
+            var user = await _userRepository.GetUserByEmailAsync(email);
+
+            // For security, never reveal if an email address exists or not.
+            // We proceed as if everything is fine, but only do work if the user was found.
+            if (user != null)
+            {
+                // Generate a secure, URL-safe random token
+                var resetToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+
+                // Update the user object with the token and its expiration date
+                user.ResetToken = resetToken;
+                user.ResetTokenExpires = DateTime.UtcNow.AddMinutes(15); // Token is valid for 15 minutes
+
+                // Save the updated user to the database
+                await _userRepository.UpdateData(user.ID, user);
+
+                // In a real application, you would now send an email to the user
+                // with a link like: https://yourapp.com/reset-password?token={resetToken}
+                // For now, we return the token in the ResultObject.
+                return new ResultObject { Result = resetToken };
+            }
+
+            // If user is null, return a success-like object to prevent email enumeration attacks.
+            // The calling controller will know not to send an email if the Result is empty.
+            return new ResultObject { Result = null };
         }
 
         /// <summary>

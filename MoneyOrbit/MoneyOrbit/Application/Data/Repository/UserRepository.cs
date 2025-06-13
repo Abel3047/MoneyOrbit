@@ -31,5 +31,20 @@ namespace MoneyOrbit.Application.Data.Repository
             return usersFound.FirstOrDefault();
         }
 
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            // Call the correct DataService method to find users where the "Email" property matches.
+            var usersFound = await _dataService.GetCollectionWithIdenticalProperty<User>(
+                _nodePath,      // The node to search in, e.g., "Users"
+                "Email",        // The specific property name to filter on
+                email           // The email address we are looking for
+            );
+
+            // GetCollectionWithIdenticalProperty returns a collection.
+            // Since email should be unique, we expect at most one user.
+            // .FirstOrDefault() safely gets that user, or returns null if none were found.
+            return usersFound.FirstOrDefault();
+        }
+
     }
 }

@@ -10,5 +10,7 @@ namespace MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository
     public interface IUserRepository<TUser> : IEntityRepository<TUser> where TUser : IUser
     {
         Task<User> GetUserByUsernameAsync(string username);
+
+        Task<User> GetUserByEmailAsync(string email);
     }
 }
