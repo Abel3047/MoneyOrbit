@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MoneyOrbit")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eb4eac238cd785cc7406144d4227ac65273f8154")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+37f74ffc3f25d24dbbce91dfa671c447e4c09ded")]
 [assembly: System.Reflection.AssemblyProductAttribute("MoneyOrbit")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MoneyOrbit")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

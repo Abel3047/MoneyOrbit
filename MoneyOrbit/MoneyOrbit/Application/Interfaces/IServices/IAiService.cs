@@ -12,12 +12,11 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         Task<string> GeneratePrompt();
 
         /// <summary>
-        /// This method takes in a prompt and sends it to the Gemini agent and
+        /// This method generates a prompt and sends it to the Gemini agent and
         /// returns the response.
         /// </summary>
-        /// <param name="prompt">The prompt that will be sent to Gemini</param>
         /// <returns>The response from Gemini</returns>
-        Task<string> GetResponse(string prompt);
+        Task<string> GetResponse();
 
         /// <summary>
         /// This method will take in user feedback about the AI and relays that information

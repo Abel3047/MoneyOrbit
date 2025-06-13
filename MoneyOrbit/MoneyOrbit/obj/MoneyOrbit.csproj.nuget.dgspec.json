@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\abelt\\source\\repos\\MoneyOrbit\\MoneyOrbit\\MoneyOrbit.csproj": {}
+    "C:\\Users\\nndun\\Desktop\\FNB Hackathon\\MoneyOrbit\\MoneyOrbit\\MoneyOrbit\\MoneyOrbit.csproj": {}
   },
   "projects": {
-    "C:\\Users\\abelt\\source\\repos\\MoneyOrbit\\MoneyOrbit\\MoneyOrbit.csproj": {
+    "C:\\Users\\nndun\\Desktop\\FNB Hackathon\\MoneyOrbit\\MoneyOrbit\\MoneyOrbit\\MoneyOrbit.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\abelt\\source\\repos\\MoneyOrbit\\MoneyOrbit\\MoneyOrbit.csproj",
+        "projectUniqueName": "C:\\Users\\nndun\\Desktop\\FNB Hackathon\\MoneyOrbit\\MoneyOrbit\\MoneyOrbit\\MoneyOrbit.csproj",
         "projectName": "MoneyOrbit",
-        "projectPath": "C:\\Users\\abelt\\source\\repos\\MoneyOrbit\\MoneyOrbit\\MoneyOrbit.csproj",
-        "packagesPath": "C:\\Users\\abelt\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\abelt\\source\\repos\\MoneyOrbit\\MoneyOrbit\\obj\\",
+        "projectPath": "C:\\Users\\nndun\\Desktop\\FNB Hackathon\\MoneyOrbit\\MoneyOrbit\\MoneyOrbit\\MoneyOrbit.csproj",
+        "packagesPath": "C:\\Users\\nndun\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\nndun\\Desktop\\FNB Hackathon\\MoneyOrbit\\MoneyOrbit\\MoneyOrbit\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\abelt\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\nndun\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -26,7 +22,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -54,6 +49,10 @@
               "target": "Package",
               "version": "[5.0.0, )"
             },
+            "Google.Cloud.AIPlatform.V1": {
+              "target": "Package",
+              "version": "[3.33.0, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.6.2, )"
@@ -78,7 +77,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
