@@ -109,12 +109,17 @@ namespace MoneyOrbit.Infrastructure.Services
 
         public async Task<ResultObject> GetGoal(GetGoalDto getGoalDto)
         {
-            var goal = await GetGoalfromID(getGoalDto.GoalID);
-            //Check if the goal exists in the database
-            var goalquestion = await _goalRepository.GetInstanceOfType<Goal>(getGoalDto.GoalID);
-            if (NullGuard.IsNull(goalquestion))
-                return new ResultObject() { Error = "The provided ID does not exist in the goal repository." };
-            return new ResultObject() { Result = goal };
+            try
+            {
+                //Check if the goal exists in the database
+                var goal = await GetGoalfromID(getGoalDto.GoalID);
+                return new ResultObject() { Result = goal };
+            }
+            catch (Exception ex)
+            {
+                return new ResultObject() { Error = ex.Message };
+                throw;
+            }            
         }
         public async Task<ResultObject> GetGoalAmountAccomplished(GoalAmountAccomplishedDto gAADto)
         {
@@ -183,10 +188,18 @@ namespace MoneyOrbit.Infrastructure.Services
                 return new ResultObject() { Error = "Goal delete data is null." };
             if (String.IsNullOrEmpty(dGDto.GoalID))
                 return new ResultObject() { Error = "Goal ID is required to update a goal." };
-            //Check if the goal exists in the database
-            var goalquestion= await _goalRepository.GetInstanceOfType<Goal>(dGDto.GoalID);
-            if(NullGuard.IsNull(goalquestion))
-                return new ResultObject() { Error = "The provided ID does not exist in the goal repository." };
+            try
+            {
+                //Check if the goal exists in the database
+                var goalquestion = await GetGoalfromID(dGDto.GoalID);
+                    
+            }
+            catch (Exception ex)
+            {
+                return new ResultObject() { Error =  ex.Message };
+                throw;
+            }
+           
             await _goalRepository.DeleteData(dGDto.GoalID);
 
             return new ResultObject() { Result = "success" };
