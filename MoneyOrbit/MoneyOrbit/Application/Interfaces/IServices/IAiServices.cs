@@ -1,4 +1,4 @@
-using MoneyOrbit.Core.Entities;
+using MoneyOrbit.Application.Interfaces.IEntities;
 
 namespace MoneyOrbit.Application.Interfaces.IServices
 {
@@ -17,13 +17,5 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         /// </summary>
         /// <returns>The response from Gemini</returns>
         Task<string> GetResponse();
-
-        /// <summary>
-        /// This method will take in user feedback about the AI and relays that information
-        /// to the Gemini agent.
-        /// </summary>
-        /// <param name="feedback">The feedback from the user</param>
-        /// <returns></returns>
-        Task GiveFeedback(string feedback);
     }
 }
