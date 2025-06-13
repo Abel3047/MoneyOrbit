@@ -97,13 +97,22 @@ namespace MoneyOrbit.Infrastructure.Services
             return new ResultObject() { Result = "success" };
         }
         public async Task<Account> GetAccountById(string accountId) => await _accountRepository.GetInstanceOfType<Account>(accountId);        
-        public async Task<ResultObject> DeleteUser(string accountId)
+        public async Task<ResultObject> DeleteAccount(DeleteAccountDto dADTO)
         {
-            await _accountRepository.DeleteData(accountId);
+            await _accountRepository.DeleteData(dADTO.accountId);
+            var emptyaccount = await _accountRepository.GetInstanceOfType<Account>(dADTO.accountId);
+            if(NullGuard.IsNotNull(emptyaccount)) return new ResultObject() { Error = $"Failed to delete the account with the ID {dADTO.accountId}" };
+
             return new ResultObject() { Result = "success" };
         }
-        public Task<ResultObject> LinkBankAccount(LinkBankAccountDto linkBankAccountDto)
+        public async Task<ResultObject> LinkBankAccount(LinkBankAccountDto linkBankAccountDto)
         {
+            if(NullGuard.IsNull(linkBankAccountDto)) return new ResultObject() { Error = "Linking data is null." };
+
+            //I'd imagine that we need to look at some public API that contains all the bank information to verify the bank
+            //Then it should send a email to the bank to make sure that it makes sense, or confirms them
+            //After the business day the notification system will aleart the user that its possible to make transactions
+            //@Abel please put in implementation for the INotification system
             throw new NotImplementedException();
         }
         #region Support methods

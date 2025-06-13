@@ -13,7 +13,8 @@
         public bool isLiability { get; set; }
 
         //BankAccount creation properties
-        public bool isBankAccount { get; set; }
+        //Accounts are typically not bank accounts so the default is false
+        public bool isBankAccount { get; set; } = false;
 
         public string? BankAccountName { get; set; }
         public string? BankAccountNumber { get; set; }
