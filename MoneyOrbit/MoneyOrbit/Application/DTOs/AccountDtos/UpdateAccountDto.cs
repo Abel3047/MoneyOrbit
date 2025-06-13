@@ -1,6 +1,6 @@
 ﻿namespace MoneyOrbit.Application.DTOs.AccountDtos
 {
-    public class AccountUpdateDto
+    public class UpdateAccountDto
     {
         public string  ID { get; set; }
 

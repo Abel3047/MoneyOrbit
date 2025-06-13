@@ -10,14 +10,14 @@ namespace MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository
         /// <typeparam name="T"></typeparam>
         /// <param name="path"></param>
         /// <returns>Single instance of type T</returns>
-        public Task<T> GetInstanceOfType<T>(string path);
+        public Task<TEntity> GetInstanceOfType<TEntity>(string path);
         /// <summary>
         /// Get collection of type T at path.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="path"></param>
         /// <returns>Collection of type T</returns>
-        public Task<IEnumerable<T>> GetCollectionOfType<T>(string path);
+        public Task<IEnumerable<TEntity>> GetCollectionOfType<TEntity>(string path);
         /// <summary>
         /// Updating an object can be done at a single property of an 
         /// object or the entire object or collection.
@@ -49,6 +49,6 @@ namespace MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository
         /// <typeparam name="T"></typeparam>
         /// <param name="propertyKeyword"></param>
         /// <returns></returns>
-        public Task<IEnumerable<T>> GetCollectionWithIdenticalProperty<T>(string propertyKeyword);
+        public Task<IEnumerable<TEntity>> GetCollectionWithIdenticalProperty<TEntity>(string propertyKeyword);
     }
 }

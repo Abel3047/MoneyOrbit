@@ -20,7 +20,7 @@ namespace MoneyOrbit.Infrastructure.Services
         public async Task<ResultObject> RegisterUser(UserCreationDto uCD)
         {
             //Checks to see if the DTO is empty
-            if (uCD == null)
+            if (NullGuard.IsNull(uCD))
                 return new ResultObject() { Error = "User creation data is null." };
 
             //Checks if the important information is not null or empty
@@ -33,9 +33,9 @@ namespace MoneyOrbit.Infrastructure.Services
                     " 'username'/password/firstname/lastname/AccessLevel."};
 
             //Checks if the email and phonenumber are in the correct format
-            if (uCD.Email != null && !Validator.ValidateEmail(uCD.Email))
+            if (NullGuard.IsNotNull(uCD.Email) && !Validator.ValidateEmail(uCD.Email))
                 return new ResultObject(){ Error = "This isn't the correct format for an email." };
-            if (uCD.PhoneNumber != null && !Validator.ValidatePhoneNumber(uCD.PhoneNumber))
+            if (NullGuard.IsNotNull(uCD.PhoneNumber) && !Validator.ValidatePhoneNumber(uCD.PhoneNumber))
                 return new ResultObject() { Error = "This isn't the correct format for a PhoneNumber." };
 
             // Check if the user already exists
@@ -52,7 +52,7 @@ namespace MoneyOrbit.Infrastructure.Services
         }
         public async Task<ResultObject> UpdateUser(UserUpdateDto uUD)
         {
-            User user = await _userRepository.GetInstanceOfType<User>(uUD.ID);
+            User user = await _userRepository.GetInstanceOfType<User>(uUD.Token);
             if (!String.IsNullOrEmpty(uUD.FirstName)) user.FirstName = uUD.FirstName;
             if (!String.IsNullOrEmpty(uUD.LastName)) user.LastName = uUD.LastName;
             if (!String.IsNullOrEmpty(uUD.Email)) user.Email = uUD.Email;
@@ -60,7 +60,7 @@ namespace MoneyOrbit.Infrastructure.Services
             await _userRepository.UpdateData(user.ID, user);
             return new ResultObject() { Result = "success" };
         }
-        public async Task<ResultObject> UpdateUserPassword(string userID, string resetToken, string _newpassword)
+        public async Task<ResultObject> UpdateUserPassword(string resetToken, string _newpassword)
         {          
             if (String.IsNullOrEmpty(resetToken)) throw new NullReferenceException("You cannot have a null/empty resetToken");
             if (String.IsNullOrEmpty(_newpassword)) throw new NullReferenceException("You cannot have a null/empty _newpassword");
@@ -69,7 +69,7 @@ namespace MoneyOrbit.Infrastructure.Services
             throw new NotImplementedException("Terrence needs to implement resetToken authentication so that the rest of the method can" +
                 "fire. He of course needs to test it as well");
 
-            User user = await _userRepository.GetInstanceOfType<User>(userID);            
+            User user = await _userRepository.GetInstanceOfType<User>(resetToken);            
 
             var encryptedPasswordTuple = new Generators().PasswordEncryptor(_newpassword);
             user.PasswordHash = encryptedPasswordTuple.Item1;

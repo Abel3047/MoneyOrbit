@@ -5,6 +5,7 @@ using MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository;
 using MoneyOrbit.Application.Interfaces.IEntities;
 using MoneyOrbit.Application.Interfaces.IServices;
 using MoneyOrbit.Core.Entities;
+using System.Collections.ObjectModel;
 
 namespace MoneyOrbit.Infrastructure.Services
 {
@@ -12,20 +13,90 @@ namespace MoneyOrbit.Infrastructure.Services
     {
         private readonly ITransactionRepository<ITransaction> _transactionRepository;
         private readonly IAccountRepository<IAccount> _accountRepository;
+        private readonly IUserRepository<IUser> _userRepository;
 
         public TransactionService(ITransactionRepository<ITransaction> transactionRepository, 
-            IAccountRepository<IAccount> accountRepository)
+            IAccountRepository<IAccount> accountRepository, IUserRepository<IUser> userRepository)
         {
             _transactionRepository = transactionRepository;
             _accountRepository = accountRepository;
+            _userRepository = userRepository;
         }
+                
+        public async Task<ResultObject> GetUserTransactions(GetTransactionDto gTDTO)
+        {
+            //Checks if the Token is null or empty, which is a required parameter to get transactions
+            if (String.IsNullOrEmpty(gTDTO.Token)) return new ResultObject() { Error = "User Token is required to get transactions." };
 
+            //Gets the user from the Token
+            var user= await _userRepository.GetInstanceOfType<User>(gTDTO.Token);
+            //Checks if the user exists in the database
+            if(NullGuard.IsNull(user)) return new ResultObject() { Error = $"User was not found with the Token {gTDTO.Token}." };
+
+            //Gets the transactions from the acountIDs from the user
+            List<Transaction> transactions = new List<Transaction>();
+            foreach (var accID in user.AccountIDs)
+            {
+                var ts = await _transactionRepository.GetCollectionWithIdenticalProperty<Transaction>(accID);
+                if (ts != null && ts.Any())
+                {
+                    transactions.AddRange(ts);
+                }
+            }
+
+            #region Filtering options
+            // Checks if the accountIDs to filter by is null or empty, which is an optional parameter
+            if (gTDTO.AccIDs != null && gTDTO.AccIDs.Any())
+            {
+                transactions = transactions
+                    .Where(t => gTDTO.AccIDs.Contains(t.AccDebitedID) || gTDTO.AccIDs.Contains(t.AccCreditedID)).ToList();
+            }
+            // Checks if the start date and end date are both set, and filters the transactions by date range
+            if (gTDTO.StartDate.HasValue && gTDTO.EndDate.HasValue && gTDTO.StartDate <= gTDTO.EndDate)
+            {
+                transactions = transactions
+                    .Where(t => t.Date >= gTDTO.StartDate.Value && t.Date <= gTDTO.EndDate.Value).ToList();
+            }
+            else if (gTDTO.StartDate.HasValue)
+            {
+                transactions = transactions
+                    .Where(t => t.Date >= gTDTO.StartDate.Value).ToList();
+            }
+            else if (gTDTO.EndDate.HasValue)
+            {
+                transactions = transactions
+                    .Where(t => t.Date <= gTDTO.EndDate.Value).ToList();
+            }
+            // Checks if the transactions involve the suspense account (backlogged transactions)
+            if(gTDTO.suspenseTransactions)
+            {
+                string suspenseAccountID = await GetSuspenseAccountID();
+                transactions = transactions
+                    .Where(t => t.AccCreditedID == suspenseAccountID).ToList();
+            }
+
+            #endregion
+
+            if (NullGuard.IsNull(transactions) || !transactions.Any())
+                return new ResultObject() { Error = "No transactions were found for the user. Either adjust your filtering options " +
+                    "or give a different user" };
+
+            return new ResultObject()
+            {
+                Result = new Collection<Transaction>(transactions)
+            };
+        }
         public async Task<ResultObject> RecordTransaction(TransactionRecordDto trDTO)
         {
-            if(trDTO == null)
+            if(NullGuard.IsNull(trDTO))
                 return new ResultObject() { Error = "Transaction record data is null." };
             if (trDTO.Amount == 0)
                 return new ResultObject() { Error = "Transaction record has to have an amount to be recorded." };
+            if(trDTO.Date == default(DateTime) || trDTO.Date == DateTime.MinValue|| NullGuard.IsNull(trDTO.Date))
+                return new ResultObject() { Error = "Transaction record has to have a date to be recorded." };
+
+            //If accredited of the transaction account is null, it will set the value to a suspense account registered with the user
+            //If both of them are null it will throw the typical error
             //Checks if the important information (accountDebited) is not null or empty
             if (String.IsNullOrEmpty(trDTO.AccDebitedID))
                 return new ResultObject()
@@ -33,6 +104,8 @@ namespace MoneyOrbit.Infrastructure.Services
                     Error = "You are missing an important piece of information. Please provide  the ID of the account" +
                     " debited-'AccDebitedID'."
                 };
+            //If accountDebited is populated but the accountCredited is not, it will set the accountCredited to a suspense account
+            if (String.IsNullOrEmpty(trDTO.AccCreditedID)) trDTO.AccCreditedID = await GetSuspenseAccountID();
             //Checks if the account exists in the database
             if (!await DoesAccountExist(trDTO.AccDebitedID))
                 return new ResultObject() { Error = "The debited account does not exist in the database, and is a requisite parameter" };
@@ -43,7 +116,16 @@ namespace MoneyOrbit.Infrastructure.Services
             //Records the transaction in the database
             await _transactionRepository.UpdateData(transaction.ID,transaction);
 
-            return new ResultObject();
+            return new ResultObject() { Result = "success" };
+        }
+        public async Task<ResultObject> DeleteTransaction(DeleteTransactionDto dTDto)
+        {
+            await _transactionRepository.DeleteData(dTDto.transactionId);
+            var emptyaccount = await _accountRepository.GetInstanceOfType<Transaction>(dTDto.transactionId);
+            if (NullGuard.IsNotNull(emptyaccount)) return new ResultObject() { Error = $"Failed to delete the transaction with " +
+                $"the ID {dTDto.transactionId}" };
+
+            return new ResultObject() { Result = "success" };
         }
 
         #region Support methods
@@ -51,14 +133,23 @@ namespace MoneyOrbit.Infrastructure.Services
         /// Checks if the account already exists in the database by simply running the typical path and if account!=null it will 
         /// return true
         /// </summary>
-        /// <param name="username"></param>
+        /// <param name="accID"></param>
         /// <returns> False if it does not exist in the database</returns>
         private async Task<bool> DoesAccountExist(string accID)
         {
             var account = await _accountRepository.GetInstanceOfType<Account>(accID);
-            return account != null;
+            return NullGuard.IsNotNull(account);
         }
-        
+        private async Task<string> GetSuspenseAccountID()
+        {
+            //Note we use the environment variable because we can't have each person setting their own suspense account
+            var susAcc= (await _accountRepository
+                .GetCollectionWithIdenticalProperty<Account>(Environment.GetEnvironmentVariable("Firebase_Db_SuspenseAccount_name")))
+                .FirstOrDefault();
+            if (NullGuard.IsNull(susAcc)) return "1";
+            return susAcc.ID;
+        }
+            
         #endregion
     }
 }

@@ -3,16 +3,16 @@ using MoneyOrbit.Core.Entities;
 
 namespace MoneyOrbit.Application.Factory
 {
-    public class TransactionFactory :BaseFactory<Transaction>, ITransactionFactory<Transaction>
+    public class GoalFactory : BaseFactory<Goal>, IGoalFactory<Goal>
     {
-        public Transaction CreateTransaction(string? description, string accDebitedID, string? accCreditedID, decimal amount, DateTime? date)
+        public Goal CreateGoal(string goalName, string goalDescription, string accDebitedID, decimal amount, DateTime date)
         {
-            return new Transaction
+            return new Goal
             {
                 ID = generators.GenerateKey(DateTime.Now),
-                Description = description,
+                GoalName = goalName,
+                GoalDescription = goalDescription,
                 AccDebitedID = accDebitedID,
-                AccCreditedID = accCreditedID,
                 Amount = amount,
                 Date = date
             };

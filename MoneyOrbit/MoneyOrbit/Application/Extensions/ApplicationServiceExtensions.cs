@@ -18,11 +18,13 @@ namespace MoneyOrbit.Application.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<IGoalService, GoalService>();
 
             //Repositories
             services.AddScoped<IUserRepository<IUser>, UserRepository>();
             services.AddScoped<IAccountRepository<IAccount>, AccountRepository>();
             services.AddScoped<ITransactionRepository<ITransaction>, TransactionRepository>();
+            services.AddScoped<IGoalRepository<IGoal>, GoalRepository>();
 
             return services;
         }

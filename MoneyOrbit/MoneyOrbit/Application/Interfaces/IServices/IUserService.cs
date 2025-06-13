@@ -23,11 +23,10 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         /// <summary>
         /// Takes in the parameters to make a new passwordHash and passwordSalt for user based on the new password
         /// </summary>
-        /// <param name="userID"></param>
         /// <param name="resetToken"></param>
         /// <param name="_newpassword"></param>
         /// <returns></returns>
-        Task<ResultObject> UpdateUserPassword(string userID, string resetToken, string _newpassword);
+        Task<ResultObject> UpdateUserPassword(string resetToken, string _newpassword);
         /// <summary>
         /// Gets the user from the database by its ID
         /// </summary>
