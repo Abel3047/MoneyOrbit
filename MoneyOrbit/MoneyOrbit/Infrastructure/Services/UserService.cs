@@ -1,5 +1,6 @@
 ﻿using MoneyOrbit.Application.DTOs.UserDtos;
 using MoneyOrbit.Application.Factory;
+using MoneyOrbit.Application.Helpers;
 using MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository;
 using MoneyOrbit.Application.Interfaces.IEntities;
 using MoneyOrbit.Application.Interfaces.IServices;
@@ -7,7 +8,7 @@ using MoneyOrbit.Core.Entities;
 
 namespace MoneyOrbit.Infrastructure.Services
 {
-    public class UserService:IUserService
+    public class UserService : IUserService
     {
         private readonly IUserRepository<IUser> _userRepository;
 
@@ -28,18 +29,21 @@ namespace MoneyOrbit.Infrastructure.Services
                String.IsNullOrEmpty(uCD.FirstName) ||
                String.IsNullOrEmpty(uCD.LastName) ||
                String.IsNullOrEmpty(uCD.AccessLevel))
-                return new ResultObject() { Error = "You are missing an important piece of information.Please provide a" +
-                    " 'username'/password/firstname/lastname/AccessLevel."};
+                return new ResultObject()
+                {
+                    Error = "You are missing an important piece of information.Please provide a" +
+                    " 'username'/password/firstname/lastname/AccessLevel."
+                };
 
             //Checks if the email and phonenumber are in the correct format
             if (NullGuard.IsNotNull(uCD.Email) && !Validator.ValidateEmail(uCD.Email))
-                return new ResultObject(){ Error = "This isn't the correct format for an email." };
+                return new ResultObject() { Error = "This isn't the correct format for an email." };
             if (NullGuard.IsNotNull(uCD.PhoneNumber) && !Validator.ValidatePhoneNumber(uCD.PhoneNumber))
                 return new ResultObject() { Error = "This isn't the correct format for a PhoneNumber." };
 
             // Check if the user already exists
             if (await DoesUserNameExist(uCD.UserName))
-            return new ResultObject() { Error = "User already exists" };
+                return new ResultObject() { Error = "User already exists" };
 
             //Creates the user with information
             var user = new UserFactory()
@@ -47,7 +51,7 @@ namespace MoneyOrbit.Infrastructure.Services
 
             //Stores info in the database
             await _userRepository.UpdateData(user.ID, user);
-            return  new ResultObject() { Result= user.ID};
+            return new ResultObject() { Result = user.ID };
         }
         public async Task<ResultObject> UpdateUser(UserUpdateDto uUD)
         {
@@ -60,7 +64,7 @@ namespace MoneyOrbit.Infrastructure.Services
             return new ResultObject() { Result = "success" };
         }
         public async Task<ResultObject> UpdateUserPassword(string resetToken, string _newpassword)
-        {          
+        {
             if (String.IsNullOrEmpty(resetToken)) throw new NullReferenceException("You cannot have a null/empty resetToken");
             if (String.IsNullOrEmpty(_newpassword)) throw new NullReferenceException("You cannot have a null/empty _newpassword");
 
@@ -68,7 +72,7 @@ namespace MoneyOrbit.Infrastructure.Services
             throw new NotImplementedException("Terrence needs to implement resetToken authentication so that the rest of the method can" +
                 "fire. He of course needs to test it as well");
 
-            User user = await _userRepository.GetInstanceOfType<User>(resetToken);            
+            User user = await _userRepository.GetInstanceOfType<User>(resetToken);
 
             var encryptedPasswordTuple = new Generators().PasswordEncryptor(_newpassword);
             user.PasswordHash = encryptedPasswordTuple.Item1;
@@ -85,11 +89,11 @@ namespace MoneyOrbit.Infrastructure.Services
         }
         #region Support methods
         /// <summary>
-            /// Checks if the username already exists in the database by checking if the username is within a certain path configuration
-            /// </summary>
-            /// <param name="username"></param>
-            /// <returns> False if it does not exist in the database</returns>
-        private async Task<bool> DoesUserNameExist(string username)=> await _userRepository.DoesPropertyExist(username);
+        /// Checks if the username already exists in the database by checking if the username is within a certain path configuration
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns> False if it does not exist in the database</returns>
+        private async Task<bool> DoesUserNameExist(string username) => await _userRepository.DoesPropertyExist(username);
         #endregion
     }
 }
