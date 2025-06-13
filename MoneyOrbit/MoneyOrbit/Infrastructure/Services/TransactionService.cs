@@ -22,7 +22,7 @@ namespace MoneyOrbit.Infrastructure.Services
             _accountRepository = accountRepository;
             _userRepository = userRepository;
         }
-
+                
         public async Task<ResultObject> GetUserTransactions(GetTransactionDto gTDTO)
         {
             //Checks if the Token is null or empty, which is a required parameter to get transactions
@@ -115,6 +115,15 @@ namespace MoneyOrbit.Infrastructure.Services
                 .CreateTransaction(trDTO.Description,trDTO.AccDebitedID,trDTO.AccCreditedID, trDTO.Amount, trDTO.Date);
             //Records the transaction in the database
             await _transactionRepository.UpdateData(transaction.ID,transaction);
+
+            return new ResultObject() { Result = "success" };
+        }
+        public async Task<ResultObject> DeleteTransaction(DeleteTransactionDto dTDto)
+        {
+            await _transactionRepository.DeleteData(dTDto.transactionId);
+            var emptyaccount = await _accountRepository.GetInstanceOfType<Transaction>(dTDto.transactionId);
+            if (NullGuard.IsNotNull(emptyaccount)) return new ResultObject() { Error = $"Failed to delete the transaction with " +
+                $"the ID {dTDto.transactionId}" };
 
             return new ResultObject() { Result = "success" };
         }

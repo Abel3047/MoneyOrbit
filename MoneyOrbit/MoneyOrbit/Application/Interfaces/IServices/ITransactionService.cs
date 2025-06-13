@@ -5,6 +5,8 @@ namespace MoneyOrbit.Application.Interfaces.IServices
 {
     public interface ITransactionService
     {
+        Task<ResultObject> DeleteTransaction(DeleteTransactionDto deleteTransactionDto);
+
         /// <summary>
         /// This method takes the user Token gets all the accounts involved with the user. 
         /// <para>It then goes ahead to search all transactions involved with those accounts. Since those accounts are only involved
