@@ -1,4 +1,5 @@
-﻿using MoneyOrbit.Application.Interfaces.IApplication.IFactories;
+﻿using System.Security;
+using MoneyOrbit.Application.Interfaces.IApplication.IFactories;
 using MoneyOrbit.Core.Entities;
 using static MoneyOrbit.Core.Models.Enums;
 
@@ -12,10 +13,10 @@ namespace MoneyOrbit.Application.Factory
             //This takes in the _accesslevel given by the method and tries to convert it to one of the enum list. 
             //If it doesn't show up as one of them it will spit out that error, 
             //else it will set the variable permission and assign it to the User below
-            if (!Enum.TryParse(_accesslevel, out UserPermissions permission))
-            {
-                throw new ArgumentException("Invalid user permission");
-            }
+            //if (!Enum.TryParse(_accesslevel, out UserPermissions permission))
+            //{
+            //    throw new ArgumentException("Invalid user permission");
+            //}
 
             Tuple<byte[], byte[]> encryptedPasswordTuple = generators.PasswordEncryptor(_password);
             User _user = new User()
@@ -28,8 +29,9 @@ namespace MoneyOrbit.Application.Factory
                 ID = generators.GenerateKey(DateTime.Now),
                 PasswordHash = encryptedPasswordTuple.Item1,
                 PasswordSalt = encryptedPasswordTuple.Item2,
-                AccessLevel = permission.ToString(),
-                AccountIDs= []
+                //AccessLevel = permission.ToString(),
+                AccessLevel = _accesslevel,
+                AccountIDs = []
             };
             return _user;
         }
