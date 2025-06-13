@@ -837,3 +837,5 @@ $RECYCLE.BIN/
 /MoneyOrbit/MoneyOrbit/appsettings.*
 /MoneyOrbit/MoneyOrbit/obj/Debug/net8.0/MoneyOrbit.GeneratedMSBuildEditorConfig.editorconfig
 /MoneyOrbit/MoneyOrbit/Properties/launchSettings.json
+/MoneyOrbit/MoneyOrbit/obj/Debug/net8.0/MoneyOrbit.AssemblyInfoInputs.cache
+/MoneyOrbit/MoneyOrbit/obj/Debug/net8.0/MoneyOrbit.AssemblyInfo.cs
