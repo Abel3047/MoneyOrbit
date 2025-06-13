@@ -54,5 +54,6 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         /// <param name="getGoalsForUserDto"></param>
         /// <returns></returns>
         Task<ResultObject> GetGoalsForUser(GetGoalsForUserDto getGoalsForUserDto);
+        Task<ResultObject> DeleteGoal(DeleteGoalDto deleteGoalDto);
     }
 }

@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 
 namespace MoneyOrbit.Infrastructure.Services
 {
-    public class GoalService: IGoalService
+    public class GoalService : IGoalService
     {
         private readonly IGoalRepository<IGoal> _goalRepository;
         private readonly IAccountRepository<IAccount> _accountRepository;
@@ -29,7 +29,7 @@ namespace MoneyOrbit.Infrastructure.Services
                 
         public async Task<ResultObject> CreateGoal(GoalCreationDto gDTO)
         {
-            if(gDTO == null|| NullGuard.IsNull(gDTO))
+            if(NullGuard.IsNull(gDTO))
                 return new ResultObject() { Error = "Goal creation data is null." };
             if (gDTO.Amount == 0)
                 return new ResultObject() { Error = "Goal creation data has to have an amount to be recorded." };
@@ -56,7 +56,7 @@ namespace MoneyOrbit.Infrastructure.Services
         public async Task<ResultObject> UpdateGoal(GoalUpdateDto guDto)
         {
             //Checks if the goal update data is null
-            if (guDto == null)
+            if (NullGuard.IsNull(guDto))
                 return new ResultObject() { Error = "Goal creation data is null." };
             if(String.IsNullOrEmpty(guDto.ID))
                 return new ResultObject() { Error = "Goal ID is required to update a goal." };
@@ -173,6 +173,19 @@ namespace MoneyOrbit.Infrastructure.Services
             };
 
         }
+        public async Task<ResultObject> DeleteGoal(DeleteGoalDto dGDto)
+        {
+            //Checks if the goal update data is null
+            if (NullGuard.IsNull(dGDto))
+                return new ResultObject() { Error = "Goal delete data is null." };
+            if (String.IsNullOrEmpty(dGDto.GoalID))
+                return new ResultObject() { Error = "Goal ID is required to update a goal." };
+
+            await _goalRepository.DeleteData(dGDto.GoalID);
+
+            return new ResultObject() { Result = "success" };
+        }
+
         #region Support methods
         /// <summary>
         /// Checks if the account already exists in the database by simply running the typical path and if account!=null it will 

@@ -88,7 +88,7 @@ namespace MoneyOrbit.Infrastructure.Services
         }
         public async Task<ResultObject> RecordTransaction(TransactionRecordDto trDTO)
         {
-            if(trDTO == null)
+            if(NullGuard.IsNull(trDTO))
                 return new ResultObject() { Error = "Transaction record data is null." };
             if (trDTO.Amount == 0)
                 return new ResultObject() { Error = "Transaction record has to have an amount to be recorded." };
@@ -129,7 +129,7 @@ namespace MoneyOrbit.Infrastructure.Services
         private async Task<bool> DoesAccountExist(string accID)
         {
             var account = await _accountRepository.GetInstanceOfType<Account>(accID);
-            return account != null;
+            return NullGuard.IsNotNull(account);
         }
         private async Task<string> GetSuspenseAccountID()
         {

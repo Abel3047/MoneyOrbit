@@ -22,7 +22,7 @@ namespace MoneyOrbit.Infrastructure.Services
         public async Task<ResultObject> CreateAccount(AccountCreationDto aCD)
         {
             //Checks to see if the DTO is empty
-            if (aCD == null)
+            if (NullGuard.IsNull(aCD))
                 return new ResultObject() { Error = "Account creation data is null." };
 
             //Checks if the important information is not null or empty

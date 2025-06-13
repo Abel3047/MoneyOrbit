@@ -20,7 +20,7 @@ namespace MoneyOrbit.Infrastructure.Services
         public async Task<ResultObject> RegisterUser(UserCreationDto uCD)
         {
             //Checks to see if the DTO is empty
-            if (uCD == null)
+            if (NullGuard.IsNull(uCD))
                 return new ResultObject() { Error = "User creation data is null." };
 
             //Checks if the important information is not null or empty
@@ -33,9 +33,9 @@ namespace MoneyOrbit.Infrastructure.Services
                     " 'username'/password/firstname/lastname/AccessLevel."};
 
             //Checks if the email and phonenumber are in the correct format
-            if (uCD.Email != null && !Validator.ValidateEmail(uCD.Email))
+            if (NullGuard.IsNotNull(uCD.Email) && !Validator.ValidateEmail(uCD.Email))
                 return new ResultObject(){ Error = "This isn't the correct format for an email." };
-            if (uCD.PhoneNumber != null && !Validator.ValidatePhoneNumber(uCD.PhoneNumber))
+            if (NullGuard.IsNotNull(uCD.PhoneNumber) && !Validator.ValidatePhoneNumber(uCD.PhoneNumber))
                 return new ResultObject() { Error = "This isn't the correct format for a PhoneNumber." };
 
             // Check if the user already exists
