@@ -1,4 +1,5 @@
 ﻿using MoneyOrbit.Application.Interfaces.IEntities;
+using MoneyOrbit.Core.Entities;
 
 namespace MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository
 {
@@ -8,5 +9,6 @@ namespace MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository
     /// </summary>
     public interface IUserRepository<TUser> : IEntityRepository<TUser> where TUser : IUser
     {
+        Task<User> GetUserByUsernameAsync(string username);
     }
 }

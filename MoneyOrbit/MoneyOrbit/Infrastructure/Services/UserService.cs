@@ -24,10 +24,7 @@ namespace MoneyOrbit.Infrastructure.Services
 
         public async Task<AuthenticationResponseDto> Login(LoginDto loginDto)
         {
-            // Note: This assumes you can fetch a user by their username using the repository.
-            // If your GetInstanceOfType only works with ID, you'll need another method
-            // in your repository like `GetUserByUsernameAsync`.
-            var user = await _userRepository.GetInstanceOfType<User>(loginDto.UserName);
+            var user = await _userRepository.GetUserByUsernameAsync(loginDto.UserName);
 
             if (user == null)
             {
@@ -36,7 +33,7 @@ namespace MoneyOrbit.Infrastructure.Services
 
             if (!VerifyPasswordHash(loginDto.Password, user.PasswordHash, user.PasswordSalt))
             {
-                throw new UnauthorizedAccessException("Invalid username or password.");
+                throw new UnauthorizedAccessException("Invalid password.");
             }
 
             // If credentials are valid, generate the JWT
@@ -109,8 +106,8 @@ namespace MoneyOrbit.Infrastructure.Services
             if (string.IsNullOrEmpty(_newpassword)) throw new NullReferenceException("You cannot have a null/empty _newpassword");
 
             //Code that @Terrence has to implement for resetToken authentication
-            throw new NotImplementedException("Terrence needs to implement resetToken authentication so that the rest of the method can" +
-                "fire. He of course needs to test it as well");
+            //throw new NotImplementedException("Terrence needs to implement resetToken authentication so that the rest of the method can" +
+            //    "fire. He of course needs to test it as well");
 
             // This code will only execute after the above check is implemented and passes
             User user = await _userRepository.GetInstanceOfType<User>(userID);

@@ -58,9 +58,8 @@ namespace MoneyOrbit.Infrastructure.Controllers
             return NoContent(); // Success, no content to return
         }
 
-        // Example of an Admin-only endpoint
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")] // Requires the user's token to have an 'Admin' role claim
+        [Authorize(Roles = "Administrative")] // Requires the user's token to have an 'Admin' role claim
         public async Task<IActionResult> GetUserById(string id)
         {
             var user = await _userService.GetUserById(id);
