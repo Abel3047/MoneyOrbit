@@ -46,6 +46,16 @@ namespace MoneyOrbit.Infrastructure.Controllers
 
             return Ok("Goal updated successfully.");
         }
+        [HttpPost("DeleteGoal")]
+        public async Task<ActionResult> DeleteGoal(DeleteGoalDto deleteGoalDto)
+        {
+            ResultObject resultObject = await _goalService.DeleteGoal(deleteGoalDto);
+
+            if (resultObject.Error != null)
+                return BadRequest(resultObject.Error);
+
+            return Ok("Goal deleted successfully.");
+        }
 
         [HttpGet("GetGoalAmountAccomplished")]
         public async Task<ActionResult<ResultObject>> GetGoalAmountAccomplished(GoalAmountAccomplishedDto goalAmountAccomplishedDto)
@@ -67,5 +77,16 @@ namespace MoneyOrbit.Infrastructure.Controllers
 
             return resultObject;
         }
+        [HttpGet("GetGoalsForUser")]
+        public async Task<ActionResult<ResultObject>> GetGoalsForUser(GetGoalsForUserDto getGoalsForUserDto)
+        {
+            ResultObject resultObject = await _goalService.GetGoalsForUser(getGoalsForUserDto);
+
+            if (resultObject.Error != null)
+                return BadRequest(resultObject.Error);
+
+            return resultObject;
+        }
+                
     }
 }

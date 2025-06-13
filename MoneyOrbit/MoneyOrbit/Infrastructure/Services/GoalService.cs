@@ -5,27 +5,31 @@ using MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository;
 using MoneyOrbit.Application.Interfaces.IEntities;
 using MoneyOrbit.Application.Interfaces.IServices;
 using MoneyOrbit.Core.Entities;
+using System.Collections.ObjectModel;
 
 namespace MoneyOrbit.Infrastructure.Services
 {
-    public class GoalService: IGoalService
+    public class GoalService : IGoalService
     {
         private readonly IGoalRepository<IGoal> _goalRepository;
         private readonly IAccountRepository<IAccount> _accountRepository;
         private readonly ITransactionRepository<ITransaction> _transactionRepository;
+        private readonly IUserRepository<IUser> _userRepository;
 
         public GoalService(IGoalRepository<IGoal> goalRepository, 
             IAccountRepository<IAccount> accountRepository,
-            ITransactionRepository<ITransaction> transactionRepository)
+            ITransactionRepository<ITransaction> transactionRepository,
+            IUserRepository<IUser> userRepository)
         {
             _goalRepository = goalRepository;
             _accountRepository = accountRepository;
             _transactionRepository = transactionRepository;
+            _userRepository = userRepository;
         }
                 
         public async Task<ResultObject> CreateGoal(GoalCreationDto gDTO)
         {
-            if(gDTO == null|| NullGuard.IsNull(gDTO))
+            if(NullGuard.IsNull(gDTO))
                 return new ResultObject() { Error = "Goal creation data is null." };
             if (gDTO.Amount == 0)
                 return new ResultObject() { Error = "Goal creation data has to have an amount to be recorded." };
@@ -52,7 +56,7 @@ namespace MoneyOrbit.Infrastructure.Services
         public async Task<ResultObject> UpdateGoal(GoalUpdateDto guDto)
         {
             //Checks if the goal update data is null
-            if (guDto == null)
+            if (NullGuard.IsNull(guDto))
                 return new ResultObject() { Error = "Goal creation data is null." };
             if(String.IsNullOrEmpty(guDto.ID))
                 return new ResultObject() { Error = "Goal ID is required to update a goal." };
@@ -105,15 +109,100 @@ namespace MoneyOrbit.Infrastructure.Services
 
         public async Task<ResultObject> GetGoal(GetGoalDto getGoalDto)
         {
-            var goal = await GetGoalfromID(getGoalDto.GoalID);
-            //Returns the amount accomplished by the goal
-            return new ResultObject() { Result = goal };
+            try
+            {
+                //Check if the goal exists in the database
+                var goal = await GetGoalfromID(getGoalDto.GoalID);
+                return new ResultObject() { Result = goal };
+            }
+            catch (Exception ex)
+            {
+                return new ResultObject() { Error = ex.Message };
+                throw;
+            }            
         }
         public async Task<ResultObject> GetGoalAmountAccomplished(GoalAmountAccomplishedDto gAADto)
         {
             var goal = await GetGoalfromID(gAADto.GoalID);
             //Returns the amount accomplished by the goal
             return new ResultObject() { Result = goal.AmountAccomplished };
+        }
+        public async Task<ResultObject> GetGoalsForUser(GetGoalsForUserDto gGFUDto)
+        {
+            //Checks if the Token is null or empty, which is a required parameter to get goals
+            if (String.IsNullOrEmpty(gGFUDto.Token)) return new ResultObject() { Error = "User Token is required to get Goals." };
+
+            //Gets the user from the Token
+            var user = await _userRepository.GetInstanceOfType<User>(gGFUDto.Token);
+            //Checks if the user exists in the database
+            if (NullGuard.IsNull(user)) return new ResultObject() { Error = $"User was not found with the Token {gGFUDto.Token}." };
+
+            //Gets the goals from the acountIDs from the user
+            List<Goal> goals = new List<Goal>();
+            foreach (var accID in user.AccountIDs)
+            {
+                var gs = await _goalRepository.GetCollectionWithIdenticalProperty<Goal>(accID);
+                if (gs != null && gs.Any())
+                {
+                    goals.AddRange(gs);
+                }
+            }
+
+            #region Filtering options
+            // Checks if the start date and end date are both set, and filters the goals by date range
+            if (gGFUDto.StartDate.HasValue && gGFUDto.EndDate.HasValue && gGFUDto.StartDate <= gGFUDto.EndDate)
+            {
+                goals = goals
+                    .Where(t => t.Date >= gGFUDto.StartDate.Value && t.Date <= gGFUDto.EndDate.Value).ToList();
+            }
+            else if (gGFUDto.StartDate.HasValue)
+            {
+                goals = goals
+                    .Where(t => t.Date >= gGFUDto.StartDate.Value).ToList();
+            }
+            else if (gGFUDto.EndDate.HasValue)
+            {
+                goals = goals
+                    .Where(t => t.Date <= gGFUDto.EndDate.Value).ToList();
+            }           
+
+            #endregion
+
+            if (NullGuard.IsNull(goals) || !goals.Any())
+                return new ResultObject()
+                {
+                    Error = "No goals were found for the user. Either adjust your filtering options " +
+                    "or give a different user"
+                };
+
+            return new ResultObject()
+            {
+                Result = new Collection<Goal>(goals)
+            };
+
+        }
+        public async Task<ResultObject> DeleteGoal(DeleteGoalDto dGDto)
+        {
+            //Checks if the goal update data is null
+            if (NullGuard.IsNull(dGDto))
+                return new ResultObject() { Error = "Goal delete data is null." };
+            if (String.IsNullOrEmpty(dGDto.GoalID))
+                return new ResultObject() { Error = "Goal ID is required to update a goal." };
+            try
+            {
+                //Check if the goal exists in the database
+                var goalquestion = await GetGoalfromID(dGDto.GoalID);
+                    
+            }
+            catch (Exception ex)
+            {
+                return new ResultObject() { Error =  ex.Message };
+                throw;
+            }
+           
+            await _goalRepository.DeleteData(dGDto.GoalID);
+
+            return new ResultObject() { Result = "success" };
         }
 
         #region Support methods
@@ -149,7 +238,7 @@ namespace MoneyOrbit.Infrastructure.Services
                 throw new NullReferenceException("The goal does not exist in the database, and is a requisite parameter");
             return goal;
         }
-        
+
         #endregion
     }
 }
