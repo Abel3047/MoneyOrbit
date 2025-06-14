@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage'; // Import the LoginPage component
 import Dashboard from './Components/Dashboard/Dashboard'; // Import the new Dashboard component
 import './Components/Dashboard/Dashboard.css'; // Import the CSS for the dashboard
+import TransactionsPage from './Components/TransactionsPage/TransactionsPage'; // Import the TransactionsPage component
 
 function App() {
   return (
