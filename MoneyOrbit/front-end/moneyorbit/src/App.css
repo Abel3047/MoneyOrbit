@@ -1,38 +1,121 @@
-.App {
-  text-align: center;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif; /* Or your preferred font */
+  background-color: #e0e0e0; /* A light background for the entire page */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Ensure it takes full viewport height */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.app-container {
+  display: flex;
+  width: 90%; /* Adjust as needed */
+  max-width: 1200px; /* Max width for larger screens */
+  height: 70vh; /* Adjust height as needed */
+  min-height: 500px; /* Minimum height */
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Sidebar Styles */
+.sidebar {
+  width: 250px; /* Fixed width for the sidebar */
+  background: linear-gradient(180deg, #1e3a5a, #2a4c70); /* Darker blue gradient */
+  color: white;
+  padding: 30px 0;
   display: flex;
   flex-direction: column;
+  justify-content: space-between; /* Pushes bottom links to the bottom */
+  align-items: flex-start;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.logo-section {
+  padding-left: 30px;
+  margin-bottom: 50px; /* Space between logo and navigation */
+}
+
+.fnb-text {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.moneyorbit-text {
+  font-size: 0.9em;
+  display: block; /* Puts it on a new line */
+  opacity: 0.8;
+}
+
+.navigation ul, .bottom-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.nav-item {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  padding: 12px 30px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1.1em;
 }
 
-.App-link {
-  color: #61dafb;
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Slight highlight on hover */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.nav-item.active {
+  background-color: rgba(255, 255, 255, 0.15); /* Distinct background for active item */
+}
+
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  background-color: white; /* White dot */
+  border-radius: 50%;
+  margin-right: 15px;
+  flex-shrink: 0; /* Prevent dot from shrinking */
+}
+
+.bottom-links {
+  margin-top: auto; /* Pushes this section to the bottom */
+  width: 100%;
+}
+
+.bottom-links .nav-item {
+  padding: 10px 30px; /* Slightly less padding for bottom links */
+}
+
+/* Main Content Styles */
+.main-content {
+  flex-grow: 1; /* Takes up remaining space */
+  background: linear-gradient(135deg, #a7c0de, #e0efff); /* Light blue gradient */
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  padding: 40px;
+  color: #333; /* Dark text color */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align content to the left */
+}
+
+.greeting {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30px; /* Space below the greeting */
+}
+
+.content-placeholder {
+  width: 100%;
+  height: calc(100% - 100px); /* Adjust height based on greeting and padding */
+  /* You can add a border or background here to visualize the content area */
+  /* border: 1px dashed #999; */
+  /* background-color: rgba(255, 255, 255, 0.3); */
+  border-radius: 10px;
 }
