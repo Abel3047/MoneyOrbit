@@ -1,16 +1,22 @@
-import apiClient from "./api/apiClient"; // Your pre-configured axios instance from the previous examples
-import { Goal } from "./types/Goal"; // We will define this type in the next step
+import apiClient from "./api/apiClient";
+import { Goal, ApiResponse } from "./types/Goal"; // Import both types
 
 /**
- * Fetches all goals from the backend API.
- * This function knows the exact endpoint and what data shape to expect.
+ * Fetches goals from the backend and adapts the response shape.
  */
 export const getGoals = async (): Promise<Goal[]> => {
-  console.log("Fetching goals from the API...");
+  // The backend returns a single object inside the wrapper, not an array.
+  const response = await apiClient.get<ApiResponse<Goal>>("/api/goals/get-goals");
+
+  // Check if the response or the result is empty
+  if (!response.data || !response.data.result) {
+    return []; // Return an empty array if there's no data
+  }
+
+  // The backend sent a single object, but our UI expects an array.
+  // We must "unwrap" the result and then put it inside an array.
+  const singleGoal = response.data.result;
   
-  // This makes the GET request to: [your_base_url]/api/goals/get-goals
-  const response = await apiClient.get<Goal[]>("/api/goals/get-goals");
-  
-  // The 'data' property on the response will contain the array of Goal objects
-  return response.data;
+  // Return an array containing the single goal object
+  return [singleGoal]; 
 };

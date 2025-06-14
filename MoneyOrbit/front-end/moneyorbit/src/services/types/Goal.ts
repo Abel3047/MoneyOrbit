@@ -10,3 +10,8 @@ export interface Goal {
     description: string;
     amount: number;
   }
+
+export interface ApiResponse<T> {
+    result: T;
+    error: string | null;
+}
