@@ -26,6 +26,8 @@ namespace MoneyOrbit.Application.Extensions
             services.AddScoped<IAccountRepository<IAccount>, AccountRepository>();
             services.AddScoped<ITransactionRepository<ITransaction>, TransactionRepository>();
             services.AddScoped<IGoalRepository<IGoal>, GoalRepository>();
+            services.AddScoped<IGoalRepository<ITrophyRepository, TrophyRepository>();
+
 
             return services;
         }
