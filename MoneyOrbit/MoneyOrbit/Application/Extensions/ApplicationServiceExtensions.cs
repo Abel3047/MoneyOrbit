@@ -1,5 +1,6 @@
 ﻿using MoneyOrbit.Application.Data.Repository;
 using MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository;
+using MoneyOrbit.Application.Interfaces.IApplication.IHelper;
 using MoneyOrbit.Application.Interfaces.IEntities;
 using MoneyOrbit.Application.Interfaces.IServices;
 using MoneyOrbit.Infrastructure.Services;
@@ -19,6 +20,7 @@ namespace MoneyOrbit.Application.Extensions
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IGoalService, GoalService>();
+            services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
 
             //Repositories
             services.AddScoped<IUserRepository<IUser>, UserRepository>();

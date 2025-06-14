@@ -1,7 +1,11 @@
-﻿using MoneyOrbit.Application.DTOs.UserDtos;
+﻿using System.Security.Cryptography;
+using System.Text;
+using MoneyOrbit.Application.DTOs.AuthDtos;
+using MoneyOrbit.Application.DTOs.UserDtos;
 using MoneyOrbit.Application.Factory;
 using MoneyOrbit.Application.Helpers;
 using MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository;
+using MoneyOrbit.Application.Interfaces.IApplication.IHelper;
 using MoneyOrbit.Application.Interfaces.IEntities;
 using MoneyOrbit.Application.Interfaces.IServices;
 using MoneyOrbit.Core.Entities;
@@ -11,10 +15,12 @@ namespace MoneyOrbit.Infrastructure.Services
     public class UserService:IUserService
     {
         private readonly IUserRepository<IUser> _userRepository;
+        private readonly IJwtTokenProvider _jwtTokenProvider;
 
-        public UserService(IUserRepository<IUser> userRepository)
+        public UserService(IUserRepository<IUser> userRepository, IJwtTokenProvider jwtTokenProvider)
         {
             this._userRepository = userRepository;
+            this._jwtTokenProvider = jwtTokenProvider;
         }
 
         public async Task<ResultObject> RegisterUser(UserCreationDto uCD)
@@ -49,6 +55,32 @@ namespace MoneyOrbit.Infrastructure.Services
             //Stores info in the database
             await _userRepository.UpdateData(user.ID, user);
             return  new ResultObject() { Result= user.ID};
+        }
+        public async Task<AuthenticationResponseDto> Login(LoginDto loginDto)
+        {
+            var user = await _userRepository.GetInstanceOfType<User>(loginDto.UserName);
+
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("Invalid username or password.");
+            }
+
+            if (!VerifyPasswordHash(loginDto.Password, user.PasswordHash, user.PasswordSalt))
+            {
+                throw new UnauthorizedAccessException("Invalid password.");
+            }
+
+            // If credentials are valid, generate the JWT
+            var token = _jwtTokenProvider.CreateToken(user);
+
+            // Map to the response DTO
+            return new AuthenticationResponseDto
+            {
+                Id = user.ID,
+                UserName = user.UserName,
+                Email = user.Email,
+                Token = token
+            };
         }
         public async Task<ResultObject> UpdateUser(UserUpdateDto uUD)
         {
@@ -91,6 +123,19 @@ namespace MoneyOrbit.Infrastructure.Services
             /// <param name="username"></param>
             /// <returns> False if it does not exist in the database</returns>
         private async Task<bool> DoesUserNameExist(string username)=> await _userRepository.DoesPropertyExist(username);
+        /// <summary>
+        /// Verifies a password against a stored hash and salt.
+        /// </summary>
+        /// <param name="password">The plain-text password to verify.</param>
+        /// <param name="passwordHash">The stored password hash.</param>
+        /// <param name="passwordSalt">The stored password salt.</param>
+        /// <returns>True if the password is valid, otherwise false.</returns>
+        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using var hmac = new HMACSHA512(passwordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return computedHash.SequenceEqual(passwordHash);
+        }
         #endregion
     }
 }
