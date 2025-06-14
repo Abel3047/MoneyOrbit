@@ -12,7 +12,7 @@ using MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository;
 
 namespace MoneyOrbit.Infrastructure.Services
 {
-    public class AiServices:IAiService
+    public class AiService:IAiService
     {
         private readonly string _projectId;
         private readonly string _location;
@@ -21,7 +21,7 @@ namespace MoneyOrbit.Infrastructure.Services
         private readonly IGoalService _goalService;
         private readonly ITransactionRepository<ITransaction> _transactionRepository;
 
-        public AiServices(IGoalService goalService, ITransactionRepository<ITransaction> transactionRepository)
+        public AiService(IGoalService goalService, ITransactionRepository<ITransaction> transactionRepository)
         {
             _projectId = Environment.GetEnvironmentVariable("Google_Cloud_Project_ID");
             _location = Environment.GetEnvironmentVariable("Google_Cloud_Project_Location");
@@ -29,9 +29,8 @@ namespace MoneyOrbit.Infrastructure.Services
             this._transactionRepository = transactionRepository;
         }
 
-        public async Task<string> GeneratePrompt()
+        private async Task<string> GeneratePrompt(GetGoalDto getGoalDto)
         {
-            GetGoalDto getGoalDto = new GetGoalDto { GoalID = _projectId };
             Goal goal =(Goal)(await _goalService.GetGoal(getGoalDto)).Result;
 
             //we need date accDebited, accCredit, amount
@@ -43,8 +42,7 @@ namespace MoneyOrbit.Infrastructure.Services
             var promptBuilder = new StringBuilder();
 
             // Setting the persona and context for the AI
-            promptBuilder.AppendLine("You are a helpful and friendly financial budgeting assistant.");
-            promptBuilder.AppendLine("Your goal is to provide encouraging and actionable advice to help users improve their budget and reach their financial goals.");
+            promptBuilder.AppendLine("You are a friendly budgeting assistant who offers encouraging, actionable advice to help users improve their finances and reach their goals.");
             promptBuilder.AppendLine("Analyze the following description of the user's goal for a specific account, then provide feedback.");
             promptBuilder.AppendLine("---");
 
@@ -72,10 +70,10 @@ namespace MoneyOrbit.Infrastructure.Services
             //return the string that it wants
             return promptBuilder.ToString();
         }
-        public async Task<string> GetResponse()
+        public async Task<string> GetAdvice(GetGoalDto getGoalDto)
         {
 
-            string prompt = await GeneratePrompt();
+            string prompt = await GeneratePrompt(getGoalDto);
 
             var predictionServiceClient = new PredictionServiceClientBuilder
             {
