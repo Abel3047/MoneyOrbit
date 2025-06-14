@@ -27,5 +27,6 @@ namespace MoneyOrbit.Core.Entities
         public byte[] PasswordSalt { get; set; }
 
         public string[]? AccountIDs { get; set; }
+        public string AccessLevel { get; set; }
     }
 }

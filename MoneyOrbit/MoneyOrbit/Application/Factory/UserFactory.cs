@@ -1,5 +1,6 @@
 ﻿using MoneyOrbit.Application.Interfaces.IApplication.IFactories;
 using MoneyOrbit.Core.Entities;
+using static MoneyOrbit.Core.Models.Enums;
 
 namespace MoneyOrbit.Application.Factory
 {

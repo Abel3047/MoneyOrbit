@@ -1,4 +1,7 @@
-﻿using MoneyOrbit.Application.Interfaces.IServices;
+﻿using MoneyOrbit.Application.Data.Repository;
+using MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository;
+using MoneyOrbit.Application.Interfaces.IEntities;
+using MoneyOrbit.Application.Interfaces.IServices;
 using MoneyOrbit.Infrastructure.Services;
 
 namespace MoneyOrbit.Application.Extensions

@@ -23,8 +23,8 @@ namespace MoneyOrbit.Infrastructure.Services
 
         public AiServices(IGoalService goalService, ITransactionRepository<ITransaction> transactionRepository)
         {
-            _projectId = Environment.GetEnvironmentVariable("_projectId");
-            _location = Environment.GetEnvironmentVariable("_location");
+            _projectId = Environment.GetEnvironmentVariable("Google_Cloud_Project_ID");
+            _location = Environment.GetEnvironmentVariable("Google_Cloud_Project_Location");
             this._goalService = goalService;
             this._transactionRepository = transactionRepository;
         }
