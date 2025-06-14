@@ -114,15 +114,15 @@
     background-color: #2a6f7f;
 }
 .wrapper p a {
-    color: #54ACBF;
+    color: #fdfdfd;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 .wrapper p a:hover {
-    color: #3a8f9f;
+    color: #fb9107;
 }
 .wrapper p a:active {
-    color: #2a6f7f;
+    color: #fda80a;
 }
 .wrapper .error {
     color: red;
@@ -133,29 +133,4 @@
     color: green;
     font-size: 14px;
     margin-top: 10px;
-}
-.wrapper .loading {
-    color: #54ACBF;
-    font-size: 14px;
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-}
-.wrapper .loading img {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-}
-.wrapper .loading span {
-    font-size: 14px;
-}
-.wrapper .loading span::before {
-    content: '';
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid #54ACBF;
-    border-top-color: transparent;
-    animation: spin 1s linear infinite;
 }
