@@ -1,5 +1,5 @@
 import React from 'react';
-import GoalCard from '../App/GoalCard';
+import GoalCard from '../components/GoalCard';
 
 const GoalsPage = () => {
     // Example data
@@ -9,6 +9,13 @@ const GoalsPage = () => {
         { title: 'Emergency Fund', description: 'Build a $5,000 emergency fund.' },
         { title: 'Home Renovation', description: 'Save $8,000 for kitchen remodel.' },
     ];
+
+const mainStyle = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+  gap: '20px',
+  padding: '20px',
+};
 
     return (
         <div>

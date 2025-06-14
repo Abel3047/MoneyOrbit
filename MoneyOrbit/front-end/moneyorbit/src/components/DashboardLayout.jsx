@@ -1,5 +1,5 @@
-// src/components/DashboardLayout.jsx
 import React from "react";
+import '../App.css'
 
 const Sidebar = () => (
   <div className="h-full w-64 bg-gradient-to-b from-[#001f3f] to-[#004466] text-white p-6 flex flex-col justify-between">
@@ -22,8 +22,12 @@ const Sidebar = () => (
 );
 
 const DashboardContent = ({ name }) => (
-  <div className="flex-1 bg-gradient-to-br from-[#1E2A45] to-[#76B8C9] p-10 rounded-xl m-4 text-white">
-    <h1 className="text-xl font-semibold">Hello, {name}</h1>
+  <div className="flex-1 flex justify-center items-center overflow-y-auto p-10">
+    <div className="wrapper">
+      <h1 className="text-xl font-semibold">Hello, {name}</h1>
+      <p className="text-sm opacity-80 mt-2">Here’s your current financial orbit status.</p>
+      {/* Add more content here (like <Goals /> or dashboard cards) */}
+    </div>
   </div>
 );
 

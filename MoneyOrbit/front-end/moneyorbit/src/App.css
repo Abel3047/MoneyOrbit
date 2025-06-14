@@ -1,22 +1,35 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif; /* Or your preferred font */
-  background-color: #e0e0e0; /* A light background for the entire page */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh; /* Ensure it takes full viewport height */
+* {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.app-container {
-  display: flex;
-  width: 90%; /* Adjust as needed */
-  max-width: 1200px; /* Max width for larger screens */
-  height: 70vh; /* Adjust height as needed */
-  min-height: 500px; /* Minimum height */
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+body {
+    display: flex;
+    justify-content: flex-end; /* Push content to the right */
+    align-items: stretch;
+    min-height: 100vh;
+    background: no-repeat;
+    background-size: cover;
+    background-position: right;
+    padding: 20px;
+}
+
+.wrapper {
+    width: 80%;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    color: #fff;
+    border-radius: 10px;
+    padding: 30px 40px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 /* Sidebar Styles */
