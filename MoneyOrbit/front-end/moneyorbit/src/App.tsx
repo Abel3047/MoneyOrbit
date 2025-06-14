@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoginForm from './Components/LoginForm/LoginForm';
+import LoginPage from './pages/LoginPage'; // Import the LoginPage component
 import Dashboard from './Components/Dashboard/Dashboard'; // Import the new Dashboard component
 import './Components/Dashboard/Dashboard.css'; // Import the CSS for the dashboard
 
@@ -13,19 +13,19 @@ function App() {
       */}
       <Routes>
         {/* Route for the login page. We'll make it the default page ('/') */}
-        <Route path="/" element={<LoginForm />} />
-        <Route path="/login" element={<LoginForm />} />
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
 
         {/* Route for the dashboard page */}
 
         <Route
-  path="/dashboard"
-  element={
-    <div className="app-background">
-      <Dashboard />
-    </div>
-  }
-/>
+          path="/dashboard"
+          element={
+            <div className="app-background">
+              <Dashboard />
+            </div>
+          }
+        />
 
       </Routes>
     </BrowserRouter>
