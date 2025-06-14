@@ -1,7 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getGoals } from "../services/goalservice"; // Import our service function
-import { Button } from "@/components/ui/button";
 import { Goal } from "../services/types/Goal"; // Import our type definition
 
 export default function GoalsPage() {
@@ -33,9 +32,9 @@ export default function GoalsPage() {
       </p>
 
       <div className="flex items-center space-x-4">
-        <Button onClick={handleGetGoalsClick} disabled={isFetching}>
+        <button type="button" onClick={handleGetGoalsClick} disabled={isFetching}>
           {isFetching ? "Fetching..." : "Get Goals"}
-        </Button>
+        </button>
       </div>
       
       {/* --- UI Rendering Logic --- */}
