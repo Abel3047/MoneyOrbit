@@ -3,13 +3,16 @@
     public class LinkBankAccountDto
     {
         required
-        public string BankAccountName { get; set; }
+        public string IDNumber { get; set; }
         required
-        public string BankAccountNumber { get; set; }
+        public string IDType { get; set; }
         required
-        public string BankBranchCode { get; set; }
+        public string? AccountNumber { get; set; }
         required
-        public string BankBranchName { get; set; }
-        public string? BankSwiftCode { get; set; }
+        public bool isSecondOption
+        { get; set; } = false;
+        public string? Country { get; set; }
+        public string? SecurityCode { get; set; }
+
     }
 }
