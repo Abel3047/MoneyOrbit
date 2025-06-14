@@ -11,26 +11,18 @@ namespace MoneyOrbit.Core.Entities
         required
         new public string AccDebitedID { get; set; }
 
-        private decimal amountAccomplished = 0;
-        public decimal AmountAccomplished
-        {
-            get { return amountAccomplished; }
-            set { amountAccomplished = value; }
-        }
-
-        /// <summary> Checks if the given transaction relates to this goal.
-        /// A transaction relates to this goal if its debited account ID matches the goal's debited account ID
-        /// and the transaction date is before the goal's date.
+        /// <summary>
+        /// There may be multiple sources of income that will credit the Goal for it to be accomplished. The property reflects that
         /// </summary>
-        /// <param name="transaction">The transaction to check.</param>
-        /// <typeparam name="IGoal"> The type of the goal, which is expected to implement the IGoal interface.</typeparam>
-        /// <returns>true if the transaction relates to this goal; otherwise, false.</returns>
+        public string[] RelatedTransactionIDs { get; set; } = Array.Empty<string>();
+        public decimal AmountAccomplished { get; set; }
+
+        public void AddToAmountAccomplished(decimal amount) => AmountAccomplished += amount;
         public bool RelatesToTransaction<IGoal>(ITransaction transaction)
         {
             return transaction.AccDebitedID == this.AccDebitedID &&
                    transaction.Date < this.Date;
         }
-
         /// <summary>
         /// Checks if all transactions in the given array relate to this goal.
         /// </summary>
@@ -48,6 +40,8 @@ namespace MoneyOrbit.Core.Entities
             }
             return true;
         }
+
+        new public string AccCreditedID { get; private set; }= "N/A"; // Goals are not credited, they are debited from related accounts.
 
     }
 }

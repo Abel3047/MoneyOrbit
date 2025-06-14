@@ -1,4 +1,5 @@
 ﻿using MoneyOrbit.Application.Interfaces.IEntities;
+using MoneyOrbit.Core.Entities;
 
 namespace MoneyOrbit.Application.Interfaces.IApplication.IFactories
 {
@@ -12,6 +13,6 @@ namespace MoneyOrbit.Application.Interfaces.IApplication.IFactories
         /// <param name="accCreditedID">The account ID that is credited in this transaction.</param>
         /// <param name="amount">The amount of money involved in the transaction.</param>
         /// <returns>A new instance of a transaction.</returns>
-        ITransaction CreateTransaction(string? description, string accDebitedID, string accCreditedID, decimal amount);
+        Transaction CreateTransaction(string? description, string accDebitedID, string? accCreditedID, decimal amount, DateTime? date);
     }
 }

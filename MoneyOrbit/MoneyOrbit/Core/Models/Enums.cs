@@ -4,7 +4,7 @@
     {
         public enum UserPermissions
         {
-            Development,
+            Developer,
             Administrative,
             Customer
         }

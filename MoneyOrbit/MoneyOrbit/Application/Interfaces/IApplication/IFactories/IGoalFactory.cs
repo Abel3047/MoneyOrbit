@@ -1,4 +1,5 @@
 ﻿using MoneyOrbit.Application.Interfaces.IEntities;
+using MoneyOrbit.Core.Entities;
 
 namespace MoneyOrbit.Application.Interfaces.IApplication.IFactories
 {
@@ -7,9 +8,13 @@ namespace MoneyOrbit.Application.Interfaces.IApplication.IFactories
         /// <summary>
         /// Creates a new goal with the specified parameters. It should generate the id and give it the date.
         /// </summary>
-        /// <param name="name">The name of the goal.</param>
+        /// <param name="goalName">The name of the goal.</param>
+        /// <param name="goalDescription"></param>
+        /// <param name="accDebitedID">The ID of the account that will be debited for this goal. eg Xbox, Student Loan</param>
         /// <param name="amount">The target amount for the goal.</param>
+        /// <param name="date"></param>
         /// <returns>A new instance of a goal.</returns>
-        IGoal CreateGoal(string name, string goalDescription, DateTime dueDate, string accDebitedID, decimal amount);
+        Goal CreateGoal(string goalName, string goalDescription, string accDebitedID, decimal amount, DateTime date);
+
     }
 }
