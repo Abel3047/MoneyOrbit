@@ -9,8 +9,7 @@ namespace MoneyOrbit.Application.Extensions
         {
             var json = JsonConvert.SerializeObject(source);
             return JsonConvert.DeserializeObject<T>(json);
-        }
-               
+        }       
         /// <summary>
         /// Extension to make sure the enumerable returned is never null.
         /// </summary>
