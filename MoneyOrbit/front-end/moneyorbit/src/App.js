@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LoginForm from './Components/LoginForm/LoginForm';
 import Dashboard from './Components/Dashboard/Dashboard'; // Import the new Dashboard component
 import './Components/Dashboard/Dashboard.css'; // Import the CSS for the dashboard
+import TransactionsPage from './Components/TransactionsPage/TransactionsPage'; // Import the TransactionsPage component
 import Awards from './Components/Awards/Awards';
 import Trophy from './Components/Trophy/Trophy';
 
@@ -17,6 +18,8 @@ function App() {
         {/* Route for the login page. We'll make it the default page ('/') */}
         <Route path="/" element={<LoginForm />} />
         <Route path="/login" element={<LoginForm />} />
+        <Route path="/TransactionsPage" element={<TransactionsPage />} />
+
         
 
         {/* Route for the dashboard page */}
