@@ -57,12 +57,49 @@ const GoalCard = ({ title, emoji, percentage, color, text }) => (
 const Dashboard = () => {
     const [isOrbitPocketOpen, setOrbitPocketOpen] = useState(true);
     const [isLinkedAccountsOpen, setLinkedAccountsOpen] = useState(true);
+    const [selectedStatus, setSelectedStatus] = useState(null);
 
-    const goals = [
-        { title: "Liam's School fees", emoji: '🏆', percentage: 80, color: '#34d399', text: "I know you are doing your best to support family. Keep Striving for more." },
-        { title: "House Topup", emoji: '💡', percentage: 59, color: '#f59e0b', text: "I know you are doing your best to support family. Keep Striving for more." },
-        { title: "Black Tax", emoji: '👥', percentage: 10, color: '#ef4444', text: "I know you are doing your best to support family. Keep Striving for more." }
-    ];
+    const rawGoals = [
+  { title: "Liam's School fees", emoji: '🏆', percentage: 80, color: '#34d399' },
+  { title: "House Topup", emoji: '💡', percentage: 59, color: '#f59e0b' },
+  { title: "Black Tax", emoji: '👥', percentage: 10, color: '#ef4444' }
+];
+
+    const getGoalStatus = (percentage) => {
+        if (percentage === 100) return 'Done!';
+        if (percentage >= 80) return 'Doing Great';
+        if (percentage >= 50) return 'Doing Okay';
+        if (percentage <= 20) return 'Needs Attention';
+    return 'attention';
+  };
+
+    const getMotivationalText = (status) => {
+    switch (status) {
+        case 'Done!':
+        return "Excellent Job";
+      case 'Doing Great':
+        return "You're orbiting closer every day";
+      case 'Doing Okay':
+        return "You're doing well — keep it up";
+      case 'Needs Attention':
+        return "Small steps still move you forward";
+      default:
+        return "It’s never too late to realign";
+    }
+  };
+
+  const goals = rawGoals.map(goal => {
+  const status = getGoalStatus(goal.percentage);
+  return {
+    ...goal,
+    status,
+    text: getMotivationalText(status)
+  };
+});
+
+const filteredGoals = selectedStatus
+  ? goals.filter(goal => goal.status === selectedStatus)
+  : goals;
 
     return (
         <div className="dashboard-container">
@@ -205,17 +242,19 @@ const Dashboard = () => {
                     <div className="goals-header">
                         <h2>Quarterly Goals Tracker</h2>
                         <div className="goals-filters">
-                            <span>Doing Great</span>
-                            <span>May Need Help</span>
-                            <span>Needs Attention</span>
+                            <span onClick={() => setSelectedStatus('Done')}>Congratulations</span>
+                            <span onClick={() => setSelectedStatus('Doing Great')}>Doing Great</span>
+                            <span onClick={() => setSelectedStatus('Doing Okay')}>May Need Help</span>
+                            <span onClick={() => setSelectedStatus('Needs Attention')}>Needs Attention</span>
+                            <span onClick={() => setSelectedStatus(null)} style={{ color: 'gray' }}>Show All</span>
                         </div>
+
                     </div>
                     <div className="goals-grid">
-                        {/* Render Goal Cards */}   
-                        {goals.map(goal => (
-                            <GoalCard key={goal.title} {...goal}/>
+                        {filteredGoals.map(goal => (
+                            <GoalCard key={goal.title} {...goal} />
                         ))}
-                    </div>
+                    </div> 
                 </section>
                 
                 <button className="fab">
