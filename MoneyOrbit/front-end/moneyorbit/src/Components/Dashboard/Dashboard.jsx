@@ -64,7 +64,7 @@ const Dashboard = () => {
   { title: "House Topup", emoji: '💡', percentage: 59, color: '#f59e0b' },
   { title: "Black Tax", emoji: '👥', percentage: 10, color: '#ef4444' }
 ];
-
+// goal color and quote changer
     const getGoalStatus = (percentage) => {
         if (percentage === 100) return 'Done!';
         if (percentage >= 80) return 'Doing Great';
@@ -88,12 +88,29 @@ const Dashboard = () => {
     }
   };
 
+  const getStatusColor = (status) => {
+  switch (status) {
+    case 'Done!': 
+        return ' #0000FF';  //blue    
+    case 'Doing Great': 
+        return '#00FF00';     //green
+    case 'Doing Okay': 
+        return '#FFA500';      //orange
+    case 'Needs Attention': 
+        return '#FF0000';      //red
+    default: 
+        return '#6b7280';          
+  }
+};
+
   const goals = rawGoals.map(goal => {
   const status = getGoalStatus(goal.percentage);
+  const color = getStatusColor(status);
   return {
     ...goal,
     status,
-    text: getMotivationalText(status)
+    color,
+    text: getMotivationalText(status),
   };
 });
 
