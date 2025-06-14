@@ -1,0 +1,63 @@
+.awards-container {
+  padding: 2rem;
+  position: relative;
+  transition: filter 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom right, #1e3a8a, #3b82f6);
+  color: white;
+  font-family: 'Poppins', sans-serif;
+}
+
+.awards-container.blurred {
+  filter: blur(6px);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.trophy-modal {
+  background: white;
+  color: black;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+  animation: pop-in 0.3s ease;
+}
+
+@keyframes pop-in {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.award-btn, .close-btn {
+  background: gold;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.close-btn {
+  background: #1f2937;
+  color: white;
+}
