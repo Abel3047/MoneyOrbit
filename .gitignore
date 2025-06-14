@@ -835,3 +835,6 @@ $RECYCLE.BIN/
 /MoneyOrbit/MoneyOrbit/obj/project.assets.json
 /MoneyOrbit/MoneyOrbit/obj/project.nuget.cache
 /MoneyOrbit/MoneyOrbit/appsettings.*
+/MoneyOrbit/MoneyOrbit/obj/Debug/net8.0/MoneyOrbit.csproj.AssemblyReference.cache
+/MoneyOrbit/MoneyOrbit/obj/Debug/net8.0/MoneyOrbit.GeneratedMSBuildEditorConfig.editorconfig
+/MoneyOrbit/MoneyOrbit/obj/MoneyOrbit.csproj.nuget.g.props
