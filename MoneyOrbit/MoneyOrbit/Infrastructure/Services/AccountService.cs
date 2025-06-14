@@ -5,6 +5,7 @@ using MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository;
 using MoneyOrbit.Application.Interfaces.IEntities;
 using MoneyOrbit.Application.Interfaces.IServices;
 using MoneyOrbit.Core.Entities;
+using System.Net.Http.Headers;
 
 namespace MoneyOrbit.Infrastructure.Services
 {
@@ -12,11 +13,14 @@ namespace MoneyOrbit.Infrastructure.Services
     {
         private readonly IAccountRepository<IAccount> _accountRepository;
         private readonly IUserRepository<IUser> _userRepository;
+        private readonly IHttpClientService _httpclientService;
 
-        public AccountService(IAccountRepository<IAccount> accountRepository, IUserRepository<IUser> userRepository)
+        public AccountService(IAccountRepository<IAccount> accountRepository, IUserRepository<IUser> userRepository,
+            IHttpClientService httpclientService)
         {
             _accountRepository = accountRepository;
             _userRepository = userRepository;
+            _httpclientService = httpclientService;
         }
 
         public async Task<ResultObject> CreateAccount(CreateAccountDto aCD)
@@ -105,23 +109,17 @@ namespace MoneyOrbit.Infrastructure.Services
 
             return new ResultObject() { Result = "success" };
         }
-        public async Task<ResultObject> LinkBankAccount(LinkBankAccountDto lBADto)
+        public async Task<ResultObject> RegisterWithAccountNumber(RegisterWithAccountNumberDto rWANDto)
         {
-            if (lBADto == null)
-            {
-                return new ResultObject() { Error = "No banking details sent" };
-            }
-            if (lBADto.isSecondOption)
-                //Sends the information to the bank so that it will identify the user and allow us to transaction on their behalf systematically
-                //await _httpclient.Postrequest($"https://thierbank/onlineregister/?{labdto.IDNumber}&&{labdto.IDType}&&{labdto.SecurityCode}");
-
-
-                //I'd imagine that we need to look at some public API that contains all the bank information to verify the bank
-                //Then it should send a email to the bank to make sure that it makes sense, or confirms them
-                //After the business day the notification system will aleart the user that its possible to make transactions
-                //@Abel please put in implementation for the INotification system
-                throw new NotImplementedException();
+            return await RequestLinkageWithBank(rWANDto);
+            //INotification system should be used to notify the user that the request has been sent to the bank
         }
+        public async Task<ResultObject> RegisterWithSecurityCode(RegisterWithSecurityCodeDto registerWithSecurityCodeDto)
+        {
+            return await RequestLinkageWithBank(registerWithSecurityCodeDto);
+            //INotification system should be used to notify the user that the request has been sent to the bank
+        }
+
         #region Support methods
         /// <summary>
         /// Checks if the account already exists under the user with the id, <paramref name="token"/>
@@ -147,7 +145,31 @@ namespace MoneyOrbit.Infrastructure.Services
             }
             return false;
         }
+        private async Task<ResultObject> RequestLinkageWithBank(object rWANDto)
+        {
+            var bankapiUrl = Environment.GetEnvironmentVariable("BankAPI_Basepath");
+            using (var requestMessage =
+            new HttpRequestMessage(HttpMethod.Get, bankapiUrl))
+            {
+                requestMessage.Headers.Add("User-Agent", "MoneyOrbit");
+                requestMessage.Headers.Add("Authorization", $"token {Environment.GetEnvironmentVariable("BankAPI_accessToken")}");
 
+                var content = JsonContent.Create(rWANDto,
+                    new MediaTypeHeaderValue("application/json"));
+                //Here we set the content of the request message with the object we just created
+                requestMessage.Content = content;
+
+                try
+                {
+                    var response = await _httpclientService.Request(requestMessage);
+                    return new ResultObject() { Result = response };
+                }
+                catch (Exception ex)
+                {
+                    return new ResultObject() { Error = ex.Message };
+                }
+            }
+        }
         #endregion
     }
 }
