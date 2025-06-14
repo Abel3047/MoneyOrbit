@@ -56,23 +56,6 @@ namespace MoneyOrbit.Infrastructure.Services
                 throw;
             }
             
-            //If BankAccount, check the required information about it
-            if(aCD.isBankAccount)
-            {
-                if(String.IsNullOrEmpty(aCD.BankAccountName) || String.IsNullOrEmpty(aCD.BankAccountNumber)||
-                   String.IsNullOrEmpty(aCD.BankBranchName) || String.IsNullOrEmpty(aCD.BankBranchCode))
-                    return new ResultObject() { Error = "You cannot create a Bank Account without an AccountName,AccountNumber," +
-                        "BranchName or BankBranch code" };
-                //Creates a bank account with information
-                var bankaccount = await new AccountFactory(_userRepository)
-                .CreateBankAccount(aCD.Token, aCD.AccountName, aCD.description, aCD.BankAccountName, aCD.BankAccountNumber,
-                aCD.BankBranchName, aCD.BankBranchCode, aCD.BankSwiftCode);
-
-                //Stores info in the database
-                await _accountRepository.UpdateData(bankaccount.ID, bankaccount);
-                return new ResultObject() { Result = bankaccount.ID };
-            }
-
             //Creates the account with information
             var account = await new AccountFactory(_userRepository)
                 .CreateAccount(aCD.Token ,aCD.AccountName,aCD.isAsset, aCD.isExpense,aCD.isLiability, aCD.isCaptial,aCD.description);
@@ -111,13 +94,17 @@ namespace MoneyOrbit.Infrastructure.Services
         }
         public async Task<ResultObject> RegisterWithAccountNumber(RegisterWithAccountNumberDto rWANDto)
         {
-            return await RequestLinkageWithBank(rWANDto);
+            var request=await RequestLinkageWithBank(rWANDto);
+            if(NullGuard.IsNotNull(request.Error)) return new ResultObject() { Error = $"Failed to send request to the bank. Because of {request.Error} Please try again later." };
             //INotification system should be used to notify the user that the request has been sent to the bank
+            return await CreateBankAccount(rWANDto);
         }
         public async Task<ResultObject> RegisterWithSecurityCode(RegisterWithSecurityCodeDto registerWithSecurityCodeDto)
         {
-            return await RequestLinkageWithBank(registerWithSecurityCodeDto);
+            var request = await RequestLinkageWithBank(registerWithSecurityCodeDto);
+            if (NullGuard.IsNotNull(request.Error)) return new ResultObject() { Error = $"Failed to send request to the bank. Because of {request.Error} Please try again later." };
             //INotification system should be used to notify the user that the request has been sent to the bank
+            return await CreateBankAccount(registerWithSecurityCodeDto);
         }
 
         #region Support methods
@@ -169,6 +156,24 @@ namespace MoneyOrbit.Infrastructure.Services
                     return new ResultObject() { Error = ex.Message };
                 }
             }
+        }
+        private async Task<ResultObject> CreateBankAccount(BaseRegisterBankAccountDto aCD)
+        {
+            if (String.IsNullOrEmpty(aCD.BankAccountName) || String.IsNullOrEmpty(aCD.BankAccountNumber) ||
+                               String.IsNullOrEmpty(aCD.BankBranchName) || String.IsNullOrEmpty(aCD.BankBranchCode))
+                return new ResultObject()
+                {
+                    Error = "You cannot create a Bank Account without an AccountName,AccountNumber," +
+                    "BranchName or BankBranch code"
+                };
+            //Creates a bank account with information
+            var bankaccount = await new AccountFactory(_userRepository)
+            .CreateBankAccount(aCD.Token, aCD.AccountName, aCD.description, aCD.BankAccountName, aCD.BankAccountNumber,
+            aCD.BankBranchName, aCD.BankBranchCode, aCD.BankSwiftCode);
+
+            //Stores info in the database
+            await _accountRepository.UpdateData(bankaccount.ID, bankaccount);
+            return new ResultObject() { Result = bankaccount.ID };
         }
         #endregion
     }
