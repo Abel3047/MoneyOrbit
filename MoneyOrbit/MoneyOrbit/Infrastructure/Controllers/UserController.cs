@@ -22,8 +22,12 @@ namespace MoneyOrbit.Infrastructure.Controllers
             ResultObject resultObject = await _userService.RegisterUser(userCreationDto);
 
             if (resultObject.Error != null)
+            {
+                _logger.LogError("Error registering user: " + resultObject.Error);
                 return BadRequest(resultObject.Error);
+            }
 
+            _logger.LogInformation("User registered successfully.");
             return Ok("User registered successfully.");
         }
     }
