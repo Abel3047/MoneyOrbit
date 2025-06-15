@@ -58,7 +58,7 @@ export default function OnboardingPage() {
             case 'createAccount':
                 return <CreateAccountForm onCreateAccount={handleAccountCreation} />;
             case 'createGoals':
-                 return <CreateGoalsForm onCreateGoal={handleGoalCreation} />;
+                return <CreateGoalsForm onCreateGoal={handleGoalCreation} />;
             default:
                 return <CreateUserForm />; // Fallback to the default form
         }
@@ -194,8 +194,9 @@ const handleUserRegisteration = async (userData: UserCreationDto) => {
 
 
     // Navigate the user to the dashboard page
-    // navigate('/dashboard');
-
+    const navigateDashboard = () => {
+        navigate('/dashboard');
+    }
     return (
         <div className="container mx-auto p-8 max-w-2xl">
             <h1 className="text-3xl font-bold mb-6">Onboarding</h1>
@@ -225,6 +226,15 @@ const handleUserRegisteration = async (userData: UserCreationDto) => {
 
             <div>
                 {renderActiveForm()}
+            </div>
+
+            <div>
+                <button
+                    onClick={navigateDashboard}
+                    className={`py-2 px-4 ${activeForm === 'createGoals' ? activeTabStyle : inactiveTabStyle}`}
+                >
+                    Go to Dashboard
+                </button>
             </div>
         </div>
     );
