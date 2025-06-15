@@ -58,11 +58,7 @@ export default function OnboardingPage() {
             case 'createAccount':
                 return <CreateAccountForm onCreateAccount={handleAccountCreation} />;
             case 'createGoals':
-<<<<<<< HEAD
                 return <CreateGoalsForm onCreateGoal={handleGoalCreation} />;
-=======
-                 return <CreateGoalsForm onCreateGoal={handleGoalCreation} />;
->>>>>>> e42010d33fc7d800f6182303db728a02a164e450
             default:
                 return <CreateUserForm />; // Fallback to the default form
         }
@@ -198,14 +194,9 @@ const handleUserRegisteration = async (userData: UserCreationDto) => {
 
 
     // Navigate the user to the dashboard page
-<<<<<<< HEAD
     const navigateDashboard = () => {
         navigate('/dashboard');
     }
-=======
-    // navigate('/dashboard');
->>>>>>> e42010d33fc7d800f6182303db728a02a164e450
-
     return (
         <div className="container mx-auto p-8 max-w-2xl">
             <h1 className="text-3xl font-bold mb-6">Onboarding</h1>
