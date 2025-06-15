@@ -5,6 +5,7 @@ import './Components/Dashboard/Dashboard.css'; // Import the CSS for the dashboa
 import Awards from './Components/Awards/Awards';
 import Trophy from './Components/Trophy/Trophy';
 
+
 function App() {
   return (
     // BrowserRouter wraps your entire application to enable routing
