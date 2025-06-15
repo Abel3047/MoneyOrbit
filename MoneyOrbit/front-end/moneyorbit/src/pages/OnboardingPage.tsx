@@ -30,9 +30,9 @@ export default function OnboardingPage() {
             case 'createUser':
                 return <CreateUserForm />;
             case 'createAccount':
-                return <CreateAccountForm />;
+                return <CreateAccountForm onCreateAccount={handleAccountCreation} />;
             case 'createGoals':
-                return <CreateGoalsForm />;
+                return <CreateGoalsForm onCreateGoal={handleGoalCreation} />;
             default:
                 return <CreateUserForm />; // Fallback to the default form
         }
@@ -125,7 +125,9 @@ export default function OnboardingPage() {
 
 
     // Navigate the user to the dashboard page
-    navigate('/dashboard');
+    const navigateDashboard = () => {
+        navigate('/dashboard');
+    }
 
     return (
         <div className="container mx-auto p-8 max-w-2xl">
@@ -156,6 +158,15 @@ export default function OnboardingPage() {
             {/* 4. Render the active form component */}
             <div>
                 {renderActiveForm()}
+            </div>
+
+            <div>
+                <button
+                    onClick={navigateDashboard}
+                    className={`py-2 px-4 ${activeForm === 'createGoals' ? activeTabStyle : inactiveTabStyle}`}
+                >
+                    Go to Dashboard
+                </button>
             </div>
         </div>
     );
