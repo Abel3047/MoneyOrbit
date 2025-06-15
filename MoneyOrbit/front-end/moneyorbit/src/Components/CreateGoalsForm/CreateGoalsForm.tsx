@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
+import {CreateGoalsDto} from '../../Models/Dtos';
 
-interface CreateGoalsDto {
-    token: string;
-    accIDs?: string[];
-    startDate?: Date;
-    endDate?: Date;
-    suspenseTransactions?: boolean;
-}
-
-interface CreateGoalsProp {
+interface CreateGoalsProps {
     onCreateGoal: (credentials: CreateGoalsDto) => void;
 }
 
-const CreateGoalsForm: React.FC<CreateGoalsProp> = ({ onCreateGoal }) => {
+const CreateGoalsForm: React.FC<CreateGoalsProps> = ({ onCreateGoal }) => {
     
     const [token, setToken] = useState('');
     const [accIDs, setAccIDs] = useState<string[] | undefined>(undefined);
