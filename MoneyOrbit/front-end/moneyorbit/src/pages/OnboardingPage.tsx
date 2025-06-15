@@ -5,15 +5,41 @@ import { baseAPIPath } from "../services/baseServices"; // Adjust the import pat
 import CreateUserForm from '../Components/CreateUserForm/CreateUserForm';
 import CreateAccountForm from '../Components/CreateAccountForm/CreateAccountForm';
 import CreateGoalsForm from '../Components/CreateGoalsForm/CreateGoalsForm';
+import {CreateAccountDto, CreateGoalsDto} from '../Models/Dtos';
+import { UserCreationDto } from '../Models/Dtos';
 
 interface CreateUserCredentials {
     //Variables from DTO
 }
 interface CreateAccountCredentials {
     //Variables from DTO
+    token: string;
+
+    accountName: string;
+    description?: string;
+
+    isAsset: boolean;
+    isExpense: boolean;
+    isCaptial: boolean;
+    isLiability: boolean;
+
+    // BankAccount creation properties
+    // Accounts are typically not bank accounts so the default is false
+    isBankAccount?: boolean;
+
+    bankAccountName?: string;
+    bankAccountNumber?: string;
+    bankBranchCode?: string;
+    bankBranchName?: string;
+    bankSwiftCode?: string;
 }
 interface CreateGoalsCredentials {
     //Variables from DTO
+    date: string;
+    goalName: string;
+    goalDescription: string;
+    accDebitedID: string;
+    amount: number;
 }
 
 //Define the possible forms that can be used in the onboarding process
@@ -32,7 +58,11 @@ export default function OnboardingPage() {
             case 'createAccount':
                 return <CreateAccountForm onCreateAccount={handleAccountCreation} />;
             case 'createGoals':
+<<<<<<< HEAD
                 return <CreateGoalsForm onCreateGoal={handleGoalCreation} />;
+=======
+                 return <CreateGoalsForm onCreateGoal={handleGoalCreation} />;
+>>>>>>> e42010d33fc7d800f6182303db728a02a164e450
             default:
                 return <CreateUserForm />; // Fallback to the default form
         }
@@ -44,32 +74,62 @@ export default function OnboardingPage() {
 
     const navigate = useNavigate();
 
-    // The handleUserRegistration function. This is the "middleware" logic
-    const handleUserRegisteration = async (credentials: CreateUserCredentials) => {
-        // credentials will be an object like { username: 'user123', password: '...' }
-        console.log("OnboardingPage received user registeration credentials:", credentials);
+    /**
+ * Handles the user registration process. This function acts as the "middleware"
+ * between the registration form and the backend API.
+ * 
+ * @param userData - An object containing all necessary fields for user creation.
+ */
+const handleUserRegisteration = async (userData: UserCreationDto) => {
+    console.log("Attempting to register user with data:", userData);
 
-        // This is the mapping step. You convert the data from the form's shape
-        // to the exact shape the API requires.
-        const payload: any = null;
-
-        // --- THIS IS WHERE YOUR API CALL LOGIC GOES ---
-        try {
-            console.log("Sending payload to API:", payload);
-            const response = await axios.post(baseAPIPath + 'User/RegisterUser', payload);
-
-            // If the API call is successful:
-            console.log(response.data);
-            alert('Login successful!');
-
-            // Navigate the user to the dashboard page
-            navigate('/dashboard');
-
-        } catch (error) {
-            console.error('Login failed:', error);
-            alert('Login failed. Please check your credentials.');
-        }
+    // --- MAPPING STEP ---
+    // This is the crucial part. We create a payload object where the keys
+    // EXACTLY match the property names in your C# UserCreationDto, including casing.
+    const payload = {
+        UserName: userData.UserName,
+        password: userData.password, // Your C# DTO has a lowercase 'p'
+        FirstName: userData.FirstName,
+        LastName: userData.LastName,
+        AccessLevel: userData.AccessLevel,
+        Email: userData.Email || null, // Send null if the string is empty
+        PhoneNumber: userData.PhoneNumber || null,
     };
+
+    // --- API CALL LOGIC ---
+    try {
+        console.log("Sending payload to API:", payload);
+
+        // Your C# code probably returns a ResultObject like { result: "someUserId", error: null }
+        // We define the expected response shape for type safety
+
+        const response = await axios.post(baseAPIPath + 'Auth/register', payload);
+
+        // Check the response from your .NET API
+        if (response.data && response.data.error) {
+            // Handle specific errors returned from the API
+            throw new Error(response.data.error);
+        }
+
+        if (response.data && response.data.result) {
+            // If the API call is successful:
+            console.log("Registration successful! User ID:", response.data.result);
+            alert('Registration successful! Please log in.');
+
+            // Navigate the user to the login page, not the dashboard
+            navigate('/login');
+        } else {
+            // Handle unexpected successful responses that don't match the expected shape
+            throw new Error("Received an invalid response from the server.");
+        }
+
+    } catch (error) {
+        // This block catches network errors or errors thrown from the try block
+        const errorMessage = (error as any).response?.data?.message || (error as Error).message || "An unknown error occurred.";
+        console.error('Registration failed:', errorMessage);
+        alert(`Registration failed: ${errorMessage}`);
+    }
+};
     // The handleAccountCreation function. This is the "middleware" logic
     const handleAccountCreation = async (credentials: CreateAccountCredentials) => {
         // credentials will be an object like { username: 'user123', password: '...' }
@@ -77,7 +137,14 @@ export default function OnboardingPage() {
 
         // This is the mapping step. You convert the data from the form's shape
         // to the exact shape the API requires.
-        const payload: any = null;
+        const payload: CreateAccountDto = {
+            token: credentials.token,
+            accountName: credentials.accountName,
+            isAsset: credentials.isAsset,
+            isExpense: credentials.isExpense,
+            isCaptial: credentials.isCaptial,
+            isLiability: credentials.isLiability
+        };
 
         // --- THIS IS WHERE YOUR API CALL LOGIC GOES ---
         try {
@@ -103,7 +170,13 @@ export default function OnboardingPage() {
 
         // This is the mapping step. You convert the data from the form's shape
         // to the exact shape the API requires.
-        const payload: any = null;
+        const payload: CreateGoalsDto = {
+            date: credentials.date,
+            goalName: credentials.goalName,
+            goalDescription: credentials.goalDescription,
+            accDebitedID: credentials.accDebitedID,
+            amount: credentials.amount
+        };
 
         // --- THIS IS WHERE YOUR API CALL LOGIC GOES ---
         try {
@@ -125,16 +198,21 @@ export default function OnboardingPage() {
 
 
     // Navigate the user to the dashboard page
+<<<<<<< HEAD
     const navigateDashboard = () => {
         navigate('/dashboard');
     }
+=======
+    // navigate('/dashboard');
+>>>>>>> e42010d33fc7d800f6182303db728a02a164e450
 
     return (
         <div className="container mx-auto p-8 max-w-2xl">
-            <h1 className="text-3xl font-bold mb-6">User Settings</h1>
+            <h1 className="text-3xl font-bold mb-6">Onboarding</h1>
 
             {/* 3. Navigation to switch between forms */}
             <div className="flex border-b mb-6">
+                {/* 4. Buttons to switch between forms */}
                 <button
                     onClick={() => setActiveForm('createUser')}
                     className={`py-2 px-4 ${activeForm === 'createUser' ? activeTabStyle : inactiveTabStyle}`}
@@ -155,7 +233,6 @@ export default function OnboardingPage() {
                 </button>
             </div>
 
-            {/* 4. Render the active form component */}
             <div>
                 {renderActiveForm()}
             </div>

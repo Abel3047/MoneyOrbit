@@ -30,3 +30,42 @@ export interface LoginDto {
   UserName: string;
   Password: string;
 }
+
+export interface CreateAccountDto {
+  token: string;
+
+  accountName: string;
+  description?: string;
+
+  isAsset: boolean;
+  isExpense: boolean;
+  isCaptial: boolean;
+  isLiability: boolean;
+
+  // BankAccount creation properties
+  // Accounts are typically not bank accounts so the default is false
+  isBankAccount?: boolean;
+
+  bankAccountName?: string;
+  bankAccountNumber?: string;
+  bankBranchCode?: string;
+  bankBranchName?: string;
+  bankSwiftCode?: string;
+}
+
+export interface CreateGoalsDto {
+  date: string;
+  goalName: string;
+  goalDescription: string;
+  accDebitedID: string;
+  amount: number;
+}
+export interface UserCreationDto {
+  UserName: string;
+  password: string;
+  FirstName: string;
+  LastName: string;
+  AccessLevel: string;
+  Email: string;
+  PhoneNumber: string;
+} 
