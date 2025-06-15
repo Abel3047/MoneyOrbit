@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios'; // Or use fetch
+import axios from 'axios'; 
 import { FaUser, FaLock } from "react-icons/fa";
 import LoginForm from '../Components/LoginForm/LoginForm';
 import { LoginDto } from "../Models/Dtos"; // Adjust the import path as necessary
