@@ -5,6 +5,7 @@ using MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository;
 using MoneyOrbit.Application.Interfaces.IEntities;
 using MoneyOrbit.Application.Interfaces.IServices;
 using MoneyOrbit.Core.Entities;
+using System.Net.Http.Headers;
 
 namespace MoneyOrbit.Infrastructure.Services
 {
@@ -12,11 +13,14 @@ namespace MoneyOrbit.Infrastructure.Services
     {
         private readonly IAccountRepository<IAccount> _accountRepository;
         private readonly IUserRepository<IUser> _userRepository;
+        private readonly IHttpClientService _httpclientService;
 
-        public AccountService(IAccountRepository<IAccount> accountRepository, IUserRepository<IUser> userRepository)
+        public AccountService(IAccountRepository<IAccount> accountRepository, IUserRepository<IUser> userRepository,
+            IHttpClientService httpclientService)
         {
             _accountRepository = accountRepository;
             _userRepository = userRepository;
+            _httpclientService = httpclientService;
         }
 
         public async Task<ResultObject> CreateAccount(CreateAccountDto aCD)
@@ -52,23 +56,6 @@ namespace MoneyOrbit.Infrastructure.Services
                 throw;
             }
             
-            //If BankAccount, check the required information about it
-            if(aCD.isBankAccount)
-            {
-                if(String.IsNullOrEmpty(aCD.BankAccountName) || String.IsNullOrEmpty(aCD.BankAccountNumber)||
-                   String.IsNullOrEmpty(aCD.BankBranchName) || String.IsNullOrEmpty(aCD.BankBranchCode))
-                    return new ResultObject() { Error = "You cannot create a Bank Account without an AccountName,AccountNumber," +
-                        "BranchName or BankBranch code" };
-                //Creates a bank account with information
-                var bankaccount = await new AccountFactory(_userRepository)
-                .CreateBankAccount(aCD.Token, aCD.AccountName, aCD.description, aCD.BankAccountName, aCD.BankAccountNumber,
-                aCD.BankBranchName, aCD.BankBranchCode, aCD.BankSwiftCode);
-
-                //Stores info in the database
-                await _accountRepository.UpdateData(bankaccount.ID, bankaccount);
-                return new ResultObject() { Result = bankaccount.ID };
-            }
-
             //Creates the account with information
             var account = await new AccountFactory(_userRepository)
                 .CreateAccount(aCD.Token ,aCD.AccountName,aCD.isAsset, aCD.isExpense,aCD.isLiability, aCD.isCaptial,aCD.description);
@@ -105,16 +92,21 @@ namespace MoneyOrbit.Infrastructure.Services
 
             return new ResultObject() { Result = "success" };
         }
-        public async Task<ResultObject> LinkBankAccount(LinkBankAccountDto linkBankAccountDto)
+        public async Task<ResultObject> RegisterWithAccountNumber(RegisterWithAccountNumberDto rWANDto)
         {
-            if(NullGuard.IsNull(linkBankAccountDto)) return new ResultObject() { Error = "Linking data is null." };
-
-            //I'd imagine that we need to look at some public API that contains all the bank information to verify the bank
-            //Then it should send a email to the bank to make sure that it makes sense, or confirms them
-            //After the business day the notification system will aleart the user that its possible to make transactions
-            //@Abel please put in implementation for the INotification system
-            throw new NotImplementedException();
+            var request=await RequestLinkageWithBank(rWANDto);
+            if(NullGuard.IsNotNull(request.Error)) return new ResultObject() { Error = $"Failed to send request to the bank. Because of {request.Error} Please try again later." };
+            //INotification system should be used to notify the user that the request has been sent to the bank
+            return await CreateBankAccount(rWANDto);
         }
+        public async Task<ResultObject> RegisterWithSecurityCode(RegisterWithSecurityCodeDto registerWithSecurityCodeDto)
+        {
+            var request = await RequestLinkageWithBank(registerWithSecurityCodeDto);
+            if (NullGuard.IsNotNull(request.Error)) return new ResultObject() { Error = $"Failed to send request to the bank. Because of {request.Error} Please try again later." };
+            //INotification system should be used to notify the user that the request has been sent to the bank
+            return await CreateBankAccount(registerWithSecurityCodeDto);
+        }
+
         #region Support methods
         /// <summary>
         /// Checks if the account already exists under the user with the id, <paramref name="token"/>
@@ -140,7 +132,49 @@ namespace MoneyOrbit.Infrastructure.Services
             }
             return false;
         }
+        private async Task<ResultObject> RequestLinkageWithBank(object rWANDto)
+        {
+            var bankapiUrl = Environment.GetEnvironmentVariable("BankAPI_Basepath");
+            using (var requestMessage =
+            new HttpRequestMessage(HttpMethod.Get, bankapiUrl))
+            {
+                requestMessage.Headers.Add("User-Agent", "MoneyOrbit");
+                requestMessage.Headers.Add("Authorization", $"token {Environment.GetEnvironmentVariable("BankAPI_accessToken")}");
 
+                var content = JsonContent.Create(rWANDto,
+                    new MediaTypeHeaderValue("application/json"));
+                //Here we set the content of the request message with the object we just created
+                requestMessage.Content = content;
+
+                try
+                {
+                    var response = await _httpclientService.Request(requestMessage);
+                    return new ResultObject() { Result = response };
+                }
+                catch (Exception ex)
+                {
+                    return new ResultObject() { Error = ex.Message };
+                }
+            }
+        }
+        private async Task<ResultObject> CreateBankAccount(BaseRegisterBankAccountDto aCD)
+        {
+            if (String.IsNullOrEmpty(aCD.BankAccountName) || String.IsNullOrEmpty(aCD.BankAccountNumber) ||
+                               String.IsNullOrEmpty(aCD.BankBranchName) || String.IsNullOrEmpty(aCD.BankBranchCode))
+                return new ResultObject()
+                {
+                    Error = "You cannot create a Bank Account without an AccountName,AccountNumber," +
+                    "BranchName or BankBranch code"
+                };
+            //Creates a bank account with information
+            var bankaccount = await new AccountFactory(_userRepository)
+            .CreateBankAccount(aCD.Token, aCD.AccountName, aCD.description, aCD.BankAccountName, aCD.BankAccountNumber,
+            aCD.BankBranchName, aCD.BankBranchCode, aCD.BankSwiftCode);
+
+            //Stores info in the database
+            await _accountRepository.UpdateData(bankaccount.ID, bankaccount);
+            return new ResultObject() { Result = bankaccount.ID };
+        }
         #endregion
     }
 }

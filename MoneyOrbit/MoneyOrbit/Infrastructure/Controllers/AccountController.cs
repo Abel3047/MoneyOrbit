@@ -45,10 +45,10 @@ namespace MoneyOrbit.Infrastructure.Controllers
             _logger.LogInformation("Account deleted successfully.");
             return Ok("Account deleted successfully.");
         }
-        [HttpPost("LinkBankAccount")]
-        public async Task<ActionResult> LinkBankAccount(LinkBankAccountDto linkBankAccountDto)
+        [HttpPost("RegisterWithAccountNumber")]
+        public async Task<ActionResult> RegisterWithAccountNumber(RegisterWithAccountNumberDto registerWithAccountNumberDto)
         {
-            ResultObject resultObject = await _accountService.LinkBankAccount(linkBankAccountDto);
+            ResultObject resultObject = await _accountService.RegisterWithAccountNumber(registerWithAccountNumberDto);
 
             if (resultObject.Error != null)
             {
@@ -59,6 +59,15 @@ namespace MoneyOrbit.Infrastructure.Controllers
             _logger.LogInformation("Link request successfully sent to the bank.");
             return Ok("Request to your bank as been sent. Wait 3 business working days to confirm linkage.");
         }
+        [HttpPost("RegisterWithSecurityCode")]
+        public async Task<ActionResult> RegisterWithAccountNumber(RegisterWithSecurityCodeDto registerWithSecurityCodeDto)
+        {
+            ResultObject resultObject = await _accountService.RegisterWithSecurityCode(registerWithSecurityCodeDto);
 
+            if (resultObject.Error != null)
+                return BadRequest(resultObject.Error);
+
+            return Ok("Request to your bank as been sent. Wait 3 business working days to confirm linkage.");
+        }
     }
 }
