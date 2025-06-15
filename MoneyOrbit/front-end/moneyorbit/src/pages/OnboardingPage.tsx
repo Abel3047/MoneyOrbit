@@ -5,6 +5,7 @@ import { baseAPIPath } from "../services/baseServices"; // Adjust the import pat
 import CreateUserForm from '../Components/CreateUserForm/CreateUserForm';
 import CreateAccountForm from '../Components/CreateAccountForm/CreateAccountForm';
 import CreateGoalsForm from '../Components/CreateGoalsForm/CreateGoalsForm';
+import {CreateAccountDto, CreateGoalsDto} from '../Models/Dtos';
 import { UserCreationDto } from '../Models/Dtos';
 
 interface CreateUserCredentials {
@@ -12,9 +13,33 @@ interface CreateUserCredentials {
 }
 interface CreateAccountCredentials {
     //Variables from DTO
+    token: string;
+
+    accountName: string;
+    description?: string;
+
+    isAsset: boolean;
+    isExpense: boolean;
+    isCaptial: boolean;
+    isLiability: boolean;
+
+    // BankAccount creation properties
+    // Accounts are typically not bank accounts so the default is false
+    isBankAccount?: boolean;
+
+    bankAccountName?: string;
+    bankAccountNumber?: string;
+    bankBranchCode?: string;
+    bankBranchName?: string;
+    bankSwiftCode?: string;
 }
 interface CreateGoalsCredentials {
     //Variables from DTO
+    date: string;
+    goalName: string;
+    goalDescription: string;
+    accDebitedID: string;
+    amount: number;
 }
 
 //Define the possible forms that can be used in the onboarding process
@@ -31,9 +56,9 @@ export default function OnboardingPage() {
             case 'createUser':
                 return <CreateUserForm />;
             case 'createAccount':
-                return <CreateAccountForm />;
+                return <CreateAccountForm onCreateAccount={handleAccountCreation} />;
             case 'createGoals':
-                return <CreateGoalsForm />;
+                 return <CreateGoalsForm onCreateGoal={handleGoalCreation} />;
             default:
                 return <CreateUserForm />; // Fallback to the default form
         }
@@ -108,7 +133,14 @@ const handleUserRegisteration = async (userData: UserCreationDto) => {
 
         // This is the mapping step. You convert the data from the form's shape
         // to the exact shape the API requires.
-        const payload: any = null;
+        const payload: CreateAccountDto = {
+            token: credentials.token,
+            accountName: credentials.accountName,
+            isAsset: credentials.isAsset,
+            isExpense: credentials.isExpense,
+            isCaptial: credentials.isCaptial,
+            isLiability: credentials.isLiability
+        };
 
         // --- THIS IS WHERE YOUR API CALL LOGIC GOES ---
         try {
@@ -134,7 +166,13 @@ const handleUserRegisteration = async (userData: UserCreationDto) => {
 
         // This is the mapping step. You convert the data from the form's shape
         // to the exact shape the API requires.
-        const payload: any = null;
+        const payload: CreateGoalsDto = {
+            date: credentials.date,
+            goalName: credentials.goalName,
+            goalDescription: credentials.goalDescription,
+            accDebitedID: credentials.accDebitedID,
+            amount: credentials.amount
+        };
 
         // --- THIS IS WHERE YOUR API CALL LOGIC GOES ---
         try {
@@ -156,7 +194,7 @@ const handleUserRegisteration = async (userData: UserCreationDto) => {
 
 
     // Navigate the user to the dashboard page
-    navigate('/dashboard');
+    // navigate('/dashboard');
 
     return (
         <div className="container mx-auto p-8 max-w-2xl">
