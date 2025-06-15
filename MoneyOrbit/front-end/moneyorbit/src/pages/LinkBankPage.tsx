@@ -16,9 +16,9 @@ export default function LinkBankPage() {
     const navigate = useNavigate();
 
     // The handleUserRegistration function. This is the "middleware" logic
-    const handleUserRegisteration = async (credentials: LinkBankCredentials) => {
+    const handleBankRegisteration = async (credentials: LinkBankCredentials) => {
         // credentials will be an object like { username: 'user123', password: '...' }
-        console.log("OnboardingPage received user registeration credentials:", credentials);
+        console.log("Bank Registration received bank registeration credentials:", credentials);
 
         // This is the mapping step. You convert the data from the form's shape
         // to the exact shape the API requires.
@@ -27,18 +27,18 @@ export default function LinkBankPage() {
         // --- THIS IS WHERE YOUR API CALL LOGIC GOES ---
         try {
             console.log("Sending payload to API:", payload);
-            const response = await axios.post(baseAPIPath + 'User/RegisterUser', payload);
+            const response = await axios.post(baseAPIPath + 'Account/LinkBankAccount', payload);
 
             // If the API call is successful:
             console.log(response.data);
-            alert('Login successful!');
+            alert('Registration successful!');
 
             // Navigate the user to the dashboard page
             navigate('/dashboard');
 
         } catch (error) {
-            console.error('Login failed:', error);
-            alert('Login failed. Please check your credentials.');
+            console.error('Registration failed:', error);
+            alert('Registration failed. Please check your credentials.');
         }
     };
 

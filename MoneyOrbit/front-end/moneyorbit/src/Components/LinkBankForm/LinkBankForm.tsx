@@ -25,7 +25,7 @@ export default function LinkBankForm() {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-lg">
-            <h2 className="text-xl font-semibold">Edit Profile</h2>
+            <h2 className="text-xl font-semibold">Any Bank will do</h2>
             <div>
                 <label>First Name</label>
                 <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className="w-full border p-2 rounded" />
@@ -38,7 +38,7 @@ export default function LinkBankForm() {
                 <label>Email Address</label>
                 <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full border p-2 rounded" />
             </div>
-            <button type="submit" className="bg-blue-500 text-white p-2 rounded">Save Profile</button>
+            <button type="submit" className="bg-blue-500 text-white p-2 rounded">Send Link Request</button>
         </form>
     );
 }
