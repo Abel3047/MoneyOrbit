@@ -133,6 +133,7 @@ export default function OnboardingPage() {
 
             {/* 3. Navigation to switch between forms */}
             <div className="flex border-b mb-6">
+                {/* 4. Buttons to switch between forms */}
                 <button
                     onClick={() => setActiveForm('createUser')}
                     className={`py-2 px-4 ${activeForm === 'createUser' ? activeTabStyle : inactiveTabStyle}`}
@@ -153,7 +154,6 @@ export default function OnboardingPage() {
                 </button>
             </div>
 
-            {/* 4. Render the active form component */}
             <div>
                 {renderActiveForm()}
             </div>
