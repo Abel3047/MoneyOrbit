@@ -39,4 +39,12 @@ export interface UserCreationDto {
   AccessLevel: string;
   Email: string;
   PhoneNumber: string;
-} 
+}
+
+export interface LinkBankAccountDto {
+  bankAccountName: string;
+  bankAccountNumber: string;
+  bankBranchCode: string;
+  bankBranchName: string;
+  bankSwiftCode?: string;
+}
