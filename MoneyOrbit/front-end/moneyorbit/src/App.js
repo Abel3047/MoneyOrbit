@@ -6,6 +6,7 @@ import TransactionsPage from './Components/TransactionsPage/TransactionsPage'; /
 import Awards from './Components/Awards/Awards';
 import Trophy from './Components/Trophy/Trophy';
 
+
 function App() {
   return (
     // BrowserRouter wraps your entire application to enable routing
