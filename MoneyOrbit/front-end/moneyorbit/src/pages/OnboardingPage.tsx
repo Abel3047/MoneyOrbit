@@ -5,170 +5,121 @@ import { baseAPIPath } from "../services/baseServices"; // Adjust the import pat
 import CreateUserForm, { UserCreationPayload } from '../Components/CreateUserForm/CreateUserForm';
 import CreateAccountForm from '../Components/CreateAccountForm/CreateAccountForm';
 import CreateGoalsForm from '../Components/CreateGoalsForm/CreateGoalsForm';
-import { UserCreationDto } from '../Models/Dtos';
 
-interface CreateUserCredentials {
-    //Variables from DTO
-}
+// These interfaces are placeholders. You should define them based on your DTOs/form needs.
 interface CreateAccountCredentials {
-    //Variables from DTO
+    // Variables for account creation
 }
 interface CreateGoalsCredentials {
-    //Variables from DTO
+    // Variables for goal creation
 }
 
-//Define the possible forms that can be used in the onboarding process
+// Defines the possible forms that can be used in the onboarding process
 type ActiveForm = 'createUser' | 'createAccount' | 'createGoals';
 
 export default function OnboardingPage() {
+    const navigate = useNavigate();
 
-    // 1. State to track the currently active form. Default to 'profile'.
+    // State to track the currently active form.
     const [activeForm, setActiveForm] = useState<ActiveForm>('createUser');
+    
+    // IMPROVEMENT: State to manage the loading status of API calls.
+    const [isLoading, setIsLoading] = useState(false);
 
-    // 2. A helper function for conditional rendering (or you can do it inline)
+    /**
+     * Handles the user registration process. It's called when the CreateUserForm is submitted.
+     * @param formData - The data object directly from the UserCreationForm component (camelCase).
+     */
+    const handleUserRegisteration = async (formData: UserCreationPayload) => {
+        console.log("Attempting to register user with form data:", formData);
+        setIsLoading(true); // Disable the form button
+
+        // --- MAPPING STEP ---
+        // Convert the form's camelCase data to the PascalCase DTO the C# API expects.
+        // Double-check your C# DTO for the exact property names (especially 'password' vs 'Password').
+        const payload = {
+            UserName: formData.userName,
+            Password: formData.password, // IMPORTANT: Ensure this matches your C# DTO property name exactly.
+            FirstName: formData.firstName,
+            LastName: formData.lastName,
+            AccessLevel: formData.accessLevel,
+            Email: formData.email || null, // Send null if the string is empty
+            PhoneNumber: formData.phoneNumber || null,
+        };
+
+        try {
+            console.log("Sending payload to API:", payload);
+            const response = await axios.post(baseAPIPath + 'Auth/register', payload);
+
+            if (response.data && response.data.result) {
+                console.log("Registration successful! User ID:", response.data.result);
+                alert('User created successfully! Please create an account.');
+                
+                // IMPROVEMENT: Instead of navigating away, move to the next onboarding step.
+                setActiveForm('createAccount');
+            } else {
+                // Handle cases where the API returns an error in its standard response shape.
+                throw new Error(response.data.error || "An unknown error occurred during registration.");
+            }
+        } catch (error) {
+            // This block catches network errors or errors thrown from the try block.
+            const errorMessage = (error as any).response?.data?.message || (error as Error).message;
+            console.error('Registration failed:', errorMessage);
+            alert(`Registration failed: ${errorMessage}`);
+        } finally {
+            setIsLoading(false); // Re-enable the form button, whether it succeeded or failed.
+        }
+    };
+
+    // Placeholder for account creation logic.
+    const handleAccountCreation = async (credentials: CreateAccountCredentials) => {
+        console.log("Account creation triggered with:", credentials);
+        // TODO: Implement API call with loading state, mapping, and error handling.
+        alert("Account creation logic not implemented yet.");
+    };
+
+    // Placeholder for goal creation logic.
+    const handleGoalCreation = async (credentials: CreateGoalsCredentials) => {
+        console.log("Goal creation triggered with:", credentials);
+        // TODO: Implement API call with loading state, mapping, and error handling.
+        alert("Goal creation successful! Navigating to dashboard.");
+        // After the FINAL step, you navigate the user away.
+        navigate('/dashboard');
+    };
+
+    // --- CRITICAL FIX ---
+    // The stray `navigate('/dashboard')` call has been REMOVED from here.
+    // It should only be called inside a handler after an action is complete.
+
+    // This helper function renders the correct form based on the `activeForm` state.
     const renderActiveForm = () => {
         switch (activeForm) {
             case 'createUser':
-                return <CreateUserForm onSubmit={function (data: UserCreationPayload): void {
-                    throw new Error('Function not implemented.');
-                } } isLoading={false} />;
+                // FIX: Pass the REAL handler function and loading state to the form component.
+                return <CreateUserForm onSubmit={handleUserRegisteration} isLoading={isLoading} />;
+            
             case 'createAccount':
-                return <CreateAccountForm />;
+                // You will need to wire this up similarly to CreateUserForm
+                return <CreateAccountForm /* onSubmit={handleAccountCreation} isLoading={isLoading} */ />;
+            
             case 'createGoals':
-                return <CreateGoalsForm />;
+                 // And this one too
+                return <CreateGoalsForm /* onSubmit={handleGoalCreation} isLoading={isLoading} */ />;
+            
             default:
-                return <CreateUserForm onSubmit={function (data: UserCreationPayload): void {
-                    throw new Error('Function not implemented.');
-                } } isLoading={false} />; // Fallback to the default form
+                // Fallback to the default form
+                return <CreateUserForm onSubmit={handleUserRegisteration} isLoading={isLoading} />;
         }
     };
 
-    // Simple CSS-in-JS for active tab styling
     const activeTabStyle = 'bg-blue-500 text-white';
     const inactiveTabStyle = 'bg-gray-200 text-black';
-
-    const navigate = useNavigate();
-
-    /**
- * Handles the user registration process. This function acts as the "middleware"
- * between the registration form and the backend API.
- * 
- * @param userData - An object containing all necessary fields for user creation.
- */
-const handleUserRegisteration = async (userData: UserCreationDto) => {
-    console.log("Attempting to register user with data:", userData);
-
-    // --- MAPPING STEP ---
-    // This is the crucial part. We create a payload object where the keys
-    // EXACTLY match the property names in your C# UserCreationDto, including casing.
-    const payload = {
-        UserName: userData.UserName,
-        password: userData.password, // Your C# DTO has a lowercase 'p'
-        FirstName: userData.FirstName,
-        LastName: userData.LastName,
-        AccessLevel: userData.AccessLevel,
-        Email: userData.Email || null, // Send null if the string is empty
-        PhoneNumber: userData.PhoneNumber || null,
-    };
-
-    // --- API CALL LOGIC ---
-    try {
-        console.log("Sending payload to API:", payload);
-
-        // Your C# code probably returns a ResultObject like { result: "someUserId", error: null }
-        // We define the expected response shape for type safety
-
-        const response = await axios.post(baseAPIPath + 'Auth/register', payload);
-
-        // Check the response from your .NET API
-        if (response.data && response.data.error) {
-            // Handle specific errors returned from the API
-            throw new Error(response.data.error);
-        }
-
-        if (response.data && response.data.result) {
-            // If the API call is successful:
-            console.log("Registration successful! User ID:", response.data.result);
-            alert('Registration successful! Please log in.');
-
-            // Navigate the user to the login page, not the dashboard
-            navigate('/login');
-        } else {
-            // Handle unexpected successful responses that don't match the expected shape
-            throw new Error("Received an invalid response from the server.");
-        }
-
-    } catch (error) {
-        // This block catches network errors or errors thrown from the try block
-        const errorMessage = (error as any).response?.data?.message || (error as Error).message || "An unknown error occurred.";
-        console.error('Registration failed:', errorMessage);
-        alert(`Registration failed: ${errorMessage}`);
-    }
-};
-    // The handleAccountCreation function. This is the "middleware" logic
-    const handleAccountCreation = async (credentials: CreateAccountCredentials) => {
-        // credentials will be an object like { username: 'user123', password: '...' }
-        console.log("OnboardingPage received account creation credentials:", credentials);
-
-        // This is the mapping step. You convert the data from the form's shape
-        // to the exact shape the API requires.
-        const payload: any = null;
-
-        // --- THIS IS WHERE YOUR API CALL LOGIC GOES ---
-        try {
-            console.log("Sending payload to API:", payload);
-            const response = await axios.post(baseAPIPath + 'Account/CreateAccount', payload);
-
-            // If the API call is successful:
-            console.log(response.data);
-            alert('Account created successfully!');
-
-            // Navigate the user to the dashboard page
-            navigate('/dashboard');
-
-        } catch (error) {
-            console.error('Account creation failed:', error);
-            alert('Account creation failed. Please check your credentials.');
-        }
-    };
-    // The handleUserRegistration function. This is the "middleware" logic
-    const handleGoalCreation = async (credentials: CreateGoalsCredentials) => {
-        // credentials will be an object like { username: 'user123', password: '...' }
-        console.log("OnboardingPage received goal creation credentials:", credentials);
-
-        // This is the mapping step. You convert the data from the form's shape
-        // to the exact shape the API requires.
-        const payload: any = null;
-
-        // --- THIS IS WHERE YOUR API CALL LOGIC GOES ---
-        try {
-            console.log("Sending payload to API:", payload);
-            const response = await axios.post(baseAPIPath + 'Goal/CreateGoal', payload);
-
-            // If the API call is successful:
-            console.log(response.data);
-            alert('Goal created successfully!');
-
-            // Navigate the user to the dashboard page
-            navigate('/dashboard');
-
-        } catch (error) {
-            console.error('Goal creation failed:', error);
-            alert('Goal creation failed. Please check your credentials.');
-        }
-    };
-
-
-    // Navigate the user to the dashboard page
-    navigate('/dashboard');
 
     return (
         <div className="container mx-auto p-8 max-w-2xl">
             <h1 className="text-3xl font-bold mb-6">Onboarding</h1>
 
-            {/* 3. Navigation to switch between forms */}
             <div className="flex border-b mb-6">
-                {/* 4. Buttons to switch between forms */}
                 <button
                     onClick={() => setActiveForm('createUser')}
                     className={`py-2 px-4 ${activeForm === 'createUser' ? activeTabStyle : inactiveTabStyle}`}
