@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoginForm from './Components/LoginForm/LoginForm';
+import LoginPage from './pages/LoginPage'; // Import the LoginPage component
 import Dashboard from './Components/Dashboard/Dashboard'; // Import the new Dashboard component
 import './Components/Dashboard/Dashboard.css'; // Import the CSS for the dashboard
 import TransactionsPage from './Components/TransactionsPage/TransactionsPage'; // Import the TransactionsPage component
-import Awards from './Components/Awards/Awards';
-import Trophy from './Components/Trophy/Trophy';
 
+import Trophy from './Components/Trophy/Trophy';
+import OnboardingPage from './pages/OnboardingPage';
 
 function App() {
   return (
@@ -17,41 +17,26 @@ function App() {
       */}
       <Routes>
         {/* Route for the login page. We'll make it the default page ('/') */}
-        <Route path="/" element={<LoginForm />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/TransactionsPage" element={<TransactionsPage />} />
-
-        
-
-        {/* Route for the dashboard page */}
-
-        <Route
-  path="/dashboard"
-  element={
-    <div className="app-background">
-      <Dashboard />
-    </div>
-  }
-/>
-
-<Route
-  path="/awards"
-  element={
-    <div className="app-background">
-      <Awards />
-    </div>
-  }
-/>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/TransactionsPage" element={<TransactionsPage darkMode={undefined} />} />
+        <Route path="/onboarding" element={<OnboardingPage />} /> {/* <-- Add the route */}
+        <Route path="/dashboard" element={
+            <div className="app-background">
+              <Dashboard />
+            </div>
+          }
+        /> 
 
 <Route
   path="/trophy"
   element={
     <div className="app-background">
-      <Trophy />
+      <Trophy isOpen={true} onClose={() => console.log('Trophy closed')} />
+
     </div>
   }
 />
-
 
       </Routes>
     </BrowserRouter>

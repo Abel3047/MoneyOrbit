@@ -26,5 +26,18 @@ namespace MoneyOrbit.Infrastructure.Controllers
 
             return Ok("User registered successfully.");
         }
+        [HttpPost("login")]
+        public async Task<ActionResult> Login(LoginDto loginDto)
+        {
+            try
+            {
+                var response = await _userService.Login(loginDto);
+                return Ok(response);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+        }
     }
 }

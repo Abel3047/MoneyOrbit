@@ -39,6 +39,7 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         /// <param name="userId"></param>
         /// <returns></returns>
         Task<ResultObject> DeleteUser(string userId);
+        Task<ResultObject> Login(LoginDto loginDto);
 
     }
 }

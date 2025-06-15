@@ -5,6 +5,8 @@ using MoneyOrbit.Application.Interfaces.IApplication.IData.IRepository;
 using MoneyOrbit.Application.Interfaces.IEntities;
 using MoneyOrbit.Application.Interfaces.IServices;
 using MoneyOrbit.Core.Entities;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace MoneyOrbit.Infrastructure.Services
 {
@@ -84,13 +86,40 @@ namespace MoneyOrbit.Infrastructure.Services
             await _userRepository.DeleteData(userId);
             return new ResultObject() { Result = "success" };
         }
+
+        public async Task<ResultObject> Login(LoginDto loginDto)
+        {
+            var user = await _userRepository.GetInstanceOfType<User>(loginDto.UserName);
+
+            if (NullGuard.IsNull(user))
+                throw new UnauthorizedAccessException("Invalid username or password.");
+
+            if (!VerifyPasswordHash(loginDto.Password, user.PasswordHash, user.PasswordSalt))
+            {
+                throw new UnauthorizedAccessException("Invalid password.");
+            }
+            return new ResultObject() { Result = "success" };
+        }
         #region Support methods
         /// <summary>
-            /// Checks if the username already exists in the database by checking if the username is within a certain path configuration
-            /// </summary>
-            /// <param name="username"></param>
-            /// <returns> False if it does not exist in the database</returns>
+        /// Checks if the username already exists in the database by checking if the username is within a certain path configuration
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns> False if it does not exist in the database</returns>
         private async Task<bool> DoesUserNameExist(string username)=> await _userRepository.DoesPropertyExist(username);
+        /// <summary>
+        /// Verifies a password against a stored hash and salt.
+        /// </summary>
+        /// <param name="password">The plain-text password to verify.</param>
+        /// <param name="passwordHash">The stored password hash.</param>
+        /// <param name="passwordSalt">The stored password salt.</param>
+        /// <returns>True if the password is valid, otherwise false.</returns>
+        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using var hmac = new HMACSHA512(passwordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return computedHash.SequenceEqual(passwordHash);
+        }
         #endregion
     }
 }
