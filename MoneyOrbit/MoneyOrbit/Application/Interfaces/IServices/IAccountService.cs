@@ -16,6 +16,7 @@ namespace MoneyOrbit.Application.Interfaces.IServices
         Task<ResultObject> UpdateAccount(UpdateAccountDto aUD);
         Task<Account> GetAccountById(string accountId);
         Task<ResultObject> DeleteAccount(DeleteAccountDto deleteAccountDto);
-        Task<ResultObject> LinkBankAccount(LinkBankAccountDto linkBankAccountDto);
+        Task<ResultObject> RegisterWithAccountNumber(RegisterWithAccountNumberDto registerWithAccountNumberDto);
+        Task<ResultObject> RegisterWithSecurityCode(RegisterWithSecurityCodeDto registerWithSecurityCodeDto);
     }
 }

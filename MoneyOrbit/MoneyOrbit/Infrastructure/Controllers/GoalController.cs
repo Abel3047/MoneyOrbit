@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using MoneyOrbit.Application.DTOs.GoalDtos;
 using MoneyOrbit.Application.Helpers;
 using MoneyOrbit.Application.Interfaces.IServices;
@@ -22,8 +23,13 @@ namespace MoneyOrbit.Infrastructure.Controllers
             ResultObject resultObject = await _goalService.CreateGoal(goalCreationDto);
 
             if (resultObject.Error != null)
+            {
+                _logger.LogError("Error creating goal: " + resultObject.Error);
                 return BadRequest(resultObject.Error);
 
+            }
+
+            _logger.LogInformation("Goal created successfully");
             return Ok("Goal created successfully.");
         }
         [HttpPost("UpdateGoal")]
@@ -32,8 +38,12 @@ namespace MoneyOrbit.Infrastructure.Controllers
             ResultObject resultObject = await _goalService.UpdateGoal(goalUpdateDto);
 
             if (resultObject.Error != null)
+            {
+                _logger.LogError("Error updating goal: " + resultObject.Error);
                 return BadRequest(resultObject.Error);
+            }
 
+            _logger.LogInformation("Goal updated successfully.");
             return Ok("Goal updated successfully.");
         }
         [HttpPost("AssignTransationToGoal")]
@@ -42,8 +52,12 @@ namespace MoneyOrbit.Infrastructure.Controllers
             ResultObject resultObject = await _goalService.AssignTransationToGoal(assignTransationToGoalDto);
 
             if (resultObject.Error != null)
+            {
+                _logger.LogError("Error assigning transaction to goal: " + resultObject.Error);
                 return BadRequest(resultObject.Error);
+            }
 
+            _logger.LogInformation("Transaction assigned successfully.");
             return Ok("Goal updated successfully.");
         }
         [HttpPost("DeleteGoal")]
@@ -52,8 +66,12 @@ namespace MoneyOrbit.Infrastructure.Controllers
             ResultObject resultObject = await _goalService.DeleteGoal(deleteGoalDto);
 
             if (resultObject.Error != null)
+            {
+                _logger.LogError("Error deleting goal: " + resultObject.Error);
                 return BadRequest(resultObject.Error);
+            }
 
+            _logger.LogInformation("Goal deleted successfully.");
             return Ok("Goal deleted successfully.");
         }
 
@@ -63,8 +81,12 @@ namespace MoneyOrbit.Infrastructure.Controllers
             ResultObject resultObject = await _goalService.GetGoalAmountAccomplished(goalAmountAccomplishedDto);
 
             if (resultObject.Error != null)
+            {
+                _logger.LogError("Error getting amount accomplished: " + resultObject.Error);
                 return BadRequest(resultObject.Error);
+            }
 
+            _logger.LogInformation("Successfully retirved amount accomplished");
             return resultObject;
         }
         [HttpGet("GetGoal")]
@@ -73,8 +95,12 @@ namespace MoneyOrbit.Infrastructure.Controllers
             ResultObject resultObject = await _goalService.GetGoal(getGoalDto);
 
             if (resultObject.Error != null)
+            {
+                _logger.LogError("Error getting goal: " + resultObject.Error);
                 return BadRequest(resultObject.Error);
+            }
 
+            _logger.LogInformation("Successfully retrieved goal");
             return resultObject;
         }
         [HttpGet("GetGoalsForUser")]
@@ -83,10 +109,14 @@ namespace MoneyOrbit.Infrastructure.Controllers
             ResultObject resultObject = await _goalService.GetGoalsForUser(getGoalsForUserDto);
 
             if (resultObject.Error != null)
+            {
+                _logger.LogError("Error getting  all the goals: " + resultObject.Error);
                 return BadRequest(resultObject.Error);
+            }
 
+            _logger.LogInformation("Successfully retrieved all the goals");
             return resultObject;
         }
-                
+
     }
 }

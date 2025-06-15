@@ -19,6 +19,8 @@ namespace MoneyOrbit.Application.Extensions
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IGoalService, GoalService>();
+            services.AddScoped<IHttpClientService, HttpClientService>();
+            services.AddScoped<IAiService, AiService>();
 
             //Repositories
             services.AddScoped<IUserRepository<IUser>, UserRepository>();

@@ -1,14 +1,17 @@
 ﻿namespace MoneyOrbit.Application.DTOs.AccountDtos
 {
-    public class LinkBankAccountDto
+    public class BaseRegisterBankAccountDto
     {
-        required
+        public string Token { get; set; }
+
+        public string AccountName { get; set; }
+        public string? description { get; set; }
+
+        public string IDType { get; set; }
+        public string IDNumber { get; set; }
         public string BankAccountName { get; set; }
-        required
         public string BankAccountNumber { get; set; }
-        required
         public string BankBranchCode { get; set; }
-        required
         public string BankBranchName { get; set; }
         public string? BankSwiftCode { get; set; }
     }
