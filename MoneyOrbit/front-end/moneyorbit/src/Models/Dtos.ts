@@ -30,3 +30,13 @@ export interface LoginDto {
   UserName: string;
   Password: string;
 }
+
+export interface UserCreationDto {
+  UserName: string;
+  password: string;
+  FirstName: string;
+  LastName: string;
+  AccessLevel: string;
+  Email: string;
+  PhoneNumber: string;
+} 
