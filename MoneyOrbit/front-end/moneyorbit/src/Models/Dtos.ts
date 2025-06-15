@@ -54,9 +54,9 @@ export interface CreateAccountDto {
 }
 
 export interface CreateGoalsDto {
-    token: string;
-    accIDs?: string[];
-    startDate?: Date;
-    endDate?: Date;
-    suspenseTransactions?: boolean;
+  date: string;
+  goalName: string;
+  goalDescription: string;
+  accDebitedID: string;
+  amount: number;
 }

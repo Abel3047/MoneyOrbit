@@ -34,11 +34,11 @@ interface CreateAccountCredentials {
 }
 interface CreateGoalsCredentials {
     //Variables from DTO
-    token: string;
-    accIDs?: string[];
-    startDate?: Date;
-    endDate?: Date;
-    suspenseTransactions?: boolean;
+    date: string;
+    goalName: string;
+    goalDescription: string;
+    accDebitedID: string;
+    amount: number;
 }
 
 //Define the possible forms that can be used in the onboarding process
@@ -136,7 +136,11 @@ export default function OnboardingPage() {
         // This is the mapping step. You convert the data from the form's shape
         // to the exact shape the API requires.
         const payload: CreateGoalsDto = {
-            token: credentials.token
+            date: credentials.date,
+            goalName: credentials.goalName,
+            goalDescription: credentials.goalDescription,
+            accDebitedID: credentials.accDebitedID,
+            amount: credentials.amount
         };
 
         // --- THIS IS WHERE YOUR API CALL LOGIC GOES ---
