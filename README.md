@@ -11,7 +11,7 @@ When a user links their bank accounts to through our app, they are essentially m
 If the users banks accepts the request, the bank can then section off part of the users funds, to be managed by the bank explicitly for the 'Humanity'fund.
 All returns and capital gains are fed back into 'Humanity' and a user can make claims for social security on that fund.
 
-To have all transactions unchanging and fully transparent, the financial transactions the bank takes, using the 'Humanity' capital invested, will have to make records in a blockchain. This is so there is complete accountability and transparency between all banks worldwide. This also serves to protect the rights to claim for anyone who has a bank account, but has had their data lost by the site running a clone of our software.
+To have all transactions unchanging and fully transparent, the financial transactions the bank takes, using the 'Humanity' capital invested, will have to make records in a blockchain. This is so there is complete accountability and transparency between all banks worldwide. This also serves to protect the rights to claim for anyone who has a bank account, but has had their data lost by the site running a clone of our software. Only registered banks can have access to this portfolio, (note this excluded insurance companies and brokers).This is because banks are uniquely positioned to be the right balance of accountable, liquid and independant and monitored.
 
 To have this application set up, you first need to:
 1. clone/fork this repo.
