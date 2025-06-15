@@ -1,44 +1,132 @@
 import React, { useState } from 'react';
 
-export default function CreateAccountForm() {
-    const [formData, setFormData] = useState({
-        firstName: 'Abel',
-        lastName: 'T',
-        email: 'abel@example.com'
-    });
+interface CreateAccountDto {
+  token: string;
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+  accountName: string;
+  description?: string;
 
-    const handleSubmit = async (e: React.FormEvent) => {
+  isAsset: boolean;
+  isExpense: boolean;
+  isCaptial: boolean;
+  isLiability: boolean;
+
+  // BankAccount creation properties
+  // Accounts are typically not bank accounts so the default is false
+  isBankAccount?: boolean;
+
+  bankAccountName?: string;
+  bankAccountNumber?: string;
+  bankBranchCode?: string;
+  bankBranchName?: string;
+  bankSwiftCode?: string;
+}
+
+interface CreateAccountProp {
+    onCreateAccount: (credentials: CreateAccountDto) => void;
+}
+
+const CreateAccountForm: React.FC<CreateAccountProp> = ({ onCreateAccount }) => {
+
+    const [token, setToken] = useState('');
+    const [accountName, setAccountName] = useState('');
+    const [description, setDescription] = useState<string | undefined>(undefined);
+
+    const [isAsset, setIsAsset] = useState(false);
+    const [isExpense, setIsExpense] = useState(false);
+    const [isCaptial, setIsCaptial] = useState(false);
+    const [isLiability, setIsLiability] = useState(false);
+
+    const [isBankAccount, setIsBankAccount] = useState(false);
+
+    const [bankAccountName, setBankAccountName] = useState<string | undefined>(undefined);
+    const [bankAccountNumber, setBankAccountNumber] = useState<string | undefined>(undefined);
+    const [bankBranchCode, setBankBranchCode] = useState<string | undefined>(undefined);
+    const [bankBranchName, setBankBranchName] = useState<string | undefined>(undefined);
+    const [bankSwiftCode, setBankSwiftCode] = useState<string | undefined>(undefined);
+
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Submitting Profile Data:", formData);
-        try {
-            // const response = await axios.post('/api/user/profile', formData);
-            alert('Profile updated successfully!');
-        } catch (error) {
-            console.error("Failed to update profile", error);
-            alert('Failed to update profile.');
-        }
+
+        onCreateAccount({
+            token,
+            accountName,
+            description,
+            isAsset,
+            isExpense,
+            isCaptial,
+            isLiability,
+            isBankAccount,
+            bankAccountName,
+            bankAccountNumber,
+            bankBranchCode,
+            bankBranchName,
+            bankSwiftCode,
+        });
     };
+
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-lg">
-            <h2 className="text-xl font-semibold">Edit Profile</h2>
-            <div>
-                <label>First Name</label>
-                <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className="w-full border p-2 rounded" />
-            </div>
-            <div>
-                <label>Last Name</label>
-                <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="w-full border p-2 rounded" />
-            </div>
-            <div>
-                <label>Email Address</label>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full border p-2 rounded" />
-            </div>
-            <button type="submit" className="bg-blue-500 text-white p-2 rounded">Save Profile</button>
-        </form>
-    );
-}
+            <div className="wrapper">
+                <form onSubmit={handleSubmit}>
+                    <h1>Sign Up</h1>
+                    <div className="input-box">
+                        <input type="text"
+                            placeholder="token"
+                            required value={token} onChange={(e) => setToken(e.target.value)} />
+                    </div>
+                    <div className="input-box">
+                        <input
+                            type="text"
+                            placeholder="accountName"
+                            required
+                            // Connect input value to state
+                            value={accountName}
+                            // Update state when user types
+                            onChange={(e) => setAccountName(e.target.value)}
+                        />
+                    </div>
+                    <div className="input-box">
+                        <label htmlFor="accountType">Account Type</label>
+                        <select
+                            id="accountType"
+                            onChange={(e) => {
+                            // Reset all types
+                            setIsAsset(false);
+                            setIsExpense(false);
+                            setIsCaptial(false);
+                            setIsLiability(false);
+
+                            // Set the selected type to true
+                            const selected = e.target.value;
+                            if (selected === "asset") setIsAsset(true);
+                            else if (selected === "expense") setIsExpense(true);
+                            else if (selected === "capital") setIsCaptial(true);
+                            else if (selected === "liability") setIsLiability(true);
+                            }}
+                            defaultValue=""
+                        >
+                            <option value="" disabled>Select Account Type</option>
+                            <option value="asset">Asset</option>
+                            <option value="expense">Expense</option>
+                            <option value="capital">Capital</option>
+                            <option value="liability">Liability</option>
+                        </select>
+                    </div>
+
+                    <div className="Remember forgot password">
+                        <label><input type="checkbox" /> Remember me </label>
+                        <a href='#'> Forgot Password ?</a>
+                    </div>
+    
+                    <button type="submit" className="btn">Login</button>
+    
+                    <div className="register-link">
+                        <p> Don't have an account? <a href='#' > Register </a></p></div>
+    
+                </form>
+                CreateAccountForm</div>
+        );
+    
+};
+export default CreateAccountForm;

@@ -1,44 +1,53 @@
 import React, { useState } from 'react';
 
-export default function CreateGoalsForm() {
-    const [formData, setFormData] = useState({
-        firstName: 'Abel',
-        lastName: 'T',
-        email: 'abel@example.com'
-    });
+interface CreateGoalsDto {
+    token: string;
+    accIDs?: string[];
+    startDate?: Date;
+    endDate?: Date;
+    suspenseTransactions?: boolean;
+}
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+interface CreateGoalsProp {
+    onCreateGoal: (credentials: CreateGoalsDto) => void;
+}
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log("Submitting Profile Data:", formData);
-        try {
-            // const response = await axios.post('/api/user/profile', formData);
-            alert('Profile updated successfully!');
-        } catch (error) {
-            console.error("Failed to update profile", error);
-            alert('Failed to update profile.');
-        }
+const CreateGoalsForm: React.FC<CreateGoalsProp> = ({ onCreateGoal }) => {
+    
+    const [token, setToken] = useState('');
+    const [accIDs, setAccIDs] = useState<string[] | undefined>(undefined);
+    const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+    const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+    const [suspenseTransactions, setSuspenseTransactions] = useState(false);
+
+    const handleSubmit = (e: React.FormEvent) => {
+            // 1. Prevent the default form submission (which causes a page refresh)
+            e.preventDefault();
+
+            onCreateGoal({ 
+                token,
+                accIDs,
+                startDate,
+                endDate,
+                suspenseTransactions
+        });
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-lg">
-            <h2 className="text-xl font-semibold">Edit Profile</h2>
-            <div>
-                <label>First Name</label>
-                <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className="w-full border p-2 rounded" />
-            </div>
-            <div>
-                <label>Last Name</label>
-                <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="w-full border p-2 rounded" />
-            </div>
-            <div>
-                <label>Email Address</label>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full border p-2 rounded" />
-            </div>
-            <button type="submit" className="bg-blue-500 text-white p-2 rounded">Save Profile</button>
-        </form>
-    );
-}
+                <div className="wrapper">
+                    <form onSubmit={handleSubmit}>
+                        <h1>Sign Up</h1>
+                        <div className="input-box">
+                            <input type="text"
+                                placeholder="Token"
+                                required value={token} onChange={(e) => setToken(e.target.value)} />
+                        </div>
+        
+                        <button type="submit" className="btn">Login</button>
+        
+                    </form>
+                    CreateGoalsForm</div>
+            );
+
+};
+export default CreateGoalsForm;
