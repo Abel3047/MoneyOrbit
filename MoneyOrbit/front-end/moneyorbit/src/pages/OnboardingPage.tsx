@@ -34,6 +34,11 @@ interface CreateAccountCredentials {
 }
 interface CreateGoalsCredentials {
     //Variables from DTO
+    token: string;
+    accIDs?: string[];
+    startDate?: Date;
+    endDate?: Date;
+    suspenseTransactions?: boolean;
 }
 
 //Define the possible forms that can be used in the onboarding process
@@ -154,7 +159,7 @@ export default function OnboardingPage() {
 
 
     // Navigate the user to the dashboard page
-    navigate('/dashboard');
+    // navigate('/dashboard');
 
     return (
         <div className="container mx-auto p-8 max-w-2xl">
