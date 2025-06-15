@@ -1,79 +1,52 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // For making API requests
 
-// Define the TypeScript type that matches your C# UserCreationDto
-// This provides type safety and autocompletion for your form data.
-interface UserCreationPayload {
+// Define the TypeScript type for the form's state.
+// We can export this to use it in the parent component as well.
+export interface UserCreationPayload {
   userName: string;
-  password: string; // Lowercase 'p' to match your DTO
+  password: string;
   firstName: string;
   lastName: string;
   accessLevel: string;
-  email?: string; // Optional fields are marked with '?'
+  email?: string;
   phoneNumber?: string;
 }
 
-export default function UserCreationForm() {
-    // Initialize the state with all the fields required by the DTO
+// Define the props this component will accept from its parent.
+interface UserCreationFormProps {
+  onSubmit: (data: UserCreationPayload) => void; // A function to call with the form data
+  isLoading: boolean;                           // A boolean to disable the button
+}
+
+export default function UserCreationForm({ onSubmit, isLoading }: UserCreationFormProps) {
+    // State for the form fields remains the same.
     const [formData, setFormData] = useState<UserCreationPayload>({
         userName: '',
         password: '',
         firstName: '',
         lastName: '',
-        accessLevel: 'User', // Set a default value for the access level
+        accessLevel: 'User',
         email: '',
         phoneNumber: ''
     });
 
+    // The handleChange function also remains the same.
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    /**
-     * This function handles the form submission. It acts as the "middleware"
-     * by mapping the React state to the C# DTO shape and sending it to the API.
-     */
-    const handleSubmit = async (e: React.FormEvent) => {
+    // The handleSubmit function is now much simpler.
+    // It prevents the default browser action and calls the function passed down from the parent.
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        
-        // --- MAPPING STEP ---
-        // Create the payload object with keys that EXACTLY match your C# DTO
-        const apiPayload = {
-            UserName: formData.userName,
-            password: formData.password, // Lowercase 'p'
-            FirstName: formData.firstName,
-            LastName: formData.lastName,
-            AccessLevel: formData.accessLevel,
-            Email: formData.email,
-            PhoneNumber: formData.phoneNumber,
-        };
-
-        console.log("Submitting User Creation Data:", apiPayload);
-
-        try {
-            // Send the mapped payload to your .NET registration endpoint
-            const response = await axios.post('/api/auth/register', apiPayload);
-
-            alert('User created successfully! Response: ' + JSON.stringify(response.data));
-            // Reset the form after successful submission
-            setFormData({
-                userName: '', password: '', firstName: '', lastName: '',
-                accessLevel: 'User', email: '', phoneNumber: ''
-            });
-
-        } catch (error) {
-            console.error("Failed to create user", error);
-            // Try to show a more specific error message from the backend if available
-            const errorMessage = (error as any).response?.data?.message || "An unknown error occurred.";
-            alert(`Failed to create user: ${errorMessage}`);
-        }
+        onSubmit(formData); // Pass the form data up to the parent component.
     };
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4 p-6 border rounded-lg shadow-md max-w-lg mx-auto">
             <h2 className="text-2xl font-semibold text-center">Create New User</h2>
             
-            {/* Required Fields */}
+            {/* The JSX for the form fields is identical */}
             <div>
                 <label className="block text-sm font-medium text-gray-700">Username</label>
                 <input type="text" name="userName" value={formData.userName} onChange={handleChange} className="w-full border p-2 rounded mt-1" required />
@@ -97,8 +70,6 @@ export default function UserCreationForm() {
                     <option value="Administrative">Administrator</option>
                 </select>
             </div>
-
-            {/* Optional Fields */}
             <div>
                 <label className="block text-sm font-medium text-gray-700">Email Address (Optional)</label>
                 <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full border p-2 rounded mt-1" />
@@ -108,8 +79,13 @@ export default function UserCreationForm() {
                 <input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} className="w-full border p-2 rounded mt-1" />
             </div>
             
-            <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition-colors">
-                Create User
+            {/* The button is now disabled based on the isLoading prop */}
+            <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+            >
+                {isLoading ? 'Creating User...' : 'Create User'}
             </button>
         </form>
     );

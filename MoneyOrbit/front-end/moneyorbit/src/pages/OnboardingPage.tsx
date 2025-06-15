@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { baseAPIPath } from "../services/baseServices"; // Adjust the import path as necessary
-import CreateUserForm from '../Components/CreateUserForm/CreateUserForm';
+import CreateUserForm, { UserCreationPayload } from '../Components/CreateUserForm/CreateUserForm';
 import CreateAccountForm from '../Components/CreateAccountForm/CreateAccountForm';
 import CreateGoalsForm from '../Components/CreateGoalsForm/CreateGoalsForm';
 import { UserCreationDto } from '../Models/Dtos';
@@ -29,13 +29,17 @@ export default function OnboardingPage() {
     const renderActiveForm = () => {
         switch (activeForm) {
             case 'createUser':
-                return <CreateUserForm />;
+                return <CreateUserForm onSubmit={function (data: UserCreationPayload): void {
+                    throw new Error('Function not implemented.');
+                } } isLoading={false} />;
             case 'createAccount':
                 return <CreateAccountForm />;
             case 'createGoals':
                 return <CreateGoalsForm />;
             default:
-                return <CreateUserForm />; // Fallback to the default form
+                return <CreateUserForm onSubmit={function (data: UserCreationPayload): void {
+                    throw new Error('Function not implemented.');
+                } } isLoading={false} />; // Fallback to the default form
         }
     };
 

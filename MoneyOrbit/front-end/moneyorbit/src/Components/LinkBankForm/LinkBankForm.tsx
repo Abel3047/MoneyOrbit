@@ -1,30 +1,22 @@
 import React, { useState } from 'react';
 
-// --- TYPE DEFINITIONS START ---
-
-// 1. Define the shape of the form data. This should match your C# DTO.
-interface LinkBankAccountDto {
-    bankAccountName: string;
-    bankAccountNumber: string;
-    bankBranchCode: string;
-    bankBranchName: string;
-    bankSwiftCode?: string; // The '?' makes this property optional
+// Export the DTO type so the parent can use it
+export interface LinkBankAccountDto {
+  bankAccountName: string;
+  bankAccountNumber: string;
+  bankBranchCode: string;
+  bankBranchName: string;
+  bankSwiftCode?: string;
 }
 
-// 2. Define the shape of the props this component expects to receive.
-// This will fix the errors on `onSubmit` and `isLoading`.
+// Define the props this component expects to receive.
 interface LinkBankFormProps {
-    onSubmit: (data: LinkBankAccountDto) => void; // A function that takes our DTO and returns nothing
-    isLoading: boolean;                           // A boolean value
+  onSubmit: (data: LinkBankAccountDto) => void;
+  isLoading: boolean;
 }
 
-// --- TYPE DEFINITIONS END ---
-
-
-// Use React.FC (Functional Component) and provide the props type.
+// Apply the props type here. This is where it belongs.
 export default function LinkBankForm({ onSubmit, isLoading }: LinkBankFormProps) {
-    
-    // 3. Explicitly type the state using the interface we defined.
     const [formData, setFormData] = useState<LinkBankAccountDto>({
         bankAccountName: '',
         bankAccountNumber: '',
@@ -33,16 +25,13 @@ export default function LinkBankForm({ onSubmit, isLoading }: LinkBankFormProps)
         bankSwiftCode: '',
     });
 
-    // 4. Explicitly type the event parameter 'e'.
-    // This will fix the "Parameter 'e' implicitly has an 'any' type" error.
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // 5. Explicitly type the form event parameter 'e' as well.
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        onSubmit(formData);
+        onSubmit(formData); // Pass the data up to the parent via the prop function
     };
 
     return (
@@ -101,13 +90,12 @@ export default function LinkBankForm({ onSubmit, isLoading }: LinkBankFormProps)
                 <input
                     type="text"
                     name="bankSwiftCode"
-                    value={formData.bankSwiftCode || ''} // Use '||' to prevent controlled/uncontrolled warning
+                    value={formData.bankSwiftCode || ''}
                     onChange={handleChange}
                     className="mt-1 w-full border p-2 rounded"
                     placeholder="e.g., BANKUS33"
                 />
             </div>
-
             <button
                 type="submit"
                 disabled={isLoading}
