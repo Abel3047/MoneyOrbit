@@ -35,11 +35,13 @@ export default function UserCreationForm({ onSubmit, isLoading }: UserCreationFo
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // The handleSubmit function is now much simpler.
-    // It prevents the default browser action and calls the function passed down from the parent.
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        onSubmit(formData); // Pass the form data up to the parent component.
+    // --- THIS IS THE FUNCTION TO CHECK CAREFULLY ---
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        // FIX #1: This line is CRITICAL. Without it, the page reloads and the console clears.
+        e.preventDefault(); 
+        
+        // This calls the function passed down from the parent page.
+        onSubmit(formData); 
     };
 
     return (
