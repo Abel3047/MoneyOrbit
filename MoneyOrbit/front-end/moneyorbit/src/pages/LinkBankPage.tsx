@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { baseAPIPath } from '../services/baseServices';
-// Import the dumb form component AND the type for its data
+// Import the dumb form component AND its data shape type
 import LinkBankForm, { LinkBankAccountDto } from '../Components/LinkBankForm/LinkBankForm';
 
-// REMOVE the props from the function signature. This is the main fix.
 export default function LinkBankPage() {
-  // --- This is where the state and logic should live ---
+  // State for managing API call status and messages
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  // This is the "middleware" logic, now with an explicit mapping step.
   const handleLinkBankAccount = async (credentials: LinkBankAccountDto) => {
     setIsLoading(true);
     setError(null);
@@ -23,37 +23,50 @@ export default function LinkBankPage() {
         return;
     }
 
+    // --- MAPPING STEP ---
+    // Create the payload object with keys that EXACTLY match your C# LinkBankAccountDto.
+    // This is the core of the refactor.
+    const apiPayload = {
+        BankAccountName: credentials.bankAccountName,
+        BankAccountNumber: credentials.bankAccountNumber,
+        BankBranchCode: credentials.bankBranchCode,
+        BankBranchName: credentials.bankBranchName,
+        BankSwiftCode: credentials.bankSwiftCode || null, // Send null if optional field is empty
+    };
+
     try {
-      const endpoint = 'User/link-bank-account'; // Make sure this matches your API route
+      const endpoint = 'User/LinkBankAccount'; // Ensure this matches your API route
       
-      const response = await axios.post(baseAPIPath + endpoint, credentials, {
+      console.log("Sending payload to API:", apiPayload);
+
+      // --- API CALL ---
+      // Send the correctly shaped `apiPayload` to the backend.
+      const response = await axios.post(baseAPIPath + endpoint, apiPayload, {
           headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}`
           }
       });
 
-      setSuccessMessage(response.data.message || "Bank account linked successfully!");
+      // The backend returns a simple string on success in this case
+      setSuccessMessage(response.data); 
 
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'An unexpected error occurred. Please try again.';
+      const errorMessage = err.response?.data?.message || err.response?.data || 'An unexpected error occurred.';
       setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // The Page component now just renders the Form, passing all necessary state and handlers.
+  // This makes its structure identical to your LoginPage example.
   return (
-    <div className="container mx-auto p-8 max-w-2xl">
-      <h1 className="text-3xl font-bold mb-6 text-center">Link your Bank Account</h1>
-      
-      {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">{error}</div>}
-      {successMessage && <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4" role="alert">{successMessage}</div>}
-
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        {/* The parent renders the child and PASSES the state and logic DOWN as props */}
-        <LinkBankForm onSubmit={handleLinkBankAccount} isLoading={isLoading} />
-      </div>
-    </div>
+    <LinkBankForm 
+      onSubmit={handleLinkBankAccount} 
+      isLoading={isLoading}
+      error={error}
+      successMessage={successMessage}
+    />
   );
 }
