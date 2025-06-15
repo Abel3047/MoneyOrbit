@@ -24,8 +24,12 @@ namespace MoneyOrbit.Infrastructure.Controllers
             ResultObject resultObject = await _transactionService.RecordTransaction(transactionRecordDto);
 
             if (resultObject.Error != null)
+            {
+                _logger.LogError("Error recording transaction: " + resultObject.Error);
                 return BadRequest(resultObject.Error);
+            }
 
+            _logger.LogInformation("Transaction recorded successfully");
             return Ok("Transaction recorded successfully.");
         }
         [HttpPost("DeleteTransaction")]
@@ -34,8 +38,12 @@ namespace MoneyOrbit.Infrastructure.Controllers
             ResultObject resultObject = await _transactionService.DeleteTransaction(deleteTransactionDto);
 
             if (resultObject.Error != null)
+            {
+                _logger.LogError("Error deleting transaction: " + resultObject.Error);
                 return BadRequest(resultObject.Error);
+            }
 
+            _logger.LogInformation("Transaction deleted successfully.");
             return Ok("Transaction deleted successfully.");
         }
         [HttpGet("GetUserTransactions")]
@@ -44,8 +52,12 @@ namespace MoneyOrbit.Infrastructure.Controllers
             ResultObject resultObject = await _transactionService.GetUserTransactions(getTransactionDto);
 
             if (resultObject.Error != null)
+            {
+                _logger.LogError("Error getting transactions: " + resultObject.Error);
                 return BadRequest(resultObject.Error);
+            }
 
+            _logger.LogInformation("Successfully retrieved user transactions.");
             return resultObject;
         }
     }

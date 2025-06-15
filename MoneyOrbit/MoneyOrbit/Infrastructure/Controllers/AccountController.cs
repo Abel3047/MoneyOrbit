@@ -22,8 +22,13 @@ namespace MoneyOrbit.Infrastructure.Controllers
             ResultObject resultObject = await _accountService.CreateAccount(accountCreationDto);
 
             if (resultObject.Error != null)
+            {
+                _logger.LogError("Error creating an account: " + resultObject.Error);
                 return BadRequest(resultObject.Error);
+            }
 
+
+            _logger.LogInformation("Creating an account");
             return Ok("Account registered successfully.");
         }
         [HttpPost("DeleteAccount")]
@@ -32,8 +37,12 @@ namespace MoneyOrbit.Infrastructure.Controllers
             ResultObject resultObject = await _accountService.DeleteAccount(deleteAccountDto);
 
             if (resultObject.Error != null)
+            {
+                _logger.LogError("Error deleting the account: " + resultObject.Error);
                 return BadRequest(resultObject.Error);
+            }
 
+            _logger.LogInformation("Account deleted successfully.");
             return Ok("Account deleted successfully.");
         }
         [HttpPost("RegisterWithAccountNumber")]
@@ -42,8 +51,12 @@ namespace MoneyOrbit.Infrastructure.Controllers
             ResultObject resultObject = await _accountService.RegisterWithAccountNumber(registerWithAccountNumberDto);
 
             if (resultObject.Error != null)
+            {
+                _logger.LogError("Error linking the bank account: " + resultObject.Error);
                 return BadRequest(resultObject.Error);
+            }
 
+            _logger.LogInformation("Link request successfully sent to the bank.");
             return Ok("Request to your bank as been sent. Wait 3 business working days to confirm linkage.");
         }
         [HttpPost("RegisterWithSecurityCode")]
@@ -56,6 +69,5 @@ namespace MoneyOrbit.Infrastructure.Controllers
 
             return Ok("Request to your bank as been sent. Wait 3 business working days to confirm linkage.");
         }
-
     }
 }
