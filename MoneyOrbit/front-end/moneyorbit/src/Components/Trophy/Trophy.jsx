@@ -23,14 +23,14 @@ const Trophy = ({ isOpen, onClose }) => {
   }
 
   return (
-    <div className={styles.backdrop}>
-      <div className={styles.modalCard}>
+    <div className="backdrop">
+      <div className="modalCard">
         <TrophyIcon />
-        <h2 className={styles.title}>Goal Completed!</h2>
-        <p className={styles.message}>
+        <h2 className="title">Goal Completed!</h2>
+        <p className="message">
           Motivation Message about keeping it up!
         </p>
-        <button className={styles.continueButton} onClick={onClose}>
+        <button className="continueButton" onClick={onClose}>
           Continue
         </button>
       </div>

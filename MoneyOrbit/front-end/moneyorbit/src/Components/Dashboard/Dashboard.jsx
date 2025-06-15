@@ -6,6 +6,7 @@ import {
 } from 'react-icons/fi';
 import { FaRocket } from 'react-icons/fa';
 import './Dashboard.css';
+import { Link } from 'react-router-dom';
 
 // --- Sub-components ---
 
@@ -143,13 +144,32 @@ const filteredGoals = selectedStatus
 
                 <nav className="sidebar-nav">
                     <ul>
-                        <li className="nav-item active"><FiHome /> <span>Dashboard</span></li>
-                        <li className="nav-item"><FiRepeat /> <span>Transactions</span></li>
+                        <li className="nav-item active">
+                         <Link to="/dashboard">
+                        <FiHome /> <span>Dashboard</span>
+                        </Link>
+                        </li>
+                        
                         <li className="nav-item">
+                        <Link to="/TransactionsPage">
+                        <FiHome /> <span>Transactions</span>
+                        </Link>
+                        </li>
+
+                        <li className="nav-item">
+                            <Link to="/Awards">
+                            <FiAward /> <span>Badges & Awards</span>
+                            <span className="badge purple">4</span>
+                            </Link>
                             <FiAward /> <span>Badges & Awards</span>
                             <span className="badge purple">4</span>
                         </li>
+
                         <li className="nav-item">
+                            <Link to="/notifications">
+                            <FiBell /> <span>Notifications</span>
+                            <span className="badge blue"><FiPlus size={10}/> 8</span>
+                            </Link>
                             <FiBell /> <span>Notifications</span>
                             <span className="badge blue"><FiPlus size={10}/> 8</span>
                         </li>
