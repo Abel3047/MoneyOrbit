@@ -60,3 +60,12 @@ export interface CreateGoalsDto {
   accDebitedID: string;
   amount: number;
 }
+export interface UserCreationDto {
+  UserName: string;
+  password: string;
+  FirstName: string;
+  LastName: string;
+  AccessLevel: string;
+  Email: string;
+  PhoneNumber: string;
+} 
