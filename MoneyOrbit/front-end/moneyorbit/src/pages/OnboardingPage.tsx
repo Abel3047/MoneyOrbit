@@ -160,10 +160,11 @@ const handleUserRegisteration = async (userData: UserCreationDto) => {
 
     return (
         <div className="container mx-auto p-8 max-w-2xl">
-            <h1 className="text-3xl font-bold mb-6">User Settings</h1>
+            <h1 className="text-3xl font-bold mb-6">Onboarding</h1>
 
             {/* 3. Navigation to switch between forms */}
             <div className="flex border-b mb-6">
+                {/* 4. Buttons to switch between forms */}
                 <button
                     onClick={() => setActiveForm('createUser')}
                     className={`py-2 px-4 ${activeForm === 'createUser' ? activeTabStyle : inactiveTabStyle}`}
@@ -184,7 +185,6 @@ const handleUserRegisteration = async (userData: UserCreationDto) => {
                 </button>
             </div>
 
-            {/* 4. Render the active form component */}
             <div>
                 {renderActiveForm()}
             </div>

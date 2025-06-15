@@ -17,7 +17,7 @@ function App() {
         {/* Route for the login page. We'll make it the default page ('/') */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/TransactionsPage" element={<TransactionsPage darkMode={undefined} />} />
+        <Route path="/TransactionsPage" element={<TransactionsPage/>} />
         <Route path="/onboarding" element={<OnboardingPage />} /> {/* <-- Add the route */}
         <Route path="/dashboard" element={
             <div className="app-background">
