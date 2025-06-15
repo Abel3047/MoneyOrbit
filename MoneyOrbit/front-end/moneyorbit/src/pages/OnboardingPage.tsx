@@ -49,7 +49,7 @@ export default function OnboardingPage() {
 
         try {
             console.log("Sending payload to API:", payload);
-            const response = await axios.post(baseAPIPath + 'Auth/register', payload);
+            const response = await axios.post(baseAPIPath + 'User/RegisterUser', payload);
 
             if (response.data && response.data.result) {
                 console.log("Registration successful! User ID:", response.data.result);
