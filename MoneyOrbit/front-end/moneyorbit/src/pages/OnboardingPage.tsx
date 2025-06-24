@@ -5,11 +5,17 @@ import { baseAPIPath } from "../services/baseServices"; // Adjust the import pat
 import CreateUserForm from '../Components/CreateUserForm/CreateUserForm';
 import CreateAccountForm from '../Components/CreateAccountForm/CreateAccountForm';
 import CreateGoalsForm from '../Components/CreateGoalsForm/CreateGoalsForm';
-import {CreateAccountDto, CreateGoalsDto} from '../Models/Dtos';
-import { UserCreationDto } from '../Models/Dtos';
+import { CreateAccountDto, CreateGoalsDto, UserCreationDto } from '../Models/Dtos';
 
 interface CreateUserCredentials {
     //Variables from DTO
+    UserName: string;
+    password: string;
+    FirstName: string;
+    LastName: string;
+    AccessLevel: string;
+    Email: string;
+    PhoneNumber: string;
 }
 interface CreateAccountCredentials {
     //Variables from DTO
@@ -54,13 +60,13 @@ export default function OnboardingPage() {
     const renderActiveForm = () => {
         switch (activeForm) {
             case 'createUser':
-                return <CreateUserForm />;
+                return <CreateUserForm onCreateUser={handleUserRegisteration} />;
             case 'createAccount':
                 return <CreateAccountForm onCreateAccount={handleAccountCreation} />;
             case 'createGoals':
                 return <CreateGoalsForm onCreateGoal={handleGoalCreation} />;
             default:
-                return <CreateUserForm />; // Fallback to the default form
+                return <CreateUserForm onCreateUser={handleUserRegisteration} />;// Fallback to the default form
         }
     };
 
@@ -76,56 +82,56 @@ export default function OnboardingPage() {
  * 
  * @param userData - An object containing all necessary fields for user creation.
  */
-const handleUserRegisteration = async (userData: UserCreationDto) => {
-    console.log("Attempting to register user with data:", userData);
+    const handleUserRegisteration = async (userData: CreateUserCredentials) => {
+        console.log("Attempting to register user with data:", userData);
 
-    // --- MAPPING STEP ---
-    // This is the crucial part. We create a payload object where the keys
-    // EXACTLY match the property names in your C# UserCreationDto, including casing.
-    const payload = {
-        UserName: userData.UserName,
-        password: userData.password, // Your C# DTO has a lowercase 'p'
-        FirstName: userData.FirstName,
-        LastName: userData.LastName,
-        AccessLevel: userData.AccessLevel,
-        Email: userData.Email || null, // Send null if the string is empty
-        PhoneNumber: userData.PhoneNumber || null,
+        // --- MAPPING STEP ---
+        // This is the crucial part. We create a payload object where the keys
+        // EXACTLY match the property names in your C# UserCreationDto, including casing.
+        const payload:UserCreationDto = {
+            UserName: userData.UserName,
+            password: userData.password, 
+            FirstName: userData.FirstName,
+            LastName: userData.LastName,
+            AccessLevel: userData.AccessLevel,
+            Email: userData.Email || '', 
+            PhoneNumber: userData.PhoneNumber ||  '',
+        };
+
+        // --- API CALL LOGIC ---
+        try {
+            console.log("Sending payload to API:", payload);
+
+            // Your C# code probably returns a ResultObject like { result: "someUserId", error: null }
+            // We define the expected response shape for type safety
+
+            const response = await axios.post(baseAPIPath + 'Auth/register', payload);
+
+            // Check the response from your .NET API
+            if (response.data && response.data.error) {
+                // Handle specific errors returned from the API
+                throw new Error(response.data.error);
+            }
+
+            if (response.data && response.data.result) {
+                // If the API call is successful:
+                console.log("Registration successful! User ID:", response.data.result);
+                alert('Registration successful! Please log in.');
+
+                // Navigate the user to the login page, not the dashboard
+                navigate('/login');
+            } else {
+                // Handle unexpected successful responses that don't match the expected shape
+                throw new Error("Received an invalid response from the server.");
+            }
+
+        } catch (error) {
+            // This block catches network errors or errors thrown from the try block
+            const errorMessage = (error as any).response?.data?.message || (error as Error).message || "An unknown error occurred.";
+            console.error('Registration failed:', errorMessage);
+            alert(`Registration failed: ${errorMessage}`);
+        }
     };
-
-    // --- API CALL LOGIC ---
-    try {
-        console.log("Sending payload to API:", payload);
-
-        // Your C# code probably returns a ResultObject like { result: "someUserId", error: null }
-        // We define the expected response shape for type safety
-
-        const response = await axios.post(baseAPIPath + 'Auth/register', payload);
-
-        // Check the response from your .NET API
-        if (response.data && response.data.error) {
-            // Handle specific errors returned from the API
-            throw new Error(response.data.error);
-        }
-
-        if (response.data && response.data.result) {
-            // If the API call is successful:
-            console.log("Registration successful! User ID:", response.data.result);
-            alert('Registration successful! Please log in.');
-
-            // Navigate the user to the login page, not the dashboard
-            navigate('/login');
-        } else {
-            // Handle unexpected successful responses that don't match the expected shape
-            throw new Error("Received an invalid response from the server.");
-        }
-
-    } catch (error) {
-        // This block catches network errors or errors thrown from the try block
-        const errorMessage = (error as any).response?.data?.message || (error as Error).message || "An unknown error occurred.";
-        console.error('Registration failed:', errorMessage);
-        alert(`Registration failed: ${errorMessage}`);
-    }
-};
     // The handleAccountCreation function. This is the "middleware" logic
     const handleAccountCreation = async (credentials: CreateAccountCredentials) => {
         // credentials will be an object like { username: 'user123', password: '...' }

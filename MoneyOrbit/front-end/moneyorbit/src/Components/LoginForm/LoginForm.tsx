@@ -30,7 +30,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
     return (
         <div className="wrapper">
             <form onSubmit={handleSubmit}>
-                <h1>Sign Up</h1>
+                <h1>Login</h1>
                 <div className="input-box">
                     <input type="text"
                         placeholder="Username"
