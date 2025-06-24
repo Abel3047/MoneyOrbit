@@ -28,7 +28,7 @@ namespace MoneyOrbit.Infrastructure.Controllers
             }
 
             _logger.LogInformation("User registered successfully.");
-            return Ok("User registered successfully.");
+            return Ok(resultObject);
         }
         [HttpPost("login")]
         public async Task<ActionResult> Login(LoginDto loginDto)

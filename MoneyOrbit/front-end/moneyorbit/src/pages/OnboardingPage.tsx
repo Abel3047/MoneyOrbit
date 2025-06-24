@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { baseAPIPath } from "../services/baseServices"; // Adjust the import path as necessary
@@ -6,6 +6,8 @@ import CreateUserForm from '../Components/CreateUserForm/CreateUserForm';
 import CreateAccountForm from '../Components/CreateAccountForm/CreateAccountForm';
 import CreateGoalsForm from '../Components/CreateGoalsForm/CreateGoalsForm';
 import { CreateAccountDto, CreateGoalsDto, UserCreationDto } from '../Models/Dtos';
+import {getPreferences, setPreferences} from '../services/PreferenceServices';
+import { Preferences } from '../Models/Preferences';
 
 interface CreateUserCredentials {
     //Variables from DTO
@@ -75,7 +77,7 @@ export default function OnboardingPage() {
     const inactiveTabStyle = 'bg-gray-200 text-black';
 
     const navigate = useNavigate();
-
+    
     /**
  * Handles the user registration process. This function acts as the "middleware"
  * between the registration form and the backend API.
@@ -88,23 +90,19 @@ export default function OnboardingPage() {
         // --- MAPPING STEP ---
         // This is the crucial part. We create a payload object where the keys
         // EXACTLY match the property names in your C# UserCreationDto, including casing.
-        const payload:UserCreationDto = {
+        const payload: UserCreationDto = {
             UserName: userData.UserName,
-            password: userData.password, 
+            password: userData.password,
             FirstName: userData.FirstName,
             LastName: userData.LastName,
             AccessLevel: userData.AccessLevel,
-            Email: userData.Email || '', 
-            PhoneNumber: userData.PhoneNumber ||  '',
+            Email: userData.Email || '',
+            PhoneNumber: userData.PhoneNumber || '',
         };
 
         // --- API CALL LOGIC ---
         try {
             console.log("Sending payload to API:", payload);
-
-            // Your C# code probably returns a ResultObject like { result: "someUserId", error: null }
-            // We define the expected response shape for type safety
-
             const response = await axios.post(baseAPIPath + 'User/RegisterUser', payload);
 
             // Check the response from your .NET API
@@ -112,9 +110,18 @@ export default function OnboardingPage() {
                 // Handle specific errors returned from the API
                 throw new Error(response.data.error);
             }
-            if (response.data.result) {
+            if (response.data) {
+                //Gets the preferences from local storage
+                let prefs: Preferences = await getPreferences();
+
+                // Sets the userID and the accessLevel in the local storage preferences
+                prefs.user.id = response.data.result;
+                prefs.user.accessLevel = payload.AccessLevel;
+
+                // Saves the preferences back to local storage
+                await setPreferences(prefs);
+                
                 // If the API call is successful:
-                console.log("Registration successful! User ID:", response.data.result);
                 alert('Registration successful! Please log in.');
 
                 // Navigate the user to create an account
@@ -126,7 +133,7 @@ export default function OnboardingPage() {
 
         } catch (error) {
             // This block catches network errors or errors thrown from the try block
-            const errorMessage = (error as any).response?.data?.message || (error as Error).message || "An unknown error occurred.";
+            const errorMessage = (error as any).response?.data || (error as Error).message || "An unknown error occurred.";
             console.error('Registration failed:', errorMessage);
             alert(`Registration failed: ${errorMessage}`);
         }
@@ -196,7 +203,6 @@ export default function OnboardingPage() {
             alert('Goal creation failed. Please check your credentials.');
         }
     };
-
 
     return (
         <div className="container mx-auto p-8 max-w-2xl">
