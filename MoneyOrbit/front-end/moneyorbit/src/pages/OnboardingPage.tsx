@@ -6,8 +6,7 @@ import CreateUserForm from '../Components/CreateUserForm/CreateUserForm';
 import CreateAccountForm from '../Components/CreateAccountForm/CreateAccountForm';
 import CreateGoalsForm from '../Components/CreateGoalsForm/CreateGoalsForm';
 import { CreateAccountDto, CreateGoalsDto, UserCreationDto } from '../Models/Dtos';
-import {getPreferences, setPreferences} from '../services/PreferenceServices';
-import { Preferences } from '../Models/Preferences';
+import { saveUserPreferencesAndToken } from '../services/PersistenceServices';
 
 interface CreateUserCredentials {
     //Variables from DTO
@@ -111,15 +110,8 @@ export default function OnboardingPage() {
                 throw new Error(response.data.error);
             }
             if (response.data) {
-                //Gets the preferences from local storage
-                let prefs: Preferences = await getPreferences();
-
-                // Sets the userID and the accessLevel in the local storage preferences
-                prefs.user.id = response.data.result;
-                prefs.user.accessLevel = payload.AccessLevel;
-
-                // Saves the preferences back to local storage
-                await setPreferences(prefs);
+                // Save user preferences and auth token using a helper from PersistenceServices
+                await saveUserPreferencesAndToken(payload.AccessLevel, response.data.result);
                 
                 // If the API call is successful:
                 alert('Registration successful! Please log in.');
@@ -238,3 +230,4 @@ export default function OnboardingPage() {
         </div>
     );
 }
+

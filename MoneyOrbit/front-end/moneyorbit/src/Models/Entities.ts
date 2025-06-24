@@ -11,6 +11,6 @@ export interface Goal {
   amount: number;
 }
 export interface User {
-  id: string;
+  token: string;
   accessLevel: string;
 }

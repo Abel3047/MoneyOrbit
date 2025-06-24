@@ -4,7 +4,6 @@ export interface Preferences {
   phoneNumber: string;
   nextPage: string;
   user: {
-    id: string, // Initialize with empty strings or null
     accessLevel: string,
   }
 }

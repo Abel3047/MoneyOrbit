@@ -92,16 +92,16 @@ namespace MoneyOrbit.Infrastructure.Services
 
         public async Task<ResultObject> Login(LoginDto loginDto)
         {
-            var user = await _userRepository.GetInstanceOfType<User>(loginDto.UserName);
+            var user = (await _userRepository.GetCollectionWithIdenticalProperty<User>(loginDto.UserName)).FirstOrDefault();
 
             if (NullGuard.IsNull(user))
-                throw new UnauthorizedAccessException("Invalid username or password.");
+                throw new UnauthorizedAccessException("Username doesn't exist.");
 
             if (!VerifyPasswordHash(loginDto.Password, user.PasswordHash, user.PasswordSalt))
             {
                 throw new UnauthorizedAccessException("Invalid password.");
             }
-            return new ResultObject() { Result = "success" };
+            return new ResultObject() { Result = new LoginResponseDto{ token= user.ID, accessLevel=user.AccessLevel} };
         }
         #region Support methods
         /// <summary>
