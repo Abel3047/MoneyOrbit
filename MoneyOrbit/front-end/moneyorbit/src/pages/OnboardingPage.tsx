@@ -108,18 +108,17 @@ export default function OnboardingPage() {
             const response = await axios.post(baseAPIPath + 'User/RegisterUser', payload);
 
             // Check the response from your .NET API
-            if (response.data && response.data.error) {
+            if (response.data.error) {
                 // Handle specific errors returned from the API
                 throw new Error(response.data.error);
             }
-
-            if (response.data && response.data.result) {
+            if (response.data.result) {
                 // If the API call is successful:
                 console.log("Registration successful! User ID:", response.data.result);
                 alert('Registration successful! Please log in.');
 
-                // Navigate the user to the login page, not the dashboard
-                navigate('/login');
+                // Navigate the user to create an account
+                setActiveForm('createAccount');
             } else {
                 // Handle unexpected successful responses that don't match the expected shape
                 throw new Error("Received an invalid response from the server.");

@@ -1,0 +1,34 @@
+// In your launch.json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch and Debug App",
+            "type": "msedge",
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}",
+            "sourceMapPathOverrides": {
+                "C:/Users/abelt/source/repos/Team-Gama/MoneyOrbit/MoneyOrbit/front-end/moneyorbit/src/*": 
+                "${webRoot}/src/*"
+            },
+            "userDataDir": "${workspaceFolder}/.vscode/edge-user-data",
+            // This tells the debugger to run 'npm start' and wait for it to be ready
+            // before launching the browser.
+            "server": {
+                "command": "npm start"
+            }
+        },
+        // The Attach config is still useful to have
+        {
+            "name": "Attach to Application",
+            "type": "msedge",
+            "request": "attach",
+            "port": 9222,
+            "webRoot": "${workspaceFolder}",
+            "sourceMapPathOverrides": {
+                "webpack:///src/*": "${webRoot}/src/*"
+            }
+        }
+    ]
+}

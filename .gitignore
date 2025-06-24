@@ -817,11 +817,13 @@ $RECYCLE.BIN/
 ## Visual Studio Code
 ##
 .vscode/*
+.vscode/edge-user-data
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 /MoneyOrbit/front-end/.vscode/*
+/MoneyOrbit/front-end/MoneyOrbit/.vscode/edge-user-data
 !/MoneyOrbit/front-end/.vscode/settings.json
 !/MoneyOrbit/front-end/.vscode/tasks.json
 !/MoneyOrbit/front-end/.vscode/launch.json
