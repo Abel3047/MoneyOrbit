@@ -105,7 +105,7 @@ export default function OnboardingPage() {
             // Your C# code probably returns a ResultObject like { result: "someUserId", error: null }
             // We define the expected response shape for type safety
 
-            const response = await axios.post(baseAPIPath + 'Auth/register', payload);
+            const response = await axios.post(baseAPIPath + 'User/RegisterUser', payload);
 
             // Check the response from your .NET API
             if (response.data && response.data.error) {
@@ -199,10 +199,6 @@ export default function OnboardingPage() {
     };
 
 
-    // Navigate the user to the dashboard page
-    const navigateDashboard = () => {
-        navigate('/dashboard');
-    }
     return (
         <div className="container mx-auto p-8 max-w-2xl">
             <h1 className="text-3xl font-bold mb-6">Onboarding</h1>
@@ -234,14 +230,6 @@ export default function OnboardingPage() {
                 {renderActiveForm()}
             </div>
 
-            <div>
-                <button
-                    onClick={navigateDashboard}
-                    className={`py-2 px-4 ${activeForm === 'createGoals' ? activeTabStyle : inactiveTabStyle}`}
-                >
-                    Go to Dashboard
-                </button>
-            </div>
         </div>
     );
 }
