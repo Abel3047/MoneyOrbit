@@ -18,10 +18,8 @@ interface CreateUserCredentials {
     Email: string;
     PhoneNumber: string;
 }
-interface CreateAccountCredentials {
+export interface CreateAccountCredentials {
     //Variables from DTO
-    token: string;
-
     accountName: string;
     description?: string;
 
@@ -63,17 +61,13 @@ export default function OnboardingPage() {
             case 'createUser':
                 return <CreateUserForm onCreateUser={handleUserRegisteration} />;
             case 'createAccount':
-                return <CreateAccountForm onCreateAccount={handleAccountCreation} />;
+                return <CreateAccountForm onCreateAccount={handleAccountCreation} isBankAccount={false}/>;
             case 'createGoals':
                 return <CreateGoalsForm onCreateGoal={handleGoalCreation} />;
             default:
                 return <CreateUserForm onCreateUser={handleUserRegisteration} />;// Fallback to the default form
         }
     };
-
-    // Simple CSS-in-JS for active tab styling
-    const activeTabStyle = 'bg-blue-500 text-white';
-    const inactiveTabStyle = 'bg-gray-200 text-black';
 
     const navigate = useNavigate();
     
@@ -138,7 +132,6 @@ export default function OnboardingPage() {
         // This is the mapping step. You convert the data from the form's shape
         // to the exact shape the API requires.
         const payload: CreateAccountDto = {
-            token: credentials.token,
             accountName: credentials.accountName,
             isAsset: credentials.isAsset,
             isExpense: credentials.isExpense,
@@ -199,34 +192,9 @@ export default function OnboardingPage() {
     return (
         <div className="container mx-auto p-8 max-w-2xl">
             <h1 className="text-3xl font-bold mb-6">Onboarding</h1>
-
-            {/* 3. Navigation to switch between forms */}
-            <div className="flex border-b mb-6">
-                {/* 4. Buttons to switch between forms */}
-                <button
-                    onClick={() => setActiveForm('createUser')}
-                    className={`py-2 px-4 ${activeForm === 'createUser' ? activeTabStyle : inactiveTabStyle}`}
-                >
-                    Create User
-                </button>
-                <button
-                    onClick={() => setActiveForm('createAccount')}
-                    className={`py-2 px-4 ${activeForm === 'createAccount' ? activeTabStyle : inactiveTabStyle}`}
-                >
-                    Create Account
-                </button>
-                <button
-                    onClick={() => setActiveForm('createGoals')}
-                    className={`py-2 px-4 ${activeForm === 'createGoals' ? activeTabStyle : inactiveTabStyle}`}
-                >
-                    Create Goals
-                </button>
-            </div>
-
             <div>
                 {renderActiveForm()}
             </div>
-
         </div>
     );
 }

@@ -17,7 +17,7 @@ namespace MoneyOrbit.Core.Entities
         public string BankBranchName { get; set; }
         public string? BankSwiftCode { get; set;}
 
-        new public bool isAsset { get; private set; } = false;
+        new public bool isAsset { get; private set; } = true;
         new public bool isExpense { get; private set; } = false;
         new public bool isCaptial { get; private set; } = false;
         new public bool isLiability { get; private set; } = false;

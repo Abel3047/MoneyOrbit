@@ -32,8 +32,6 @@ export interface LoginDto {
 }
 
 export interface CreateAccountDto {
-  token: string;
-
   accountName: string;
   description?: string;
 
@@ -46,11 +44,21 @@ export interface CreateAccountDto {
   // Accounts are typically not bank accounts so the default is false
   isBankAccount?: boolean;
 
-  bankAccountName?: string;
-  bankAccountNumber?: string;
-  bankBranchCode?: string;
-  bankBranchName?: string;
-  bankSwiftCode?: string;
+  BankAccountName?: string;
+  BankAccountNumber?: string;
+  BankBranchCode?: string;
+  BankBranchName?: string;
+  BankSwiftCode?: string;
+}
+export interface BaseRegisterBankAccountDto {
+  AccountName: string;
+  description?: string;
+
+  BankAccountName: string;
+  BankAccountNumber: string;
+  BankBranchCode: string;
+  BankBranchName: string;
+  BankSwiftCode?: string;
 }
 
 export interface CreateGoalsDto {
