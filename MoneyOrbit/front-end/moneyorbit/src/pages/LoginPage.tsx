@@ -5,7 +5,7 @@ import { FaUser, FaLock } from "react-icons/fa";
 import LoginForm from '../Components/LoginForm/LoginForm';
 import { LoginDto } from "../Models/Dtos"; // Adjust the import path as necessary
 import { baseAPIPath } from "../services/baseServices"; // Adjust the import path as necessary
-import { saveUserPreferencesAndToken } from "../services/PersistenceServices";
+import { saveUserAccessLevelAndToken } from "../services/PersistenceServices";
 
 // Create a type for the credentials object that LoginForm will send up.
 // This is good practice as the form's internal state (camelCase) might differ from the API DTO (PascalCase).
@@ -37,7 +37,7 @@ export default function LoginPage() {
       const response = await axios.post(baseAPIPath + 'User/login', payload);
 
       // Save user preferences and auth token using a helper from PersistenceServices
-      await saveUserPreferencesAndToken(response.data.result.accessLevel, response.data.result.token);
+      await saveUserAccessLevelAndToken(response.data.result.accessLevel, response.data.result.token);
       // If the API call is successful:
       console.log(response.data);
       alert('Login successful!');

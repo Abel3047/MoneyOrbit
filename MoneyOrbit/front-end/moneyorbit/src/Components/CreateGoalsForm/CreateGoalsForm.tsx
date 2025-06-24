@@ -35,7 +35,7 @@ const CreateGoalsForm: React.FC<CreateGoalsProps> = ({ onCreateGoal }) => {
                     <form onSubmit={handleSubmit}>
                         <h1>Sign Up</h1>
                         <div className="input-box">
-                            <input type="text"
+                            <input type="date"
                                 placeholder="date"
                                 required value={date} onChange={(e) => setDate(e.target.value)} />
                         </div>

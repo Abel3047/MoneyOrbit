@@ -62,7 +62,7 @@ export function removeAuthToken(): void {
   }
 }
 
-export async function saveUserPreferencesAndToken(AccessLevel: string, token: string): Promise<void> {
+export async function saveUserAccessLevelAndToken(AccessLevel: string, token: string): Promise<void> {
   //Gets the preferences from local storage
   let prefs: Preferences = await getPreferences();
 

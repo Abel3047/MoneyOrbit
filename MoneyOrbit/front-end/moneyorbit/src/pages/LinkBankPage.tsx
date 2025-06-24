@@ -6,9 +6,8 @@ import { CreateAccountCredentials } from './OnboardingPage';
 import { BaseRegisterBankAccountDto } from '../Models/Dtos';
 import { getAuthToken } from '../services/PersistenceServices';
 
-export default function LinkBankPage() {    
+export default function LinkBankPage() {
     const navigate = useNavigate();
-
     // The handleUserRegistration function. This is the "middleware" logic
     const handleBankRegisteration = async (credentials: CreateAccountCredentials) => {
         // credentials will be an object like { username: 'user123', password: '...' }
@@ -17,15 +16,15 @@ export default function LinkBankPage() {
         // This is the mapping step. You convert the data from the form's shape
         // to the exact shape the API requires.
         const payload: BaseRegisterBankAccountDto = {
-                    token: await getAuthToken() || '',
-                    AccountName: credentials.accountName ?? '',
-                    description: credentials.description,     
-                    BankAccountName: credentials.bankAccountName ?? '',
-                    BankAccountNumber: credentials.bankAccountNumber ?? '',   
-                    BankBranchName: credentials.bankBranchName ?? '',
-                    BankBranchCode: credentials.bankBranchCode ?? '',
-                    BankSwiftCode: credentials.bankSwiftCode               
-                };
+            token: await getAuthToken() || '',
+            AccountName: credentials.accountName ?? '',
+            description: credentials.description,
+            BankAccountName: credentials.bankAccountName ?? '',
+            BankAccountNumber: credentials.bankAccountNumber ?? '',
+            BankBranchName: credentials.bankBranchName ?? '',
+            BankBranchCode: credentials.bankBranchCode ?? '',
+            BankSwiftCode: credentials.bankSwiftCode
+        };
         // --- THIS IS WHERE YOUR API CALL LOGIC GOES ---
         try {
             console.log("Sending payload to API:", payload);
@@ -43,6 +42,11 @@ export default function LinkBankPage() {
             alert('Registration failed. Please check your credentials.');
         }
     };
+    const handleProceedToDashboard = () => {
+        console.log("Navigating from account creation to dashboard.");
+        // Navigate the user to the dashboard page
+        navigate('/dashboard');
+    };
 
     // Navigate the user to the dashboard page
     navigate('/dashboard');
@@ -51,9 +55,9 @@ export default function LinkBankPage() {
         <div className="container mx-auto p-8 max-w-2xl">
             <h1 className="text-3xl font-bold mb-6">Link Your Bank Account</h1>
             <div>
-                <CreateAccountForm onCreateAccount={handleBankRegisteration} isBankAccount={true}/>
+                <CreateAccountForm onCreateAccount={handleBankRegisteration} isBankAccount={true} onNavigateToNext={handleProceedToDashboard} />
             </div>
         </div>
-    
+
     );
 }

@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { AccountFormData } from '../../Models/Data';
+import { setPreferences } from '../../services/PersistenceServices';
+import { Preferences } from '../../Models/Preferences';
 
 
 interface CreateAccountProps {
     onCreateAccount: (credentials: AccountFormData) => void;
     isBankAccount: boolean;
+    onNavigateToNext: () => void;
 }
 
-const CreateAccountForm: React.FC<CreateAccountProps> = ({ onCreateAccount, isBankAccount }) => {
+const CreateAccountForm: React.FC<CreateAccountProps> = ({ onCreateAccount, isBankAccount, onNavigateToNext  }) => {
 
     const [accountName, setAccountName] = useState('');
     const [description, setDescription] = useState<string | undefined>(undefined);
@@ -23,7 +26,6 @@ const CreateAccountForm: React.FC<CreateAccountProps> = ({ onCreateAccount, isBa
     const [BankBranchName, setBankBranchName] = useState<string | undefined>(undefined);
     const [BankSwiftCode, setBankSwiftCode] = useState<string | undefined>(undefined);
 
-    console.log("CreateAccountForm isBankAccount prop:", isBankAccount);
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -48,8 +50,7 @@ const CreateAccountForm: React.FC<CreateAccountProps> = ({ onCreateAccount, isBa
 
         onCreateAccount(credentials);
     };
-
-
+    
     return (
         <div className="wrapper">
             <form onSubmit={handleSubmit}>
@@ -58,59 +59,62 @@ const CreateAccountForm: React.FC<CreateAccountProps> = ({ onCreateAccount, isBa
                     <>
                         {/* This section shows ONLY when isBankAccount is FALSE 
                         For onboarding creation of accounts */}
-                        <h1>Lets create some default financial accounts.</h1>
                         <div>
-                            <div className="input-box">
-                                <input
-                                    type="text"
-                                    placeholder="Account Name"
-                                    required
-                                    // Connect input value to state
-                                    value={accountName}
-                                    // Update state when user types
-                                    onChange={(e) => setAccountName(e.target.value)}
-                                />
-                            </div>
-                            <div className="input-box">
-                                <label htmlFor="accountType">Account Type</label>
-                                <select
-                                    id="accountType"
-                                    onChange={(e) => {
-                                        // Reset all types
-                                        setIsAsset(false);
-                                        setIsExpense(false);
-                                        setIsCaptial(false);
-                                        setIsLiability(false);
+                            <h1>Lets create some default financial accounts.</h1>
+                            <div>
+                                <div className="input-box">
+                                    <input
+                                        type="text"
+                                        placeholder="Account Name"
+                                        required
+                                        // Connect input value to state
+                                        value={accountName}
+                                        // Update state when user types
+                                        onChange={(e) => setAccountName(e.target.value)}
+                                    />
+                                </div>
+                                <div className="input-box">
+                                    <label htmlFor="accountType">Account Type</label>
+                                    <select
+                                        id="accountType"
+                                        onChange={(e) => {
+                                            // Reset all types
+                                            setIsAsset(false);
+                                            setIsExpense(false);
+                                            setIsCaptial(false);
+                                            setIsLiability(false);
 
-                                        // Set the selected type to true
-                                        const selected = e.target.value;
-                                        if (selected === "asset") setIsAsset(true);
-                                        else if (selected === "expense") setIsExpense(true);
-                                        else if (selected === "capital") setIsCaptial(true);
-                                        else if (selected === "liability") setIsLiability(true);
-                                    }}
-                                    defaultValue=""
-                                >
-                                    <option value="" disabled>Select Account Type</option>
-                                    <option value="asset">Asset</option>
-                                    <option value="expense">Expense</option>
-                                    <option value="capital">Capital</option>
-                                    <option value="liability">Liability</option>
-                                </select>
+                                            // Set the selected type to true
+                                            const selected = e.target.value;
+                                            if (selected === "asset") setIsAsset(true);
+                                            else if (selected === "expense") setIsExpense(true);
+                                            else if (selected === "capital") setIsCaptial(true);
+                                            else if (selected === "liability") setIsLiability(true);
+                                        }}
+                                        defaultValue=""
+                                    >
+                                        <option value="" disabled>Select Account Type</option>
+                                        <option value="asset">Asset</option>
+                                        <option value="expense">Expense</option>
+                                        <option value="capital">Capital</option>
+                                        <option value="liability">Liability</option>
+                                    </select>
+                                </div>
+                                <div className="input-box">
+                                    <input
+                                        type="text"
+                                        placeholder="Account Description"
+                                        required
+                                        // Connect input value to state
+                                        value={description}
+                                        // Update state when user types
+                                        onChange={(e) => setDescription(e.target.value)}
+                                    />
+                                </div>
                             </div>
-                            <div className="input-box">
-                                <input
-                                    type="text"
-                                    placeholder="Account Description"
-                                    required
-                                    // Connect input value to state
-                                    value={description}
-                                    // Update state when user types
-                                    onChange={(e) => setDescription(e.target.value)}
-                                />
-                            </div>
-                        </div>                        
-                        <button type="submit" className="btn">Submit</button>
+                            <button type="submit" className="btn">Submit</button>
+                        </div>
+                        <button onClick={onNavigateToNext}>Next section</button>
                     </>
                 ) : (
                     <>

@@ -6,7 +6,7 @@ import CreateUserForm from '../Components/CreateUserForm/CreateUserForm';
 import CreateAccountForm from '../Components/CreateAccountForm/CreateAccountForm';
 import CreateGoalsForm from '../Components/CreateGoalsForm/CreateGoalsForm';
 import { CreateAccountDto, CreateGoalsDto, UserCreationDto } from '../Models/Dtos';
-import { getAuthToken, saveUserPreferencesAndToken } from '../services/PersistenceServices';
+import { getAuthToken, saveUserAccessLevelAndToken } from '../services/PersistenceServices';
 
 interface CreateUserCredentials {
     //Variables from DTO
@@ -61,16 +61,21 @@ export default function OnboardingPage() {
             case 'createUser':
                 return <CreateUserForm onCreateUser={handleUserRegisteration} />;
             case 'createAccount':
-                return <CreateAccountForm onCreateAccount={handleAccountCreation} isBankAccount={false}/>;
+                return <CreateAccountForm 
+                onCreateAccount={handleAccountCreation} 
+                isBankAccount={false} 
+                onNavigateToNext={handleProceedToGoals}
+                key={formKey}
+                />;
             case 'createGoals':
                 return <CreateGoalsForm onCreateGoal={handleGoalCreation} />;
             default:
                 return <CreateUserForm onCreateUser={handleUserRegisteration} />;// Fallback to the default form
         }
     };
-
+    const [formKey, setFormKey] = useState(0); 
     const navigate = useNavigate();
-    
+
     /**
  * Handles the user registration process. This function acts as the "middleware"
  * between the registration form and the backend API.
@@ -105,8 +110,8 @@ export default function OnboardingPage() {
             }
             if (response.data) {
                 // Save user preferences and auth token using a helper from PersistenceServices
-                await saveUserPreferencesAndToken(payload.AccessLevel, response.data.result);
-                
+                await saveUserAccessLevelAndToken(payload.AccessLevel, response.data.result);
+
                 // If the API call is successful:
                 alert('Registration successful! Please log in.');
 
@@ -143,7 +148,7 @@ export default function OnboardingPage() {
             isLiability: credentials.isLiability,
 
             isBankAccount: credentials.isBankAccount,
-            
+
             BankAccountName: credentials.bankAccountName,
             BankAccountNumber: credentials.bankAccountNumber,
             BankBranchCode: credentials.bankBranchCode,
@@ -159,14 +164,18 @@ export default function OnboardingPage() {
             // If the API call is successful:
             console.log(response.data);
             alert('Account created successfully!');
+            setFormKey(prevKey => prevKey + 1); 
 
-            // Navigate the user to the dashboard page
-            navigate('/dashboard');
-
-        } catch (error) {
-            console.error('Account creation failed:', error);
-            alert('Account creation failed. Please check your credentials.');
-        }
+        }catch (error) {
+            // This block catches network errors or errors thrown from the try block
+            const errorMessage = (error as any).response?.data || (error as Error).message || "An unknown error occurred.";
+            console.error('Account creation failed:', errorMessage);
+            alert(`Account creation failed: ${errorMessage}`);
+        } 
+    };
+    const handleProceedToGoals = () => {
+        console.log("Navigating from account creation to goal creation.");
+        setActiveForm('createGoals');
     };
     // The handleUserRegistration function. This is the "middleware" logic
     const handleGoalCreation = async (credentials: CreateGoalsCredentials) => {
