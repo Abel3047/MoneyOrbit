@@ -59,10 +59,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
                 <button type="submit" className="btn">Login</button>
 
                 <div className="register-link">
-                    <p> Don't have an account? <a href='#' > Register </a></p></div>
+                    <p> Don't have an account? <a href='Onboarding' > Register </a></p></div>
 
             </form>
-            LoginForm</div>
+        </div>
     );
 };
 export default LoginForm;

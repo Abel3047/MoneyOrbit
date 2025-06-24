@@ -36,31 +36,31 @@ const CreateUserForm: React.FC<CreateUserProps> = ({ onCreateUser }) => {
             <form onSubmit={handleSubmit}>
                 <h1>Sign Up</h1>
 
-                {/*Username */} 
+                {/*Username */}
                 <div className="input-box">
                     <input type="text"
                         placeholder="User Name"
                         required value={UserName} onChange={(e) => setUserName(e.target.value)} />
                 </div>
-                {/*Password */} 
+                {/*Password */}
                 <div className="input-box">
                     <input type="text"
                         placeholder="Password"
                         required value={password} onChange={(e) => setpassword(e.target.value)} />
                 </div>
-                {/*First Name  */} 
+                {/*First Name  */}
                 <div className="input-box">
                     <input type="text"
                         placeholder="First Name"
                         required value={FirstName} onChange={(e) => setFirstName(e.target.value)} />
                 </div>
-                {/*Last Name */} 
+                {/*Last Name */}
                 <div className="input-box">
                     <input type="text"
                         placeholder="Last Name"
                         required value={LastName} onChange={(e) => setLastName(e.target.value)} />
                 </div>
-                {/*Access Level */} 
+                {/*Access Level */}
                 <div className="input-box">
                     <label htmlFor="accessLevel">Access Level</label>
                     <select
@@ -83,13 +83,13 @@ const CreateUserForm: React.FC<CreateUserProps> = ({ onCreateUser }) => {
                         <option value="Customer">Customer</option>
                     </select>
                 </div>
-                {/*Email */} 
+                {/*Email */}
                 <div className="input-box">
                     <input type="text"
                         placeholder="Email"
                         required value={Email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
-                {/*Phone Number */} 
+                {/*Phone Number */}
                 <div className="input-box">
                     <input type="text"
                         placeholder="Phone Number"
@@ -98,8 +98,11 @@ const CreateUserForm: React.FC<CreateUserProps> = ({ onCreateUser }) => {
 
                 <button type="submit" className="btn">Sign Up</button>
 
+                <div className="login-link">
+                    <p> Already have an account? <a href='login' > Login </a></p></div>
+
             </form>
-            CreateUserForm</div>
+        </div>
     );
 
 };
