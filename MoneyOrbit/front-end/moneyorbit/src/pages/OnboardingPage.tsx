@@ -6,7 +6,7 @@ import CreateUserForm from '../Components/CreateUserForm/CreateUserForm';
 import CreateAccountForm from '../Components/CreateAccountForm/CreateAccountForm';
 import CreateGoalsForm from '../Components/CreateGoalsForm/CreateGoalsForm';
 import { CreateAccountDto, CreateGoalsDto, UserCreationDto } from '../Models/Dtos';
-import { saveUserPreferencesAndToken } from '../services/PersistenceServices';
+import { getAuthToken, saveUserPreferencesAndToken } from '../services/PersistenceServices';
 
 interface CreateUserCredentials {
     //Variables from DTO
@@ -132,11 +132,23 @@ export default function OnboardingPage() {
         // This is the mapping step. You convert the data from the form's shape
         // to the exact shape the API requires.
         const payload: CreateAccountDto = {
+            token: await getAuthToken() || '',
+
             accountName: credentials.accountName,
+            description: credentials.description,
+
             isAsset: credentials.isAsset,
             isExpense: credentials.isExpense,
             isCaptial: credentials.isCaptial,
-            isLiability: credentials.isLiability
+            isLiability: credentials.isLiability,
+
+            isBankAccount: credentials.isBankAccount,
+            
+            BankAccountName: credentials.bankAccountName,
+            BankAccountNumber: credentials.bankAccountNumber,
+            BankBranchCode: credentials.bankBranchCode,
+            BankBranchName: credentials.bankBranchName,
+            BankSwiftCode: credentials.bankSwiftCode
         };
 
         // --- THIS IS WHERE YOUR API CALL LOGIC GOES ---

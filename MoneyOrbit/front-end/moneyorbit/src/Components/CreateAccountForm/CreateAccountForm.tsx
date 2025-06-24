@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { CreateAccountDto } from '../../Models/Dtos';
+import { AccountFormData } from '../../Models/Data';
 
 
 interface CreateAccountProps {
-    onCreateAccount: (credentials: CreateAccountDto) => void;
-    isBankAccount: boolean; // This will be passed down from the parent page
+    onCreateAccount: (credentials: AccountFormData) => void;
+    isBankAccount: boolean;
 }
 
 const CreateAccountForm: React.FC<CreateAccountProps> = ({ onCreateAccount, isBankAccount }) => {
@@ -23,10 +23,11 @@ const CreateAccountForm: React.FC<CreateAccountProps> = ({ onCreateAccount, isBa
     const [BankBranchName, setBankBranchName] = useState<string | undefined>(undefined);
     const [BankSwiftCode, setBankSwiftCode] = useState<string | undefined>(undefined);
 
+    console.log("CreateAccountForm isBankAccount prop:", isBankAccount);
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        const credentials: CreateAccountDto = {
+        const credentials: AccountFormData = {
             accountName,
             description,
             // If it's a bank account, it must be an asset.
@@ -53,11 +54,11 @@ const CreateAccountForm: React.FC<CreateAccountProps> = ({ onCreateAccount, isBa
         <div className="wrapper">
             <form onSubmit={handleSubmit}>
 
-                {isBankAccount! ? (
+                {!isBankAccount ? (
                     <>
                         {/* This section shows ONLY when isBankAccount is FALSE 
                         For onboarding creation of accounts */}
-                        <h1>Lets create some default financial accounts</h1>
+                        <h1>Lets create some default financial accounts.</h1>
                         <div>
                             <div className="input-box">
                                 <input
@@ -108,13 +109,14 @@ const CreateAccountForm: React.FC<CreateAccountProps> = ({ onCreateAccount, isBa
                                     onChange={(e) => setDescription(e.target.value)}
                                 />
                             </div>
-                        </div>
+                        </div>                        
+                        <button type="submit" className="btn">Submit</button>
                     </>
                 ) : (
                     <>
                         {/* This section shows ONLY when isBankAccount is TRUE 
                         For linking a Bank account */}
-                        <h1>Lets try submitting a request to your Bank to link you Bank account</h1>
+                        <h2>Let's request your bank to link your personal account.</h2>
                         <div>
                             <div className="input-box">
                                 <input
@@ -176,7 +178,7 @@ const CreateAccountForm: React.FC<CreateAccountProps> = ({ onCreateAccount, isBa
                     </>
                 )}
             </form>
-            CreateAccountForm</div>
+        </div>
     );
 
 };

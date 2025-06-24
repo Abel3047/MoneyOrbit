@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { baseAPIPath } from "../services/baseServices"; // Adjust the import path as necessary
 import CreateAccountForm from '../Components/CreateAccountForm/CreateAccountForm';
 import { CreateAccountCredentials } from './OnboardingPage';
-import { BaseRegisterBankAccountDto, CreateAccountDto } from '../Models/Dtos';
+import { BaseRegisterBankAccountDto } from '../Models/Dtos';
+import { getAuthToken } from '../services/PersistenceServices';
 
 export default function LinkBankPage() {    
     const navigate = useNavigate();
@@ -17,6 +17,7 @@ export default function LinkBankPage() {
         // This is the mapping step. You convert the data from the form's shape
         // to the exact shape the API requires.
         const payload: BaseRegisterBankAccountDto = {
+                    token: await getAuthToken() || '',
                     AccountName: credentials.accountName ?? '',
                     description: credentials.description,     
                     BankAccountName: credentials.bankAccountName ?? '',
@@ -28,7 +29,7 @@ export default function LinkBankPage() {
         // --- THIS IS WHERE YOUR API CALL LOGIC GOES ---
         try {
             console.log("Sending payload to API:", payload);
-            const response = await axios.post(baseAPIPath + 'Account/LinkBankAccount', payload);
+            const response = await axios.post(baseAPIPath + 'Account/RegisterWithAccountNumber', payload);
 
             // If the API call is successful:
             console.log(response.data);

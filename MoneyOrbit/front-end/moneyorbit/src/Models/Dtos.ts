@@ -1,3 +1,5 @@
+import { AccountFormData } from "./Data";
+
 export interface GetGoalsForUserDto {
   Token: string;
   StartDate?: Date;
@@ -31,26 +33,12 @@ export interface LoginDto {
   Password: string;
 }
 
-export interface CreateAccountDto {
-  accountName: string;
-  description?: string;
-
-  isAsset: boolean;
-  isExpense: boolean;
-  isCaptial: boolean;
-  isLiability: boolean;
-
-  // BankAccount creation properties
-  // Accounts are typically not bank accounts so the default is false
-  isBankAccount?: boolean;
-
-  BankAccountName?: string;
-  BankAccountNumber?: string;
-  BankBranchCode?: string;
-  BankBranchName?: string;
-  BankSwiftCode?: string;
+export interface CreateAccountDto extends AccountFormData{
+  token: string; // Important: So as to register an account to a user, the token is required  
 }
 export interface BaseRegisterBankAccountDto {
+  //Important: So as to register an account to a user, the token is required
+  token: string;
   AccountName: string;
   description?: string;
 

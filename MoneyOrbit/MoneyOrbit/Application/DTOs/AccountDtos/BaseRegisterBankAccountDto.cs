@@ -2,6 +2,10 @@
 {
     public class BaseRegisterBankAccountDto
     {
+        //Important so that you can register an account under a user
+        required
+        public string Token { get; set; }
+
         public string AccountName { get; set; }
         public string? description { get; set; }
 
