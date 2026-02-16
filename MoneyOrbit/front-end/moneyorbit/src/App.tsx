@@ -3,6 +3,8 @@ import LoginPage from './pages/LoginPage'; // Import the LoginPage component
 import Dashboard from './Components/Dashboard/Dashboard'; // Import the new Dashboard component
 import './Components/Dashboard/Dashboard.css'; // Import the CSS for the dashboard
 import TransactionsPage from './Components/TransactionsPage/TransactionsPage'; // Import the TransactionsPage component
+
+import Trophy from './Components/Trophy/Trophy';
 import OnboardingPage from './pages/OnboardingPage';
 import LinkBankPage from './pages/LinkBankPage';
 
@@ -26,11 +28,23 @@ function App() {
               <Dashboard />
             </div>
           }
-        />        
+        /> 
+
+<Route
+  path="/trophy"
+  element={
+    <div className="app-background">
+      <Trophy isOpen={true} onClose={() => console.log('Trophy closed')} />
+
+    </div>
+  }
+/>
 
       </Routes>
     </BrowserRouter>
   );
+
+  
 }
 
 export default App;

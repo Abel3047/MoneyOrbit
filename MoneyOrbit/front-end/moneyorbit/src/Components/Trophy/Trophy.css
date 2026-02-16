@@ -1,0 +1,86 @@
+/* The main container for the app, with the gradient background */
+.appContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(135deg, #0d1e3a, #1b3966, #3d6cb9);
+  padding: 2rem;
+  font-family: sans-serif;
+}
+
+/* The backdrop that covers the screen and applies the blur */
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(10, 20, 40, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px); /* For Safari support */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* The pop-up card itself */
+.modalCard {
+  background: rgba(23, 37, 62, 0.85); /* Dark, semi-transparent background */
+  padding: 40px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  color: white;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px; /* Spacing between elements */
+  max-width: 380px;
+}
+
+/* The main title: "Goal Completed!" */
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* The motivation message */
+.message {
+  font-size: 0.9rem;
+  color: #cdd6f4; /* A lighter, muted color */
+  margin: 0 0 16px 0; /* Add some space below */
+}
+
+/* The "Continue" button */
+.continueButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 12px 40px;
+  border-radius: 9999px; /* Pill shape */
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.continueButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* A simple button for triggering the modal */
+.openButton {
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  background-color: #fff;
+  color: #1b3966;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
